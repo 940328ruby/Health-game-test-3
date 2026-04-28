@@ -48,7 +48,7 @@
     button:hover { transform: translateY(-2px); filter: brightness(1.03); }
     .topic-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      grid-template-columns: repeat(2, minmax(180px, 1fr));
       gap: 14px;
       width: min(900px, 100%);
       margin-top: 18px;
@@ -376,6 +376,7 @@
           <div class="knowledge-title">健康知識補給站</div>
           <div id="resultBadge">等待作答中</div>
           <div id="knowledgeText">使用鍵盤左右鍵移動人物，接住你認為正確的答案。手機可以使用下方左右按鈕。</div>
+          <div id="countdownText" style="display:none; margin-top:12px; font-size:26px; font-weight:900; color:#0284c7; text-align:center;"></div>
           <div class="tip-box">小提醒：不要只記答案，也要看「為什麼」，這樣報告或教學時比較能說明清楚。</div>
         </div>
       </aside>
@@ -567,7 +568,7 @@
     function loadQuestion() {
       clearItems();
       locked = false;
-      itemSpeed = 2.0;
+      itemSpeed = 1.35;
       const q = currentQuestions[questionIndex];
       updateStatus();
       document.getElementById("questionText").textContent = q.question;
@@ -669,27 +670,49 @@
       updateStatus();
       clearItems();
 
+      const countdownText = document.getElementById("countdownText");
+      countdownText.style.display = "none";
+      countdownText.textContent = "";
+
       resultBadge.innerHTML = correct ? `<span class="correct">答對了！</span>` : `<span class="wrong">答錯了</span>`;
       resultBadge.style.background = correct ? "#dcfce7" : "#fee2e2";
       knowledgeText.innerHTML = `
         <strong>你接到：</strong>${chosenText}<br>
         <strong>正確答案：</strong>${q.answer}<br><br>
         <strong>原因說明：</strong>${q.reason}<br><br>
-        <strong>知識點補充：</strong>${q.point}
+        <strong>知識點補充：</strong>${q.point}<br><br>
+        <span style="color:#0369a1; font-weight:900;">請先閱讀知識點，下一題開始前會有 3 秒倒數。</span>
       `;
 
       setTimeout(() => {
-        if (lives <= 0) {
-          endGame(true);
+        if (lives <= 0 || questionIndex + 1 >= currentQuestions.length) {
+          endGame(lives <= 0);
           return;
         }
-        questionIndex++;
-        if (questionIndex < currentQuestions.length) {
-          loadQuestion();
+        startCountdown();
+      }, 5500);
+    }
+
+    function startCountdown() {
+      const countdownText = document.getElementById("countdownText");
+      let count = 3;
+      countdownText.style.display = "block";
+      countdownText.textContent = `下一題準備：${count}`;
+
+      const timer = setInterval(() => {
+        count--;
+        if (count > 0) {
+          countdownText.textContent = `下一題準備：${count}`;
         } else {
-          endGame(false);
+          clearInterval(timer);
+          countdownText.textContent = "開始！";
+          setTimeout(() => {
+            countdownText.style.display = "none";
+            questionIndex++;
+            loadQuestion();
+          }, 500);
         }
-      }, 3600);
+      }, 1000);
     }
 
     function endGame(lifeOver) {
@@ -770,3 +793,4 @@
   </script>
 </body>
 </html>
+
