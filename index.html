@@ -567,7 +567,7 @@
     function loadQuestion() {
       clearItems();
       locked = false;
-      itemSpeed = 2.0 + questionIndex * 0.45;
+      itemSpeed = 2.0;
       const q = currentQuestions[questionIndex];
       updateStatus();
       document.getElementById("questionText").textContent = q.question;
