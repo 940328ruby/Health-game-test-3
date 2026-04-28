@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -327,6 +326,7 @@
       <h1>健康知識接接樂</h1>
       <p>選擇主題，移動人物接住正確答案。<br>請使用電腦鍵盤的「← 左鍵」與「→ 右鍵」控制人物移動，接住你認為正確的答案。<br>答題後會暫停並顯示知識點，幫助你把健康觀念記起來。</p>
       <button onclick="showScreen('topicScreen')">開始遊戲</button>
+      <button id="teacherModeBtn" onclick="toggleTeacherMode()" style="background:#8b5cf6;">老師模式：關</button>
     </div>
   </section>
 
@@ -342,17 +342,12 @@
   <section id="gameScreen" class="screen">
     <div class="game-layout">
       <div class="left-column">
-        <div class="top-panel">
-          <div class="status-row">
-            <span>主題：<strong id="topicName"></strong></span>
-            <span>題數：<strong id="questionNumber">1</strong> / <strong id="totalQuestion">8</strong></span>
-            <span>分數：<strong id="score">0</strong></span>
-            <span>生命：<strong id="lives" class="heart">❤️❤️❤️</strong></span>
-          </div>
+        <!-- 題目改放到遊戲區內 -->
           <div id="questionText">題目載入中……</div>
         </div>
 
         <div id="gameArea">
+          <div id="questionOverlay" style="position:absolute; top:10px; left:50%; transform:translateX(-50%); background:rgba(255,255,255,0.9); padding:10px 18px; border-radius:16px; font-size:20px; font-weight:900; box-shadow:0 4px 12px rgba(0,0,0,0.15); z-index:20; max-width:90%;">題目載入中...</div>
           <div class="sun"></div>
           <div class="cloud" style="left: 7%; top: 36px;"></div>
           <div class="cloud" style="left: 54%; top: 72px;"></div>
@@ -379,6 +374,10 @@
           <div id="knowledgeText">使用鍵盤左右鍵移動人物，接住你認為正確的答案。手機可以使用下方左右按鈕。</div>
           <div id="countdownText" style="display:none; margin-top:12px; font-size:26px; font-weight:900; color:#0284c7; text-align:center;"></div>
           <div class="tip-box">小提醒：不要只記答案，也要看「為什麼」，這樣報告或教學時比較能說明清楚。</div>
+          <div id="teacherBox" class="tip-box" style="display:none; background:#f5f3ff; border-color:#c4b5fd;">
+            <strong>老師模式</strong><br>
+            <span id="teacherText">開始遊戲後，這裡會顯示本題的教學重點與引導提問。</span>
+          </div>
         </div>
       </aside>
     </div>
@@ -479,6 +478,7 @@
     let itemSpeed = 2.1;
     let locked = false;
     let wrongRecords = [];
+    let teacherMode = false;
 
     Object.keys(questionBank).forEach(topic => {
       const btn = document.createElement("button");
@@ -491,6 +491,27 @@
     function showScreen(id) {
       document.querySelectorAll(".screen").forEach(screen => screen.classList.remove("active"));
       document.getElementById(id).classList.add("active");
+    }
+
+    function toggleTeacherMode() {
+      teacherMode = !teacherMode;
+      const btn = document.getElementById("teacherModeBtn");
+      const teacherBox = document.getElementById("teacherBox");
+      btn.textContent = teacherMode ? "老師模式：開" : "老師模式：關";
+      btn.style.background = teacherMode ? "#7c3aed" : "#8b5cf6";
+      if (teacherBox) teacherBox.style.display = teacherMode ? "block" : "none";
+    }
+
+    function updateTeacherText(q) {
+      const teacherBox = document.getElementById("teacherBox");
+      const teacherText = document.getElementById("teacherText");
+      if (!teacherBox || !teacherText) return;
+      teacherBox.style.display = teacherMode ? "block" : "none";
+      teacherText.innerHTML = `
+        <strong>本題教學重點：</strong>${q.point}<br><br>
+        <strong>可提問：</strong>你在生活中有遇過類似情境嗎？你會怎麼選擇？<br><br>
+        <strong>延伸討論：</strong>請學生說明「為什麼其他選項不適合」，訓練判斷與表達能力。
+      `;
     }
 
     function startGame(topic) {
@@ -523,10 +544,11 @@
       itemSpeed = 1.35;
       const q = currentQuestions[questionIndex];
       updateStatus();
-      document.getElementById("questionText").textContent = q.question;
+      document.getElementById("questionOverlay").textContent = q.question;
       resultBadge.textContent = `第 ${questionIndex + 1} 題｜速度 ${questionIndex + 1}`;
       resultBadge.style.background = "#e0f2fe";
       knowledgeText.innerHTML = "觀察上方題目，接住你認為正確的答案。<br><br>答題後，這裡會顯示答對或答錯，以及本題健康知識點。";
+      updateTeacherText(q);
       createItems(q.options, q.answer);
       startLoop();
     }
@@ -635,6 +657,7 @@
         <strong>知識點補充：</strong>${q.point}<br><br>
         <span style="color:#0369a1; font-weight:900;">請先閱讀知識點，下一題開始前會有 3 秒倒數。</span>
       `;
+      updateTeacherText(q);
 
       setTimeout(() => {
         if (lives <= 0 || questionIndex + 1 >= currentQuestions.length) {
