@@ -525,7 +525,7 @@
     let moveRight = false;
     let items = [];
     let gameLoopId = null;
-    let itemSpeed = 1.12;
+    let itemSpeed = 0.7;
     let locked = false;
     let wrongRecords = [];
     let teacherMode = false;
@@ -617,7 +617,7 @@
         div.textContent = text;
         div.dataset.correct = text === answer ? "true" : "false";
         div.style.left = positions[i] + "px";
-        div.style.top = (112 + Math.random() * 26) + "px";
+        div.style.top = (70 + Math.random() * 10) + "px";
         gameArea.appendChild(div);
         items.push(div);
       });
