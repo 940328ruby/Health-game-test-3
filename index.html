@@ -24,15 +24,15 @@
     .active { display: flex; }
     .card {
       width: min(920px, 100%);
-      background: rgba(255,255,255,0.92);
+      background: rgba(255,255,255,0.94);
       border-radius: 28px;
       padding: 34px;
       box-shadow: 0 16px 40px rgba(15,23,42,0.16);
       border: 4px solid rgba(255,255,255,0.8);
     }
-    h1 { font-size: 44px; margin: 8px 0; }
+    h1 { font-size: 42px; margin: 8px 0; }
     h2 { margin-top: 8px; }
-    p { line-height: 1.7; }
+    p { line-height: 1.75; }
     button {
       border: none;
       border-radius: 16px;
@@ -50,52 +50,54 @@
       display: grid;
       grid-template-columns: repeat(2, minmax(180px, 1fr));
       gap: 14px;
-      width: min(900px, 100%);
-      margin-top: 18px;
+      width: min(760px, 100%);
+      margin: 18px auto 0;
     }
     .topic-btn {
       background: linear-gradient(135deg, #22c55e, #14b8a6);
-      min-height: 70px;
-      font-weight: 800;
+      min-height: 74px;
+      font-weight: 900;
     }
     #gameScreen {
       justify-content: flex-start;
-      padding: 14px;
+      padding: 18px;
     }
-    .game-layout {
-      width: min(1240px, 100%);
+    .main-frame {
+      width: min(1280px, 100%);
+      min-height: 760px;
+      border-radius: 28px;
+      padding: 18px;
+      background: rgba(255,255,255,0.28);
+      border: 4px solid rgba(255,255,255,0.88);
+      box-shadow: 0 18px 45px rgba(15,23,42,0.15);
       display: grid;
-      grid-template-columns: minmax(560px, 2fr) minmax(300px, 1fr);
-      gap: 16px;
+      grid-template-columns: minmax(620px, 2fr) minmax(330px, 0.95fr);
+      gap: 18px;
       align-items: stretch;
     }
-    .left-column, .right-column {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+    .left-zone {
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 14px;
+      min-width: 0;
     }
-    .top-panel, .knowledge-panel, .review-panel {
-      background: rgba(255,255,255,0.95);
+    .status-panel, .knowledge-panel {
+      background: rgba(255,255,255,0.96);
       border-radius: 22px;
-      padding: 14px 18px;
+      padding: 16px 20px;
       box-shadow: 0 8px 24px rgba(15,23,42,0.12);
       border: 3px solid rgba(255,255,255,0.86);
     }
     .status-row {
-      display: flex;
-      justify-content: space-between;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
       align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      font-size: 17px;
+      font-size: 18px;
+      font-weight: 800;
+      text-align: center;
     }
-    #questionText {
-      font-size: 22px;
-      font-weight: 900;
-      margin: 10px 0 4px;
-      color: #0f172a;
-    }
-    .heart { font-size: 23px; letter-spacing: 2px; }
+    .heart { font-size: 24px; letter-spacing: 2px; }
     #gameArea {
       position: relative;
       width: 100%;
@@ -107,15 +109,36 @@
       box-shadow: inset 0 0 22px rgba(14,165,233,0.15), 0 10px 30px rgba(15,23,42,0.14);
       touch-action: none;
     }
+    #questionCard {
+      position: absolute;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 88%;
+      min-height: 58px;
+      background: rgba(255,255,255,0.94);
+      border: 3px solid #e0f2fe;
+      border-radius: 16px;
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 900;
+      z-index: 30;
+      box-shadow: 0 5px 14px rgba(0,0,0,0.13);
+    }
     .sun {
       position: absolute;
-      top: 26px;
+      top: 82px;
       right: 38px;
-      width: 62px;
-      height: 62px;
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
       background: #fde047;
       box-shadow: 0 0 32px #fde047;
+      z-index: 1;
     }
     .cloud {
       position: absolute;
@@ -123,6 +146,7 @@
       border-radius: 999px;
       height: 28px;
       width: 90px;
+      z-index: 2;
     }
     .cloud::before, .cloud::after {
       content: "";
@@ -140,6 +164,7 @@
       height: 48px;
       background: repeating-linear-gradient(45deg, #86efac 0, #86efac 12px, #bbf7d0 12px, #bbf7d0 24px);
       opacity: 0.9;
+      z-index: 2;
     }
     #player {
       position: absolute;
@@ -148,7 +173,7 @@
       width: 128px;
       height: 145px;
       transition: left 0.03s linear;
-      z-index: 10;
+      z-index: 20;
     }
     .hair {
       width: 58px;
@@ -206,7 +231,7 @@
       border: 7px solid #b45309;
       border-top: none;
       border-radius: 0 0 28px 28px;
-      background: rgba(245, 158, 11, 0.40);
+      background: rgba(245,158,11,0.40);
       z-index: 4;
     }
     .basket::before {
@@ -234,24 +259,24 @@
       justify-content: center;
       font-weight: 900;
       font-size: 15px;
-      z-index: 8;
+      z-index: 12;
     }
     .item::before {
       content: "🍎";
-      display: block;
+      display: inline-block;
       margin-right: 4px;
     }
     .knowledge-panel {
       text-align: left;
-      min-height: 590px;
+      min-height: 100%;
       display: flex;
       flex-direction: column;
     }
     .knowledge-title {
-      font-size: 24px;
+      font-size: 25px;
       font-weight: 900;
       color: #0369a1;
-      margin: 4px 0 10px;
+      margin: 4px 0 12px;
     }
     #resultBadge {
       display: inline-block;
@@ -259,14 +284,14 @@
       border-radius: 999px;
       background: #e0f2fe;
       font-weight: 900;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
     #knowledgeText {
       font-size: 18px;
       line-height: 1.75;
       background: #f8fafc;
       border-radius: 18px;
-      padding: 14px;
+      padding: 16px;
       border: 2px dashed #bae6fd;
       flex: 1;
     }
@@ -277,6 +302,19 @@
       padding: 12px;
       line-height: 1.6;
       border: 2px solid #bef264;
+    }
+    #teacherBox {
+      display: none;
+      background: #f5f3ff;
+      border-color: #c4b5fd;
+    }
+    #countdownText {
+      display: none;
+      margin-top: 12px;
+      font-size: 26px;
+      font-weight: 900;
+      color: #0284c7;
+      text-align: center;
     }
     .correct { color: #16a34a; font-weight: 900; }
     .wrong { color: #dc2626; font-weight: 900; }
@@ -302,20 +340,19 @@
       line-height: 1.65;
     }
     .review-item:last-child { border-bottom: none; }
-    @media (max-width: 920px) {
-      .game-layout { grid-template-columns: 1fr; }
-      .knowledge-panel { min-height: auto; }
-      #gameArea { height: 500px; }
+    @media (max-width: 980px) {
+      .main-frame { grid-template-columns: 1fr; }
+      #gameArea { height: 520px; }
       .mobile-controls { display: block; }
     }
-    @media (max-width: 620px) {
+    @media (max-width: 640px) {
       .screen { padding: 12px; }
       .card { padding: 22px; }
       h1 { font-size: 32px; }
-      #questionText { font-size: 18px; }
-      .status-row { font-size: 15px; }
-      #gameArea { height: 460px; }
-      .item { width: 110px; font-size: 13px; }
+      .status-row { grid-template-columns: repeat(2, 1fr); font-size: 15px; }
+      #questionCard { font-size: 17px; width: 92%; }
+      #gameArea { height: 470px; }
+      .item { width: 112px; font-size: 13px; }
       #player { transform: scale(0.88); transform-origin: bottom center; }
     }
   </style>
@@ -324,7 +361,10 @@
   <section id="homeScreen" class="screen active">
     <div class="card">
       <h1>健康知識接接樂</h1>
-      <p>選擇主題，移動人物接住正確答案。<br>請使用電腦鍵盤的「← 左鍵」與「→ 右鍵」控制人物移動，接住你認為正確的答案。<br>答題後會暫停並顯示知識點，幫助你把健康觀念記起來。<br><br><strong>老師模式說明：</strong>開啟後，右側會顯示本題教學重點、引導提問與延伸討論，適合課堂教學或帶領學生思考使用。</p>
+      <p>選擇主題，移動人物接住正確答案。<br>
+      請使用電腦鍵盤的「← 左鍵」與「→ 右鍵」控制人物移動。<br>
+      答題後會暫停並顯示知識點，幫助你把健康觀念記起來。<br><br>
+      <strong>老師模式說明：</strong>開啟後，右側會顯示本題教學重點、引導提問與延伸討論，適合課堂教學或帶領學生思考使用。</p>
       <button onclick="showScreen('topicScreen')">開始遊戲</button>
       <button id="teacherModeBtn" onclick="toggleTeacherMode()" style="background:#8b5cf6;">老師模式：關</button>
     </div>
@@ -333,16 +373,16 @@
   <section id="topicScreen" class="screen">
     <div class="card">
       <h2>請選擇想玩的健康主題</h2>
-      <p>每個主題共有 8 題，掉落速度會由慢到快。三顆愛心用完就會結束並進入錯題複習。</p>
+      <p>每個主題共有 8 題。三顆愛心用完會結束遊戲，並進入錯題複習。</p>
       <div class="topic-grid" id="topicGrid"></div>
       <button onclick="showScreen('homeScreen')">回首頁</button>
     </div>
   </section>
 
   <section id="gameScreen" class="screen">
-    <div class="game-layout">
-      <div class="left-column">
-        <div class="top-panel">
+    <div class="main-frame">
+      <div class="left-zone">
+        <div class="status-panel">
           <div class="status-row">
             <span>主題：<strong id="topicName"></strong></span>
             <span>題數：<strong id="questionNumber">1</strong> / <strong id="totalQuestion">8</strong></span>
@@ -350,15 +390,12 @@
             <span>生命：<strong id="lives" class="heart">❤️❤️❤️</strong></span>
           </div>
         </div>
-        
-          <div id="questionText">題目載入中……</div>
-        </div>
 
         <div id="gameArea">
-          <div id="questionOverlay" style="position:absolute; top:78px; left:50%; transform:translateX(-50%); background:rgba(255,255,255,0.92); padding:14px 22px; border-radius:18px; font-size:21px; font-weight:900; box-shadow:0 4px 12px rgba(0,0,0,0.15); z-index:24; width:82%; min-height:64px; display:flex; align-items:center; justify-content:center; text-align:center;">題目載入中...</div>
+          <div id="questionCard">題目載入中...</div>
           <div class="sun"></div>
-          <div class="cloud" style="left: 7%; top: 36px;"></div>
-          <div class="cloud" style="left: 54%; top: 72px;"></div>
+          <div class="cloud" style="left: 7%; top: 122px;"></div>
+          <div class="cloud" style="left: 59%; top: 142px;"></div>
           <div class="ground"></div>
           <div id="player">
             <div class="hair"></div>
@@ -368,24 +405,24 @@
           </div>
         </div>
 
-        <div class="mobile-controls">
-          <button id="leftBtn">←</button>
-          <button id="rightBtn">→</button>
+        <div>
+          <div class="mobile-controls">
+            <button id="leftBtn">←</button>
+            <button id="rightBtn">→</button>
+          </div>
+          <button onclick="backToTopics()">返回主題選單</button>
         </div>
-        <button onclick="backToTopics()">返回主題選單</button>
       </div>
 
-      <aside class="right-column">
-        <div class="knowledge-panel">
-          <div class="knowledge-title">健康知識補給站</div>
-          <div id="resultBadge">等待作答中</div>
-          <div id="knowledgeText">使用鍵盤左右鍵移動人物，接住你認為正確的答案。手機可以使用下方左右按鈕。</div>
-          <div id="countdownText" style="display:none; margin-top:12px; font-size:26px; font-weight:900; color:#0284c7; text-align:center;"></div>
-          <div class="tip-box">小提醒：不要只記答案，也要看「為什麼」，這樣報告或教學時比較能說明清楚。</div>
-          <div id="teacherBox" class="tip-box" style="display:none; background:#f5f3ff; border-color:#c4b5fd;">
-            <strong>老師模式</strong><br>
-            <span id="teacherText">開始遊戲後，這裡會顯示本題的教學重點與引導提問。</span>
-          </div>
+      <aside class="knowledge-panel">
+        <div class="knowledge-title">健康知識補給站</div>
+        <div id="resultBadge">等待作答中</div>
+        <div id="knowledgeText">使用鍵盤左右鍵移動人物，接住你認為正確的答案。手機可以使用下方左右按鈕。</div>
+        <div id="countdownText"></div>
+        <div class="tip-box">小提醒：不要只記答案，也要看「為什麼」，這樣報告或教學時比較能說明清楚。</div>
+        <div id="teacherBox" class="tip-box">
+          <strong>老師模式</strong><br>
+          <span id="teacherText">開始遊戲後，這裡會顯示本題的教學重點與引導提問。</span>
         </div>
       </aside>
     </div>
@@ -406,72 +443,77 @@
   <script>
     const questionBank = {
       "口腔健康": [
-        { question: "預防蛀牙，下列哪個習慣最適合？", options: ["使用含氟牙膏刷牙", "睡前喝含糖飲料", "牙痛才看牙醫", "刷牙只刷門牙"], answer: "使用含氟牙膏刷牙", reason: "氟化物能幫助牙齒表面更堅固，降低蛀牙風險。", point: "口腔保健重點是每天清潔與預防，而不是等牙痛才處理。" },
-        { question: "每天刷牙時，哪個時間點特別重要？", options: ["睡前刷牙", "只在早餐前刷牙", "一週刷一次", "想起來才刷"], answer: "睡前刷牙", reason: "睡覺時唾液分泌較少，口腔細菌更容易作用，因此睡前清潔很重要。", point: "飯後與睡前潔牙，是保護牙齒的重要習慣。" },
-        { question: "牙線主要可以幫助清潔哪個位置？", options: ["牙縫", "頭髮", "手掌", "衣服"], answer: "牙縫", reason: "牙刷不容易完全清潔牙縫，牙線可以幫助移除牙縫中的牙菌斑與食物殘渣。", point: "刷牙搭配牙線，口腔清潔會更完整。" },
-        { question: "定期口腔檢查的主要目的為何？", options: ["早期發現口腔問題", "讓牙齒自然變白", "取代每天刷牙", "只為了拿贈品"], answer: "早期發現口腔問題", reason: "定期檢查可以提早發現蛀牙、牙周或口腔黏膜問題。", point: "定期檢查能避免小問題拖成大問題。" },
-        { question: "常吃黏甜零食可能增加什麼風險？", options: ["蛀牙風險", "視力變好", "睡眠變深", "骨頭變長"], answer: "蛀牙風險", reason: "糖分停留在口腔中，容易被細菌利用並產生酸，進而傷害牙齒。", point: "減少甜食與含糖飲料，是口腔健康的重要策略。" },
-        { question: "嚼檳榔最需要注意的口腔危害是什麼？", options: ["增加口腔癌風險", "讓牙齒更堅固", "可以清潔牙縫", "能取代漱口"], answer: "增加口腔癌風險", reason: "嚼檳榔會增加口腔黏膜受傷與病變風險，也和口腔癌風險上升有關。", point: "口腔健康教育應提醒民眾遠離檳榔、菸與過量飲酒等危險因子。" },
-        { question: "如果口腔傷口長期沒有癒合，較適合怎麼做？", options: ["尋求專業檢查", "完全不理會", "用力刷破傷口", "繼續嚼檳榔"], answer: "尋求專業檢查", reason: "長期不癒合的口腔傷口需要由專業人員評估，避免延誤處理。", point: "早期發現、早期處理，是口腔疾病預防的重要概念。" },
-        { question: "下列哪個是良好的口腔保健組合？", options: ["含氟牙膏、牙線、定期檢查", "只喝飲料不喝水", "牙痛才刷牙", "用糖果清新口氣"], answer: "含氟牙膏、牙線、定期檢查", reason: "日常清潔加上定期檢查，可以從生活與專業照護兩方面保護口腔。", point: "口腔健康需要個人習慣與專業檢查一起配合。" }
+        q("預防蛀牙，下列哪個習慣最適合？", ["使用含氟牙膏刷牙", "睡前喝含糖飲料", "牙痛才看牙醫", "刷牙只刷門牙"], "使用含氟牙膏刷牙", "氟化物能幫助牙齒表面更堅固，降低蛀牙風險。", "口腔保健重點是每天清潔與預防。"),
+        q("每天刷牙時，哪個時間點特別重要？", ["睡前刷牙", "只在早餐前刷牙", "一週刷一次", "想起來才刷"], "睡前刷牙", "睡覺時唾液分泌較少，因此睡前清潔很重要。", "睡前刷牙是口腔保健的關鍵習慣。"),
+        q("牙線主要可以幫助清潔哪個位置？", ["牙縫", "頭髮", "手掌", "衣服"], "牙縫", "牙刷不容易完全清潔牙縫，牙線可以補強清潔。", "刷牙搭配牙線，口腔清潔會更完整。"),
+        q("定期口腔檢查的主要目的為何？", ["早期發現口腔問題", "讓牙齒自然變白", "取代每天刷牙", "只為了拿贈品"], "早期發現口腔問題", "定期檢查可以提早發現蛀牙、牙周或口腔黏膜問題。", "預防性檢查能減少問題惡化。"),
+        q("常吃黏甜零食可能增加什麼風險？", ["蛀牙風險", "視力變好", "睡眠變深", "骨頭變長"], "蛀牙風險", "糖分容易被細菌利用並產酸，進而傷害牙齒。", "減少甜食與含糖飲料，是口腔健康的重要策略。"),
+        q("嚼檳榔最需要注意的口腔危害是什麼？", ["增加口腔癌風險", "讓牙齒更堅固", "可以清潔牙縫", "能取代漱口"], "增加口腔癌風險", "嚼檳榔會增加口腔黏膜受傷與病變風險。", "口腔健康教育應提醒遠離檳榔、菸與過量飲酒。"),
+        q("如果口腔傷口長期沒有癒合，較適合怎麼做？", ["尋求專業檢查", "完全不理會", "用力刷破傷口", "繼續嚼檳榔"], "尋求專業檢查", "長期不癒合的口腔傷口需要專業評估。", "早期發現、早期處理，是疾病預防的重要概念。"),
+        q("下列哪個是良好的口腔保健組合？", ["含氟牙膏、牙線、定期檢查", "只喝飲料不喝水", "牙痛才刷牙", "用糖果清新口氣"], "含氟牙膏、牙線、定期檢查", "日常清潔加上定期檢查，可以保護口腔。", "口腔健康需要個人習慣與專業檢查一起配合。")
       ],
       "飲食": [
-        { question: "下列哪個飲食習慣比較健康？", options: ["每天吃多樣化食物", "只吃炸物", "用手搖飲代替水", "完全不吃蔬菜"], answer: "每天吃多樣化食物", reason: "多樣化飲食能幫助身體獲得不同營養素，支持成長與日常活動。", point: "均衡飲食不是只吃某一類食物，而是各類食物適量搭配。" },
-        { question: "想減少糖分攝取，下列哪個選擇比較好？", options: ["白開水", "全糖珍珠奶茶", "含糖汽水", "每天喝能量飲料"], answer: "白開水", reason: "白開水不含糖，是日常補充水分最簡單也最健康的選擇。", point: "含糖飲料容易讓糖分攝取過量，建議以白開水為主。" },
-        { question: "選擇點心時，哪一個比較符合健康飲食？", options: ["水果或無糖優格", "每天炸雞配可樂", "糖果當正餐", "只吃洋芋片"], answer: "水果或無糖優格", reason: "水果可提供膳食纖維與維生素，無糖優格也比高糖零食更適合作為點心。", point: "點心不是不能吃，而是要選擇較少糖、少油、營養較高的食物。" },
-        { question: "下列哪一種吃法比較有助於均衡？", options: ["蔬菜、蛋白質、全穀雜糧都搭配", "只吃白飯", "只吃肉不吃菜", "每天只吃甜點"], answer: "蔬菜、蛋白質、全穀雜糧都搭配", reason: "不同食物提供不同營養，均衡搭配能幫助身體維持正常功能。", point: "一餐中可以想像有主食、蛋白質、蔬菜與水分。" },
-        { question: "外食時想吃得健康，下列哪個做法較適合？", options: ["少油少鹽並加蔬菜", "每餐都加大炸物", "只喝甜湯", "完全不看食物內容"], answer: "少油少鹽並加蔬菜", reason: "外食常容易油、鹽、糖較多，選擇少油少鹽並增加蔬菜會更健康。", point: "外食族可以從減少調味、增加蔬菜、選白開水開始改善。" },
-        { question: "下列哪個做法可以幫助避免吃太多？", options: ["慢慢吃並注意飽足感", "邊滑手機邊狂吃", "看到吃到飽就硬撐", "每餐都吃到很不舒服"], answer: "慢慢吃並注意飽足感", reason: "慢慢吃比較容易感覺到飽足，減少不知不覺吃過量。", point: "健康飲食也包含覺察自己的飢餓與飽足感。" },
-        { question: "早餐比較適合選擇哪一種？", options: ["蛋、全麥吐司與無糖飲品", "只有含糖飲料", "一大包糖果", "完全不吃也不喝水"], answer: "蛋、全麥吐司與無糖飲品", reason: "含有蛋白質、主食與水分的早餐，比只有糖分的早餐更能支持上午活動。", point: "早餐可以幫助補充能量，但內容要盡量均衡。" },
-        { question: "下列哪個是健康飲食的核心觀念？", options: ["適量、均衡、多樣化", "越甜越健康", "只吃單一食物", "完全不喝水"], answer: "適量、均衡、多樣化", reason: "健康飲食強調不同食物適量搭配，而不是極端限制或單一飲食。", point: "飲食教育的重點是建立可持續的生活習慣。" }
+        q("下列哪個飲食習慣比較健康？", ["每天吃多樣化食物", "只吃炸物", "用手搖飲代替水", "完全不吃蔬菜"], "每天吃多樣化食物", "多樣化飲食能幫助身體獲得不同營養素。", "均衡飲食是各類食物適量搭配。"),
+        q("想減少糖分攝取，下列哪個選擇比較好？", ["白開水", "全糖珍珠奶茶", "含糖汽水", "每天喝能量飲料"], "白開水", "白開水不含糖，是日常補充水分的好選擇。", "含糖飲料容易讓糖分攝取過量。"),
+        q("選擇點心時，哪一個比較符合健康飲食？", ["水果或無糖優格", "每天炸雞配可樂", "糖果當正餐", "只吃洋芋片"], "水果或無糖優格", "水果與無糖優格比高糖零食更適合作為點心。", "點心也可以選擇較少糖、少油、營養較高的食物。"),
+        q("下列哪一種吃法比較有助於均衡？", ["蔬菜、蛋白質、全穀雜糧都搭配", "只吃白飯", "只吃肉不吃菜", "每天只吃甜點"], "蔬菜、蛋白質、全穀雜糧都搭配", "不同食物提供不同營養，搭配更完整。", "一餐中可包含主食、蛋白質、蔬菜與水分。"),
+        q("外食時想吃得健康，下列哪個做法較適合？", ["少油少鹽並加蔬菜", "每餐都加大炸物", "只喝甜湯", "完全不看食物內容"], "少油少鹽並加蔬菜", "外食常油、鹽、糖較多，選擇時可增加蔬菜。", "外食族可從減少調味、增加蔬菜開始。"),
+        q("下列哪個做法可以幫助避免吃太多？", ["慢慢吃並注意飽足感", "邊滑手機邊狂吃", "看到吃到飽就硬撐", "每餐都吃到很不舒服"], "慢慢吃並注意飽足感", "慢慢吃較容易感覺飽足，減少吃過量。", "健康飲食也包含覺察自己的飢餓與飽足感。"),
+        q("早餐比較適合選擇哪一種？", ["蛋、全麥吐司與無糖飲品", "只有含糖飲料", "一大包糖果", "完全不吃也不喝水"], "蛋、全麥吐司與無糖飲品", "含有蛋白質、主食與水分的早餐較能支持上午活動。", "早餐內容應盡量均衡。"),
+        q("下列哪個是健康飲食的核心觀念？", ["適量、均衡、多樣化", "越甜越健康", "只吃單一食物", "完全不喝水"], "適量、均衡、多樣化", "健康飲食強調適量搭配，而不是極端限制。", "飲食教育重點是建立可持續的生活習慣。")
       ],
       "睡眠": [
-        { question: "想提升睡眠品質，睡前較適合做什麼？", options: ["放下手機並放鬆", "狂滑短影音", "喝很多咖啡", "睡前劇烈運動"], answer: "放下手機並放鬆", reason: "睡前減少螢幕與刺激活動，有助於身體進入休息狀態。", point: "睡前放鬆儀式可以幫助建立穩定睡眠節奏。" },
-        { question: "睡前使用手機可能造成什麼影響？", options: ["延後入睡時間", "一定會睡更深", "完全不影響作息", "讓眼睛自動休息"], answer: "延後入睡時間", reason: "睡前滑手機會增加光線與內容刺激，可能讓大腦比較難進入睡眠。", point: "睡前可以設定手機休息時間，降低對睡眠的干擾。" },
-        { question: "長期睡眠不足最可能影響什麼？", options: ["注意力與情緒", "讓記憶力必定變強", "讓身體永遠不累", "完全不影響學習"], answer: "注意力與情緒", reason: "睡眠不足可能影響專注力、情緒穩定與學習表現。", point: "睡眠是學習與身心健康的重要基礎。" },
-        { question: "建立規律作息，哪個做法較合適？", options: ["固定上床與起床時間", "每天熬夜到不同時間", "週末完全日夜顛倒", "想睡才睡、想醒才醒"], answer: "固定上床與起床時間", reason: "固定作息能幫助生理時鐘穩定，讓入睡和起床更順利。", point: "規律比偶爾補眠更能支持長期睡眠品質。" },
-        { question: "睡前如果覺得緊張，可以先嘗試什麼？", options: ["深呼吸或聽輕音樂", "喝大量咖啡", "看刺激影片", "立刻打電動到半夜"], answer: "深呼吸或聽輕音樂", reason: "放鬆活動可以降低身心緊繃，讓睡前狀態更平穩。", point: "睡眠衛教可以教學生建立睡前放鬆方法。" },
-        { question: "下午或晚上攝取太多咖啡因，可能會怎樣？", options: ["比較難入睡", "一定馬上熟睡", "完全沒有影響", "能取代睡眠"], answer: "比較難入睡", reason: "咖啡因可能讓人保持清醒，太晚攝取會影響入睡。", point: "想睡得好，可以留意咖啡、茶、能量飲等飲品的時間。" },
-        { question: "下列哪個環境比較有助睡眠？", options: ["安靜、昏暗、舒適", "燈光很亮又吵", "房間很熱又雜亂", "邊睡邊開刺激影片"], answer: "安靜、昏暗、舒適", reason: "舒適且刺激較少的環境，有助於身體放鬆與入睡。", point: "睡眠環境也是睡眠品質的一部分。" },
-        { question: "如果晚上睡不夠，白天最可能出現什麼情況？", options: ["上課容易想睡", "體力永遠滿格", "不需要休息", "學習一定更快"], answer: "上課容易想睡", reason: "睡眠不足會讓白天精神較差，進而影響課堂參與與學習效率。", point: "對學生來說，睡眠與學習表現密切相關。" }
+        q("想提升睡眠品質，睡前較適合做什麼？", ["放下手機並放鬆", "狂滑短影音", "喝很多咖啡", "睡前劇烈運動"], "放下手機並放鬆", "睡前減少螢幕刺激，有助於身體進入休息。", "睡前放鬆儀式能幫助穩定睡眠節奏。"),
+        q("睡前使用手機可能造成什麼影響？", ["延後入睡時間", "一定會睡更深", "完全不影響作息", "讓眼睛自動休息"], "延後入睡時間", "睡前滑手機會增加光線與內容刺激。", "睡前可設定手機休息時間。"),
+        q("長期睡眠不足最可能影響什麼？", ["注意力與情緒", "讓記憶力必定變強", "讓身體永遠不累", "完全不影響學習"], "注意力與情緒", "睡眠不足可能影響專注力、情緒與學習表現。", "睡眠是學習與身心健康的重要基礎。"),
+        q("建立規律作息，哪個做法較合適？", ["固定上床與起床時間", "每天熬夜到不同時間", "週末完全日夜顛倒", "想睡才睡、想醒才醒"], "固定上床與起床時間", "固定作息能幫助生理時鐘穩定。", "規律比偶爾補眠更能支持長期睡眠品質。"),
+        q("睡前如果覺得緊張，可以先嘗試什麼？", ["深呼吸或聽輕音樂", "喝大量咖啡", "看刺激影片", "立刻打電動到半夜"], "深呼吸或聽輕音樂", "放鬆活動可以降低身心緊繃。", "睡眠衛教可教學生建立睡前放鬆方法。"),
+        q("晚上攝取太多咖啡因可能會怎樣？", ["比較難入睡", "一定馬上熟睡", "完全沒有影響", "能取代睡眠"], "比較難入睡", "咖啡因可能讓人保持清醒。", "想睡得好，要留意咖啡、茶與能量飲料時間。"),
+        q("下列哪個環境比較有助睡眠？", ["安靜、昏暗、舒適", "燈光很亮又吵", "房間很熱又雜亂", "邊睡邊開刺激影片"], "安靜、昏暗、舒適", "刺激較少的環境有助於放鬆入睡。", "睡眠環境也是睡眠品質的一部分。"),
+        q("如果晚上睡不夠，白天最可能出現什麼情況？", ["上課容易想睡", "體力永遠滿格", "不需要休息", "學習一定更快"], "上課容易想睡", "睡眠不足會讓白天精神較差。", "對學生來說，睡眠與學習表現密切相關。")
       ],
       "健康體位": [
-        { question: "BMI主要是用來初步評估什麼？", options: ["體位狀態", "視力好壞", "牙齒數量", "血型種類"], answer: "體位狀態", reason: "BMI是由身高與體重計算出的指標，可作為初步評估體位的參考。", point: "BMI是簡易指標，但仍要搭配生活習慣與其他健康資料判斷。" },
-        { question: "成人 BMI 18.5 到未滿 24 通常代表什麼？", options: ["健康體重範圍", "肥胖", "體重過重", "一定生病"], answer: "健康體重範圍", reason: "台灣成人健康體位標準中，BMI 18.5 到未滿 24 屬於健康體重範圍。", point: "BMI標準會依年齡與族群不同而有差異，使用時要看適用對象。" },
-        { question: "想維持健康體位，下列哪個做法較適合？", options: ["規律活動與均衡飲食", "完全不吃晚餐", "只喝含糖飲料", "整天久坐不動"], answer: "規律活動與均衡飲食", reason: "健康體位需要長期生活習慣支持，包含活動、飲食與睡眠。", point: "健康體位不等於極端減重，而是建立可持續的生活型態。" },
-        { question: "下列哪個行為較容易增加體重管理困難？", options: ["久坐且常喝含糖飲料", "規律運動", "多喝白開水", "均衡吃三餐"], answer: "久坐且常喝含糖飲料", reason: "久坐會降低活動量，含糖飲料也容易增加多餘熱量攝取。", point: "體位管理可以從減少久坐與含糖飲料開始。" },
-        { question: "除了 BMI，下列哪個指標也常用來觀察腹部脂肪？", options: ["腰圍", "鞋碼", "頭髮長度", "血型"], answer: "腰圍", reason: "腰圍可以反映腹部脂肪堆積情形，也和代謝健康風險有關。", point: "健康體位評估不只看體重，也可以看腰圍與生活型態。" },
-        { question: "體重管理比較健康的目標是什麼？", options: ["逐步建立健康習慣", "越快瘦越好", "完全不吃任何東西", "只靠偏方"], answer: "逐步建立健康習慣", reason: "快速或極端方式不容易維持，也可能影響健康。", point: "體位教育應避免羞辱身材，強調健康行為與自我照顧。" },
-        { question: "下列哪個活動較能增加日常活動量？", options: ["走樓梯或快走", "整天躺著", "一直坐著不動", "只滑手機"], answer: "走樓梯或快走", reason: "日常活動量增加能幫助能量消耗，也有助於心肺與肌肉健康。", point: "運動不一定只能去健身房，日常生活也能增加活動。" },
-        { question: "健康體位課程最適合強調哪個觀念？", options: ["健康行為比外表更重要", "只追求很瘦", "用嘲笑督促別人", "不吃東西最快"], answer: "健康行為比外表更重要", reason: "健康體位教育應重視身體功能、生活習慣與健康風險，而不是外貌評價。", point: "避免身材羞辱，才能讓健康教育更安全、有效。" }
+        q("BMI主要是用來初步評估什麼？", ["體位狀態", "視力好壞", "牙齒數量", "血型種類"], "體位狀態", "BMI由身高與體重計算，可作為初步體位參考。", "BMI是簡易指標，仍需搭配生活習慣判斷。"),
+        q("成人 BMI 18.5 到未滿 24 通常代表什麼？", ["健康體重範圍", "肥胖", "體重過重", "一定生病"], "健康體重範圍", "台灣成人標準中，BMI 18.5 到未滿 24 屬健康範圍。", "BMI標準需看適用對象。"),
+        q("想維持健康體位，下列哪個做法較適合？", ["規律活動與均衡飲食", "完全不吃晚餐", "只喝含糖飲料", "整天久坐不動"], "規律活動與均衡飲食", "健康體位需要活動、飲食與睡眠支持。", "健康體位不是極端減重。"),
+        q("下列哪個行為較容易增加體重管理困難？", ["久坐且常喝含糖飲料", "規律運動", "多喝白開水", "均衡吃三餐"], "久坐且常喝含糖飲料", "久坐降低活動量，含糖飲料也增加多餘熱量。", "體位管理可從減少久坐與含糖飲料開始。"),
+        q("除了 BMI，下列哪個指標也常用來觀察腹部脂肪？", ["腰圍", "鞋碼", "頭髮長度", "血型"], "腰圍", "腰圍可反映腹部脂肪堆積情形。", "健康體位評估不只看體重。"),
+        q("體重管理比較健康的目標是什麼？", ["逐步建立健康習慣", "越快瘦越好", "完全不吃任何東西", "只靠偏方"], "逐步建立健康習慣", "快速或極端方式不容易維持，也可能影響健康。", "體位教育應避免身材羞辱。"),
+        q("下列哪個活動較能增加日常活動量？", ["走樓梯或快走", "整天躺著", "一直坐著不動", "只滑手機"], "走樓梯或快走", "日常活動量增加有助身體健康。", "運動不一定只能去健身房。"),
+        q("健康體位課程最適合強調哪個觀念？", ["健康行為比外表更重要", "只追求很瘦", "用嘲笑督促別人", "不吃東西最快"], "健康行為比外表更重要", "健康體位教育應重視功能、習慣與健康風險。", "避免身材羞辱，健康教育更安全有效。")
       ],
       "傳染病": [
-        { question: "預防傳染病，最基本的好習慣之一是什麼？", options: ["正確洗手", "共用餐具", "生病也不休息", "打噴嚏不遮掩"], answer: "正確洗手", reason: "正確洗手可以減少病原體透過手部接觸進入口、鼻、眼的機會。", point: "手部衛生是最基本也很重要的防疫行為。" },
-        { question: "咳嗽或打噴嚏時，較適合怎麼做？", options: ["用衛生紙或手肘遮住口鼻", "對著別人咳嗽", "不用清潔雙手", "故意靠近人群"], answer: "用衛生紙或手肘遮住口鼻", reason: "遮住口鼻可以減少飛沫擴散，保護自己與他人。", point: "咳嗽禮節是公共場所中很重要的互相保護。" },
-        { question: "如果有發燒、咳嗽等症狀，較適合怎麼做？", options: ["休息並視情況就醫", "硬撐參加聚會", "不戴口罩到處跑", "故意共用水杯"], answer: "休息並視情況就醫", reason: "有症狀時休息、減少接觸他人，可以降低傳播風險。", point: "生病在家休息，也是保護他人的防疫行為。" },
-        { question: "在人多且通風較差的地方，有呼吸道症狀時可考慮什麼？", options: ["配戴口罩", "大聲咳嗽", "拿下口罩聊天", "故意靠很近"], answer: "配戴口罩", reason: "有呼吸道症狀時戴口罩，可以降低飛沫傳播給他人的機會。", point: "口罩可作為呼吸道症狀時的自我與他人保護措施。" },
-        { question: "下列哪個行為比較容易增加感染風險？", options: ["用沒洗的手揉眼睛", "洗手後吃東西", "咳嗽遮口鼻", "生病在家休息"], answer: "用沒洗的手揉眼睛", reason: "手可能接觸到病原體，揉眼睛、摸口鼻都可能增加感染機會。", point: "避免用未清潔的手碰口鼻眼，是防疫小習慣。" },
-        { question: "洗手時，下列哪個時機很重要？", options: ["吃東西前與如廁後", "只有睡覺時", "一個月一次", "手很乾淨就永遠不用洗"], answer: "吃東西前與如廁後", reason: "吃東西前與如廁後都容易影響病原體傳播，因此需要洗手。", point: "掌握洗手時機，比只知道洗手更實用。" },
-        { question: "疫苗的主要公共衛生意義是什麼？", options: ["降低感染或重症風險", "讓人永遠不用洗手", "治療所有疾病", "取代所有健康習慣"], answer: "降低感染或重症風險", reason: "疫苗能幫助身體建立保護力，降低感染、重症或併發症風險。", point: "疫苗、洗手、咳嗽禮節可以共同形成防護。" },
-        { question: "傳染病預防最適合的觀念是什麼？", options: ["保護自己也保護他人", "只顧自己就好", "生病也要到處跑", "不用理會衛生習慣"], answer: "保護自己也保護他人", reason: "傳染病會在人與人之間傳播，個人行為會影響群體健康。", point: "防疫是個人健康，也是社區健康。" }
+        q("預防傳染病，最基本的好習慣之一是什麼？", ["正確洗手", "共用餐具", "生病也不休息", "打噴嚏不遮掩"], "正確洗手", "正確洗手可減少病原體透過手部接觸進入口鼻眼。", "手部衛生是重要防疫行為。"),
+        q("咳嗽或打噴嚏時，較適合怎麼做？", ["用衛生紙或手肘遮住口鼻", "對著別人咳嗽", "不用清潔雙手", "故意靠近人群"], "用衛生紙或手肘遮住口鼻", "遮住口鼻可減少飛沫擴散。", "咳嗽禮節是公共場所的重要保護。"),
+        q("如果有發燒、咳嗽等症狀，較適合怎麼做？", ["休息並視情況就醫", "硬撐參加聚會", "不戴口罩到處跑", "故意共用水杯"], "休息並視情況就醫", "有症狀時休息、減少接觸他人，可降低傳播風險。", "生病在家休息也是保護他人。"),
+        q("有呼吸道症狀在人多處可考慮什麼？", ["配戴口罩", "大聲咳嗽", "拿下口罩聊天", "故意靠很近"], "配戴口罩", "有症狀時戴口罩可降低飛沫傳播。", "口罩是症狀時保護自己與他人的措施。"),
+        q("下列哪個行為比較容易增加感染風險？", ["用沒洗的手揉眼睛", "洗手後吃東西", "咳嗽遮口鼻", "生病在家休息"], "用沒洗的手揉眼睛", "手可能接觸病原體，摸口鼻眼可能增加感染機會。", "避免用未清潔的手碰口鼻眼。"),
+        q("洗手時，下列哪個時機很重要？", ["吃東西前與如廁後", "只有睡覺時", "一個月一次", "手很乾淨就永遠不用洗"], "吃東西前與如廁後", "吃東西前與如廁後都需要洗手。", "掌握洗手時機，比只知道洗手更實用。"),
+        q("疫苗的主要公共衛生意義是什麼？", ["降低感染或重症風險", "讓人永遠不用洗手", "治療所有疾病", "取代所有健康習慣"], "降低感染或重症風險", "疫苗能幫助身體建立保護力。", "疫苗、洗手、咳嗽禮節可共同防護。"),
+        q("傳染病預防最適合的觀念是什麼？", ["保護自己也保護他人", "只顧自己就好", "生病也要到處跑", "不用理會衛生習慣"], "保護自己也保護他人", "傳染病會在人與人之間傳播，個人行為影響群體健康。", "防疫是個人健康，也是社區健康。")
       ],
       "日常保健預防": [
-        { question: "日常保健最重要的觀念是什麼？", options: ["平時就建立健康習慣", "生病才開始注意", "完全不運動", "只靠保健食品"], answer: "平時就建立健康習慣", reason: "預防勝於治療，平時養成健康習慣可以降低許多健康風險。", point: "日常保健強調把健康行為放進每天生活中。" },
-        { question: "下列哪一項屬於日常保健行為？", options: ["定期健康檢查", "熬夜到天亮", "不喝水", "每天久坐十小時"], answer: "定期健康檢查", reason: "定期檢查可以幫助早期發現健康問題，並及早調整生活方式。", point: "健康檢查是預防保健的一部分，但不能取代日常健康習慣。" },
-        { question: "想維持日常健康，下列哪個組合較適合？", options: ["睡眠、飲食、活動都照顧", "只靠一種保健品", "每天熬夜不喝水", "完全不動"], answer: "睡眠、飲食、活動都照顧", reason: "健康來自多方面生活習慣的累積，不是單靠一種方法。", point: "日常保健可以從睡眠、飲食、運動與衛生習慣一起規劃。" },
-        { question: "長時間讀書或使用電腦時，較適合怎麼做？", options: ["適度休息與活動", "一直坐著不動", "完全不喝水", "越累越硬撐"], answer: "適度休息與活動", reason: "久坐與長時間用眼容易造成疲勞，適度休息可幫助身體恢復。", point: "日常保健也包含姿勢、用眼與活動習慣。" },
-        { question: "想保護眼睛，下列哪個習慣較適合？", options: ["用眼一段時間就休息", "關燈滑手機很久", "眼睛累也不休息", "螢幕貼很近"], answer: "用眼一段時間就休息", reason: "長時間近距離用眼容易疲勞，休息能減少眼睛負擔。", point: "視力保健是學生常見的日常保健議題。" },
-        { question: "平時喝水的好處是什麼？", options: ["幫助身體維持正常運作", "可以完全不用吃飯", "能取代睡眠", "越甜越補水"], answer: "幫助身體維持正常運作", reason: "水分參與身體許多生理功能，日常應適量補充。", point: "白開水是最基本的日常保健選擇。" },
-        { question: "壓力大時，下列哪個做法較健康？", options: ["找人聊聊或做放鬆活動", "完全不睡覺", "一直喝含糖飲料", "把壓力都悶著"], answer: "找人聊聊或做放鬆活動", reason: "適當表達與放鬆能幫助調節壓力，避免壓力長期累積。", point: "日常保健也包含心理健康與壓力調適。" },
-        { question: "日常保健課程最適合傳達哪個想法？", options: ["小習慣長期累積成健康", "等生病才處理", "健康只靠運氣", "越極端越有效"], answer: "小習慣長期累積成健康", reason: "健康行為通常不是一次完成，而是透過每天重複慢慢累積效果。", point: "健康教育的核心，是讓學生把知識轉化成可做到的生活行動。" }
+        q("日常保健最重要的觀念是什麼？", ["平時就建立健康習慣", "生病才開始注意", "完全不運動", "只靠保健食品"], "平時就建立健康習慣", "預防勝於治療，平時習慣能降低健康風險。", "日常保健是把健康行為放進生活中。"),
+        q("下列哪一項屬於日常保健行為？", ["定期健康檢查", "熬夜到天亮", "不喝水", "每天久坐十小時"], "定期健康檢查", "健康檢查可協助早期發現健康問題。", "健康檢查不能取代日常健康習慣。"),
+        q("想維持日常健康，下列哪個組合較適合？", ["睡眠、飲食、活動都照顧", "只靠一種保健品", "每天熬夜不喝水", "完全不動"], "睡眠、飲食、活動都照顧", "健康來自多方面生活習慣的累積。", "保健可從睡眠、飲食、運動與衛生習慣規劃。"),
+        q("長時間讀書或使用電腦時，較適合怎麼做？", ["適度休息與活動", "一直坐著不動", "完全不喝水", "越累越硬撐"], "適度休息與活動", "久坐與長時間用眼容易造成疲勞。", "日常保健包含姿勢、用眼與活動習慣。"),
+        q("想保護眼睛，下列哪個習慣較適合？", ["用眼一段時間就休息", "關燈滑手機很久", "眼睛累也不休息", "螢幕貼很近"], "用眼一段時間就休息", "長時間近距離用眼容易疲勞。", "視力保健是學生常見日常保健議題。"),
+        q("平時喝水的好處是什麼？", ["幫助身體維持正常運作", "可以完全不用吃飯", "能取代睡眠", "越甜越補水"], "幫助身體維持正常運作", "水分參與身體許多生理功能。", "白開水是最基本的日常保健選擇。"),
+        q("壓力大時，下列哪個做法較健康？", ["找人聊聊或做放鬆活動", "完全不睡覺", "一直喝含糖飲料", "把壓力都悶著"], "找人聊聊或做放鬆活動", "適當表達與放鬆能幫助調節壓力。", "日常保健也包含心理健康與壓力調適。"),
+        q("日常保健課程最適合傳達哪個想法？", ["小習慣長期累積成健康", "等生病才處理", "健康只靠運氣", "越極端越有效"], "小習慣長期累積成健康", "健康行為透過每天重複慢慢累積效果。", "健康教育核心是把知識轉化成可做到的行動。")
       ]
     };
+
+    function q(question, options, answer, reason, point) {
+      return { question, options, answer, reason, point };
+    }
 
     const topicGrid = document.getElementById("topicGrid");
     const gameArea = document.getElementById("gameArea");
     const player = document.getElementById("player");
     const resultBadge = document.getElementById("resultBadge");
     const knowledgeText = document.getElementById("knowledgeText");
+    const countdownText = document.getElementById("countdownText");
 
     let currentTopic = "";
     let currentQuestions = [];
@@ -483,7 +525,7 @@
     let moveRight = false;
     let items = [];
     let gameLoopId = null;
-    let itemSpeed = 2.1;
+    let itemSpeed = 1.12;
     let locked = false;
     let wrongRecords = [];
     let teacherMode = false;
@@ -537,7 +579,7 @@
         playerX = Math.max(0, (gameArea.clientWidth - player.offsetWidth) / 2);
         player.style.left = playerX + "px";
         loadQuestion();
-      }, 50);
+      }, 60);
     }
 
     function updateStatus() {
@@ -549,13 +591,15 @@
     function loadQuestion() {
       clearItems();
       locked = false;
-      itemSpeed = 1.35;
+      itemSpeed = 1.12;
       const q = currentQuestions[questionIndex];
       updateStatus();
-      document.getElementById("questionOverlay").textContent = q.question;
-      resultBadge.textContent = `第 ${questionIndex + 1} 題｜速度 ${questionIndex + 1}`;
+      document.getElementById("questionCard").textContent = q.question;
+      resultBadge.textContent = `第 ${questionIndex + 1} 題`;
       resultBadge.style.background = "#e0f2fe";
-      knowledgeText.innerHTML = "觀察上方題目，接住你認為正確的答案。<br><br>答題後，這裡會顯示答對或答錯，以及本題健康知識點。";
+      knowledgeText.innerHTML = "觀察左側題目，接住你認為正確的答案。<br><br>答題後，這裡會顯示答對或答錯，以及本題健康知識點。";
+      countdownText.style.display = "none";
+      countdownText.textContent = "";
       updateTeacherText(q);
       createItems(q.options, q.answer);
       startLoop();
@@ -573,7 +617,7 @@
         div.textContent = text;
         div.dataset.correct = text === answer ? "true" : "false";
         div.style.left = positions[i] + "px";
-        div.style.top = (155 + Math.random() * 30) + "px";
+        div.style.top = (112 + Math.random() * 26) + "px";
         gameArea.appendChild(div);
         items.push(div);
       });
@@ -652,7 +696,6 @@
       updateStatus();
       clearItems();
 
-      const countdownText = document.getElementById("countdownText");
       countdownText.style.display = "none";
       countdownText.textContent = "";
 
@@ -677,7 +720,6 @@
     }
 
     function startCountdown() {
-      const countdownText = document.getElementById("countdownText");
       let count = 3;
       countdownText.style.display = "block";
       countdownText.textContent = `下一題準備：${count}`;
@@ -755,6 +797,7 @@
 
     function bindHoldButton(buttonId, direction) {
       const btn = document.getElementById(buttonId);
+      if (!btn) return;
       const start = () => direction === "left" ? moveLeft = true : moveRight = true;
       const stop = () => direction === "left" ? moveLeft = false : moveRight = false;
       btn.addEventListener("mousedown", start);
@@ -768,7 +811,6 @@
     bindHoldButton("rightBtn", "right");
 
     window.addEventListener("resize", () => {
-      if (!gameArea || !player) return;
       const areaWidth = gameArea.clientWidth;
       playerX = Math.min(playerX, areaWidth - player.offsetWidth);
       player.style.left = playerX + "px";
