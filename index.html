@@ -43,14 +43,13 @@
       background: #38bdf8;
       color: white;
       box-shadow: 0 6px 14px rgba(0,0,0,0.16);
-      transition: transform 0.12s ease, filter 0.12s ease;
     }
-    button:hover { transform: translateY(-2px); filter: brightness(1.03); }
+    button:hover { transform: translateY(-2px); }
     .topic-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(180px, 1fr));
       gap: 14px;
-      width: min(760px, 100%);
+      width: min(680px, 100%);
       margin: 18px auto 0;
     }
     .topic-btn {
@@ -170,81 +169,59 @@
       position: absolute;
       bottom: 20px;
       left: 260px;
-      width: 128px;
-      height: 145px;
-      transition: left 0.03s linear;
+      width: 100px;
+      height: 150px;
       z-index: 20;
     }
-    .hair {
-      width: 58px;
-      height: 32px;
-      background: #3f2a19;
-      border-radius: 32px 32px 12px 12px;
-      margin: 0 auto -20px;
-      position: relative;
-      z-index: 2;
-    }
-    .head {
-      width: 58px;
-      height: 58px;
-      background: #ffd7a8;
-      border-radius: 50%;
-      margin: 0 auto;
-      position: relative;
-      border: 3px solid #7c4a22;
-      z-index: 3;
-    }
-    .head::before, .head::after {
-      content: "";
+    .stick-basket {
       position: absolute;
-      top: 24px;
-      width: 6px;
-      height: 6px;
-      background: #111827;
-      border-radius: 50%;
-    }
-    .head::before { left: 16px; }
-    .head::after { right: 16px; }
-    .smile {
-      position: absolute;
-      left: 20px;
-      top: 36px;
-      width: 18px;
-      height: 9px;
-      border-bottom: 3px solid #7c2d12;
-      border-radius: 0 0 20px 20px;
-    }
-    .body {
-      width: 66px;
-      height: 54px;
-      background: linear-gradient(180deg, #60a5fa, #2563eb);
-      border-radius: 18px 18px 14px 14px;
-      margin: -2px auto 0;
-      border: 3px solid #1d4ed8;
-    }
-    .basket {
-      position: absolute;
-      bottom: 0;
-      left: 10px;
-      width: 108px;
-      height: 42px;
-      border: 7px solid #b45309;
-      border-top: none;
-      border-radius: 0 0 28px 28px;
-      background: rgba(245,158,11,0.40);
-      z-index: 4;
-    }
-    .basket::before {
-      content: "";
-      position: absolute;
-      left: 15px;
-      top: -31px;
+      top: 0;
+      left: 18px;
       width: 64px;
-      height: 42px;
-      border: 6px solid #b45309;
-      border-bottom: none;
-      border-radius: 50% 50% 0 0;
+      height: 28px;
+      border: 5px solid #111827;
+      border-top: none;
+      border-radius: 0 0 20px 20px;
+      background: rgba(255,255,255,0.35);
     }
+    .stick-head {
+      position: absolute;
+      top: 34px;
+      left: 36px;
+      width: 28px;
+      height: 28px;
+      border: 4px solid #111827;
+      border-radius: 50%;
+      background: transparent;
+    }
+    .stick-body {
+      position: absolute;
+      top: 62px;
+      left: 48px;
+      width: 4px;
+      height: 48px;
+      background: #111827;
+    }
+    .stick-arm {
+      position: absolute;
+      top: 76px;
+      left: 26px;
+      width: 48px;
+      height: 4px;
+      background: #111827;
+      transform: rotate(-8deg);
+    }
+    .stick-leg-left, .stick-leg-right {
+      position: absolute;
+      top: 106px;
+      left: 48px;
+      width: 4px;
+      height: 44px;
+      background: #111827;
+      transform-origin: top;
+    }
+    .stick-leg-left { transform: rotate(25deg); }
+    .stick-leg-right { transform: rotate(-25deg); }
     .item {
       position: absolute;
       width: 138px;
@@ -260,11 +237,6 @@
       font-weight: 900;
       font-size: 15px;
       z-index: 12;
-    }
-    .item::before {
-      content: "🍎";
-      display: inline-block;
-      margin-right: 4px;
     }
     .knowledge-panel {
       text-align: left;
@@ -353,7 +325,6 @@
       #questionCard { font-size: 17px; width: 92%; }
       #gameArea { height: 470px; }
       .item { width: 112px; font-size: 13px; }
-      #player { transform: scale(0.88); transform-origin: bottom center; }
     }
   </style>
 </head>
@@ -373,7 +344,7 @@
   <section id="topicScreen" class="screen">
     <div class="card">
       <h2>請選擇想玩的健康主題</h2>
-      <p>每個主題共有 8 題。三顆愛心用完會結束遊戲，並進入錯題複習。</p>
+      <p>目前保留四個主題。三顆愛心用完會結束遊戲，並進入錯題複習。</p>
       <div class="topic-grid" id="topicGrid"></div>
       <button onclick="showScreen('homeScreen')">回首頁</button>
     </div>
@@ -398,14 +369,12 @@
           <div class="cloud" style="left: 59%; top: 142px;"></div>
           <div class="ground"></div>
           <div id="player">
-  <div style="width:4px;height:60px;background:black;margin:auto"></div>
-  <div style="width:40px;height:4px;background:black;margin:auto"></div>
-  <div style="width:4px;height:50px;background:black;margin:auto"></div>
-  <div style="position:absolute;top:-20px;left:20px;width:60px;height:25px;border:3px solid black;border-bottom:none;border-radius:20px 20px 0 0"></div>
-</div>
-            <div class="head"><div class="smile"></div></div>
-            <div class="body"></div>
-            <div class="basket"></div>
+            <div class="stick-basket"></div>
+            <div class="stick-head"></div>
+            <div class="stick-body"></div>
+            <div class="stick-arm"></div>
+            <div class="stick-leg-left"></div>
+            <div class="stick-leg-right"></div>
           </div>
         </div>
 
@@ -445,52 +414,52 @@
   </section>
 
   <script>
-    const questionBank = {
-  "睡眠": [
-    q("想提升睡眠品質，睡前較適合做什麼？", ["放下手機並放鬆", "狂滑短影音", "喝很多咖啡", "睡前劇烈運動"], "放下手機並放鬆", "睡前減少刺激，有助入睡。", "建立睡前放鬆習慣。"),
-    q("睡前使用手機可能造成什麼影響？", ["延後入睡時間", "一定睡更好", "完全沒影響", "幫助深睡"], "延後入睡時間", "螢幕光影響睡眠。", "睡前減少3C使用。"),
-    q("長期睡眠不足影響？", ["注意力下降", "變更聰明", "完全沒差", "變更有精神"], "注意力下降", "睡眠不足影響專注力。", "睡眠與學習表現相關。"),
-    q("規律作息好處？", ["穩定生理時鐘", "更累", "沒差", "更晚睡"], "穩定生理時鐘", "固定時間幫助入睡。", "規律比補眠重要。"),
-    q("睡前緊張可做？", ["深呼吸", "喝咖啡", "滑手機", "打電動"], "深呼吸", "放鬆可幫助入睡。", "學習放鬆技巧。"),
-    q("咖啡因影響？", ["難入睡", "更好睡", "沒差", "取代睡眠"], "難入睡", "刺激神經系統。", "避免晚間攝取。"),
-    q("好睡眠環境？", ["安靜昏暗", "吵雜明亮", "很熱", "很亂"], "安靜昏暗", "環境影響睡眠。", "打造舒適空間。"),
-    q("睡不夠會？", ["想睡", "更有精神", "沒差", "更強"], "想睡", "影響白天表現。", "睡眠很重要。")
-  ],
-  "飲食": [
-    q("健康飲食？", ["多樣化飲食", "只吃炸物", "只喝飲料", "不吃菜"], "多樣化飲食", "營養均衡。", "多樣搭配。"),
-    q("減糖最佳？", ["白開水", "含糖飲料", "奶茶", "汽水"], "白開水", "無糖最健康。", "少喝含糖飲料。"),
-    q("健康點心？", ["水果", "炸雞", "糖果", "洋芋片"], "水果", "天然較健康。", "選擇低糖食物。"),
-    q("均衡飲食？", ["蔬菜蛋白質", "只吃肉", "只吃飯", "只吃甜點"], "蔬菜蛋白質", "多元營養。", "均衡重要。"),
-    q("外食建議？", ["少油鹽", "全炸物", "只甜點", "不看內容"], "少油鹽", "降低負擔。", "選擇健康。"),
-    q("避免過量？", ["慢慢吃", "狂吃", "硬撐", "滑手機吃"], "慢慢吃", "增加飽足感。", "覺察飲食。"),
-    q("健康早餐？", ["蛋+吐司", "糖水", "糖果", "不吃"], "蛋+吐司", "營養均衡。", "早餐重要。"),
-    q("核心觀念？", ["均衡適量", "越甜越好", "單一飲食", "不喝水"], "均衡適量", "飲食原則。", "建立習慣。")
-  ],
-  "健康體位": [
-    q("BMI用途？", ["評估體位", "看視力", "看血型", "看牙齒"], "評估體位", "身高體重計算。", "基本健康指標。"),
-    q("健康BMI？", ["18.5-24", "30以上", "過低", "無範圍"], "18.5-24", "正常範圍。", "參考標準。"),
-    q("維持體位？", ["運動飲食", "不吃", "只喝飲料", "久坐"], "運動飲食", "生活習慣。", "長期維持。"),
-    q("增加風險？", ["久坐喝糖", "運動", "喝水", "均衡"], "久坐喝糖", "熱量過多。", "減少壞習慣。"),
-    q("看腹部脂肪？", ["腰圍", "鞋碼", "頭髮", "血型"], "腰圍", "脂肪分布。", "觀察指標。"),
-    q("健康目標？", ["建立習慣", "快速瘦", "不吃", "偏方"], "建立習慣", "穩定重要。", "避免極端。"),
-    q("增加活動？", ["走路", "躺著", "坐著", "滑手機"], "走路", "提升活動量。", "日常運動。"),
-    q("核心觀念？", ["健康優先", "只求瘦", "嘲笑他人", "極端減重"], "健康優先", "避免外貌焦慮。", "正確觀念。")
-  ],
-  "日常保健預防": [
-    q("日常保健？", ["建立習慣", "生病才管", "不運動", "只吃保健品"], "建立習慣", "預防重要。", "日常實踐。"),
-    q("洗手重要？", ["預防疾病", "沒差", "變髒", "浪費時間"], "預防疾病", "阻斷傳播。", "衛生習慣。"),
-    q("咳嗽禮節？", ["遮口鼻", "對人咳", "不遮", "靠近人"], "遮口鼻", "避免飛沫。", "保護他人。"),
-    q("健康檢查？", ["早期發現", "沒用", "取代運動", "不用做"], "早期發現", "預防概念。", "定期檢查。"),
-    q("用眼保健？", ["適度休息", "一直滑", "不休息", "靠很近"], "適度休息", "避免疲勞。", "視力保護。"),
-    q("喝水好處？", ["維持功能", "不用吃飯", "取代睡眠", "越甜越好"], "維持功能", "基本需求。", "白開水最佳。"),
-    q("壓力處理？", ["放鬆活動", "不睡覺", "喝飲料", "悶著"], "放鬆活動", "心理健康。", "調適壓力。"),
-    q("保健觀念？", ["小習慣累積", "等生病", "靠運氣", "極端方法"], "小習慣累積", "長期效果。", "生活實踐。")
-  ]
-};
-
     function q(question, options, answer, reason, point) {
       return { question, options, answer, reason, point };
     }
+
+    const questionBank = {
+      "睡眠": [
+        q("想提升睡眠品質，睡前較適合做什麼？", ["放下手機並放鬆", "狂滑短影音", "喝很多咖啡", "睡前劇烈運動"], "放下手機並放鬆", "睡前減少刺激，有助於身體進入休息狀態。", "建立睡前放鬆習慣，可以幫助穩定睡眠節奏。"),
+        q("睡前使用手機可能造成什麼影響？", ["延後入睡時間", "一定會睡更深", "完全不影響作息", "讓眼睛自動休息"], "延後入睡時間", "睡前滑手機會增加光線與內容刺激，可能讓大腦比較難進入睡眠。", "睡前可以設定手機休息時間，降低對睡眠的干擾。"),
+        q("長期睡眠不足最可能影響什麼？", ["注意力與情緒", "記憶力必定變強", "身體永遠不累", "完全不影響學習"], "注意力與情緒", "睡眠不足可能影響專注力、情緒穩定與學習表現。", "睡眠是學習與身心健康的重要基礎。"),
+        q("建立規律作息，哪個做法較合適？", ["固定上床與起床時間", "每天熬夜到不同時間", "週末完全日夜顛倒", "想睡才睡、想醒才醒"], "固定上床與起床時間", "固定作息能幫助生理時鐘穩定。", "規律比偶爾補眠更能支持長期睡眠品質。"),
+        q("睡前如果覺得緊張，可以先嘗試什麼？", ["深呼吸或聽輕音樂", "喝大量咖啡", "看刺激影片", "立刻打電動到半夜"], "深呼吸或聽輕音樂", "放鬆活動可以降低身心緊繃。", "睡前放鬆方法有助於進入睡眠。"),
+        q("晚上攝取太多咖啡因可能會怎樣？", ["比較難入睡", "一定馬上熟睡", "完全沒有影響", "能取代睡眠"], "比較難入睡", "咖啡因可能讓人保持清醒，太晚攝取會影響入睡。", "想睡得好，要留意咖啡、茶與能量飲料的攝取時間。"),
+        q("下列哪個環境比較有助睡眠？", ["安靜、昏暗、舒適", "燈光很亮又吵", "房間很熱又雜亂", "邊睡邊開刺激影片"], "安靜、昏暗、舒適", "刺激較少的環境有助於放鬆入睡。", "睡眠環境也是睡眠品質的一部分。"),
+        q("如果晚上睡不夠，白天最可能出現什麼情況？", ["上課容易想睡", "體力永遠滿格", "不需要休息", "學習一定更快"], "上課容易想睡", "睡眠不足會讓白天精神較差。", "對學生來說，睡眠與學習表現密切相關。")
+      ],
+      "飲食": [
+        q("下列哪個飲食習慣比較健康？", ["每天吃多樣化食物", "只吃炸物", "用手搖飲代替水", "完全不吃蔬菜"], "每天吃多樣化食物", "多樣化飲食能幫助身體獲得不同營養素。", "均衡飲食不是只吃某一類食物，而是各類食物適量搭配。"),
+        q("想減少糖分攝取，下列哪個選擇比較好？", ["白開水", "全糖珍珠奶茶", "含糖汽水", "每天喝能量飲料"], "白開水", "白開水不含糖，是日常補充水分的好選擇。", "含糖飲料容易讓糖分攝取過量，建議以白開水為主。"),
+        q("選擇點心時，哪一個比較符合健康飲食？", ["水果或無糖優格", "每天炸雞配可樂", "糖果當正餐", "只吃洋芋片"], "水果或無糖優格", "水果與無糖優格比高糖零食更適合作為點心。", "點心也可以選擇較少糖、少油、營養較高的食物。"),
+        q("下列哪一種吃法比較有助於均衡？", ["蔬菜、蛋白質、全穀雜糧都搭配", "只吃白飯", "只吃肉不吃菜", "每天只吃甜點"], "蔬菜、蛋白質、全穀雜糧都搭配", "不同食物提供不同營養，搭配更完整。", "一餐中可包含主食、蛋白質、蔬菜與水分。"),
+        q("外食時想吃得健康，下列哪個做法較適合？", ["少油少鹽並加蔬菜", "每餐都加大炸物", "只喝甜湯", "完全不看食物內容"], "少油少鹽並加蔬菜", "外食常油、鹽、糖較多，選擇時可增加蔬菜。", "外食族可從減少調味、增加蔬菜開始。"),
+        q("下列哪個做法可以幫助避免吃太多？", ["慢慢吃並注意飽足感", "邊滑手機邊狂吃", "看到吃到飽就硬撐", "每餐都吃到很不舒服"], "慢慢吃並注意飽足感", "慢慢吃較容易感覺飽足，減少吃過量。", "健康飲食也包含覺察自己的飢餓與飽足感。"),
+        q("早餐比較適合選擇哪一種？", ["蛋、全麥吐司與無糖飲品", "只有含糖飲料", "一大包糖果", "完全不吃也不喝水"], "蛋、全麥吐司與無糖飲品", "含有蛋白質、主食與水分的早餐較能支持上午活動。", "早餐內容應盡量均衡。"),
+        q("下列哪個是健康飲食的核心觀念？", ["適量、均衡、多樣化", "越甜越健康", "只吃單一食物", "完全不喝水"], "適量、均衡、多樣化", "健康飲食強調適量搭配，而不是極端限制。", "飲食教育重點是建立可持續的生活習慣。")
+      ],
+      "健康體位": [
+        q("BMI主要是用來初步評估什麼？", ["體位狀態", "視力好壞", "牙齒數量", "血型種類"], "體位狀態", "BMI由身高與體重計算，可作為初步體位參考。", "BMI是簡易指標，仍需搭配生活習慣判斷。"),
+        q("成人 BMI 18.5 到未滿 24 通常代表什麼？", ["健康體重範圍", "肥胖", "體重過重", "一定生病"], "健康體重範圍", "台灣成人標準中，BMI 18.5 到未滿 24 屬健康體重範圍。", "BMI標準需看適用對象。"),
+        q("想維持健康體位，下列哪個做法較適合？", ["規律活動與均衡飲食", "完全不吃晚餐", "只喝含糖飲料", "整天久坐不動"], "規律活動與均衡飲食", "健康體位需要活動、飲食與睡眠支持。", "健康體位不是極端減重。"),
+        q("下列哪個行為較容易增加體重管理困難？", ["久坐且常喝含糖飲料", "規律運動", "多喝白開水", "均衡吃三餐"], "久坐且常喝含糖飲料", "久坐降低活動量，含糖飲料也增加多餘熱量。", "體位管理可從減少久坐與含糖飲料開始。"),
+        q("除了 BMI，下列哪個指標也常用來觀察腹部脂肪？", ["腰圍", "鞋碼", "頭髮長度", "血型"], "腰圍", "腰圍可反映腹部脂肪堆積情形。", "健康體位評估不只看體重。"),
+        q("體重管理比較健康的目標是什麼？", ["逐步建立健康習慣", "越快瘦越好", "完全不吃任何東西", "只靠偏方"], "逐步建立健康習慣", "快速或極端方式不容易維持，也可能影響健康。", "體位教育應避免身材羞辱。"),
+        q("下列哪個活動較能增加日常活動量？", ["走樓梯或快走", "整天躺著", "一直坐著不動", "只滑手機"], "走樓梯或快走", "日常活動量增加有助身體健康。", "運動不一定只能去健身房。"),
+        q("健康體位課程最適合強調哪個觀念？", ["健康行為比外表更重要", "只追求很瘦", "用嘲笑督促別人", "不吃東西最快"], "健康行為比外表更重要", "健康體位教育應重視功能、習慣與健康風險。", "避免身材羞辱，健康教育更安全有效。")
+      ],
+      "日常保健預防": [
+        q("日常保健最重要的觀念是什麼？", ["平時就建立健康習慣", "生病才開始注意", "完全不運動", "只靠保健食品"], "平時就建立健康習慣", "預防勝於治療，平時習慣能降低健康風險。", "日常保健是把健康行為放進生活中。"),
+        q("預防傳染病，最基本的好習慣之一是什麼？", ["正確洗手", "共用餐具", "生病也不休息", "打噴嚏不遮掩"], "正確洗手", "正確洗手可減少病原體透過手部接觸進入口鼻眼。", "手部衛生是重要的日常保健行為。"),
+        q("咳嗽或打噴嚏時，較適合怎麼做？", ["用衛生紙或手肘遮住口鼻", "對著別人咳嗽", "不用清潔雙手", "故意靠近人群"], "用衛生紙或手肘遮住口鼻", "遮住口鼻可減少飛沫擴散。", "咳嗽禮節可以保護自己也保護他人。"),
+        q("下列哪一項屬於日常保健行為？", ["定期健康檢查", "熬夜到天亮", "不喝水", "每天久坐十小時"], "定期健康檢查", "健康檢查可協助早期發現健康問題。", "健康檢查不能取代日常健康習慣。"),
+        q("想保護眼睛，下列哪個習慣較適合？", ["用眼一段時間就休息", "關燈滑手機很久", "眼睛累也不休息", "螢幕貼很近"], "用眼一段時間就休息", "長時間近距離用眼容易疲勞。", "視力保健是學生常見日常保健議題。"),
+        q("平時喝水的好處是什麼？", ["幫助身體維持正常運作", "可以完全不用吃飯", "能取代睡眠", "越甜越補水"], "幫助身體維持正常運作", "水分參與身體許多生理功能。", "白開水是最基本的日常保健選擇。"),
+        q("壓力大時，下列哪個做法較健康？", ["找人聊聊或做放鬆活動", "完全不睡覺", "一直喝含糖飲料", "把壓力都悶著"], "找人聊聊或做放鬆活動", "適當表達與放鬆能幫助調節壓力。", "日常保健也包含心理健康與壓力調適。"),
+        q("保護口腔健康，下列哪個組合較適合？", ["刷牙、牙線、定期檢查", "牙痛才刷牙", "用糖果清新口氣", "完全不看牙醫"], "刷牙、牙線、定期檢查", "口腔健康需要日常清潔與專業檢查一起配合。", "口腔保健也可以融入日常保健預防。")
+      ]
+    };
 
     const topicGrid = document.getElementById("topicGrid");
     const gameArea = document.getElementById("gameArea");
@@ -509,10 +478,11 @@
     let moveRight = false;
     let items = [];
     let gameLoopId = null;
-    let itemSpeed = 0.7;
+    let itemSpeed = 0;
     let locked = false;
     let wrongRecords = [];
     let teacherMode = false;
+    let dropTimer = null;
 
     Object.keys(questionBank).forEach(topic => {
       const btn = document.createElement("button");
@@ -536,13 +506,13 @@
       if (teacherBox) teacherBox.style.display = teacherMode ? "block" : "none";
     }
 
-    function updateTeacherText(q) {
+    function updateTeacherText(questionData) {
       const teacherBox = document.getElementById("teacherBox");
       const teacherText = document.getElementById("teacherText");
       if (!teacherBox || !teacherText) return;
       teacherBox.style.display = teacherMode ? "block" : "none";
       teacherText.innerHTML = `
-        <strong>本題教學重點：</strong>${q.point}<br><br>
+        <strong>本題教學重點：</strong>${questionData.point}<br><br>
         <strong>可提問：</strong>你在生活中有遇過類似情境嗎？你會怎麼選擇？<br><br>
         <strong>延伸討論：</strong>請學生說明「為什麼其他選項不適合」，訓練判斷與表達能力。
       `;
@@ -550,11 +520,12 @@
 
     function startGame(topic) {
       currentTopic = topic;
-      currentQuestions = [...questionBank[topic]].slice(0, 8);
+      currentQuestions = [...questionBank[topic]];
       questionIndex = 0;
       score = 0;
       lives = 3;
       wrongRecords = [];
+      clearTimeout(dropTimer);
       document.getElementById("topicName").textContent = topic;
       document.getElementById("totalQuestion").textContent = currentQuestions.length;
       updateStatus();
@@ -574,43 +545,41 @@
 
     function loadQuestion() {
       clearItems();
+      clearTimeout(dropTimer);
       locked = false;
-      itemSpeed = 1.12;
-      const q = currentQuestions[questionIndex];
+      itemSpeed = 0;
+      const questionData = currentQuestions[questionIndex];
       updateStatus();
-      document.getElementById("questionCard").textContent = q.question;
+      document.getElementById("questionCard").textContent = questionData.question;
       resultBadge.textContent = `第 ${questionIndex + 1} 題`;
       resultBadge.style.background = "#e0f2fe";
-      knowledgeText.innerHTML = "觀察左側題目，接住你認為正確的答案。<br><br>答題後，這裡會顯示答對或答錯，以及本題健康知識點。";
+      knowledgeText.innerHTML = "觀察左側題目，接住你認為正確的答案。<br><br>選項會先停 1 秒，再慢慢掉落。";
       countdownText.style.display = "none";
       countdownText.textContent = "";
-      updateTeacherText(q);
-      createItems(q.options, q.answer);
+      updateTeacherText(questionData);
+      createItems(questionData.options, questionData.answer);
       startLoop();
+      dropTimer = setTimeout(() => {
+        itemSpeed = 0.7;
+      }, 1000);
     }
 
     function createItems(options, answer) {
-  const shuffled = [...options].sort(() => Math.random() - 0.5);
-  const areaWidth = gameArea.clientWidth;
-  const safeWidth = Math.max(areaWidth - 150, 100);
-  const positions = [0.04, 0.30, 0.56, 0.78].map(p => Math.min(p * areaWidth, safeWidth));
+      const shuffled = [...options].sort(() => Math.random() - 0.5);
+      const areaWidth = gameArea.clientWidth;
+      const safeWidth = Math.max(areaWidth - 150, 100);
+      const positions = [0.04, 0.30, 0.56, 0.78].map(p => Math.min(p * areaWidth, safeWidth));
 
-  shuffled.forEach((text, i) => {
-    const div = document.createElement("div");
-    div.className = "item";
-    div.textContent = text;
-    div.dataset.correct = text === answer ? "true" : "false";
-    div.style.left = positions[i] + "px";
-    div.style.top = "70px";
-    gameArea.appendChild(div);
-    items.push(div);
-  });
-
-  // 停1秒再掉落
-  setTimeout(() => {
-    itemSpeed = 0.7;
-  }, 1000);
-});
+      shuffled.forEach((text, i) => {
+        const div = document.createElement("div");
+        div.className = "item";
+        div.textContent = text;
+        div.dataset.correct = text === answer ? "true" : "false";
+        div.style.left = positions[i] + "px";
+        div.style.top = "96px";
+        gameArea.appendChild(div);
+        items.push(div);
+      });
     }
 
     function startLoop() {
@@ -641,13 +610,13 @@
         item.style.top = (top + itemSpeed) + "px";
       });
 
-      const allMissed = items.every(item => parseFloat(item.style.top) > gameArea.clientHeight + 40);
+      const allMissed = items.length > 0 && items.every(item => parseFloat(item.style.top) > gameArea.clientHeight + 40);
       if (allMissed && !locked) {
         locked = true;
-        const q = currentQuestions[questionIndex];
+        const questionData = currentQuestions[questionIndex];
         lives--;
-        wrongRecords.push({ question: q.question, chosen: "沒有接到答案", answer: q.answer, reason: q.reason, point: q.point });
-        showResult(false, "沒有接到答案", q);
+        wrongRecords.push({ question: questionData.question, chosen: "沒有接到答案", answer: questionData.answer, reason: questionData.reason, point: questionData.point });
+        showResult(false, "沒有接到答案", questionData);
       }
     }
 
@@ -655,10 +624,10 @@
       if (locked) return;
       const playerRect = player.getBoundingClientRect();
       const basketRect = {
-        left: playerRect.left + 8,
-        right: playerRect.right - 8,
-        top: playerRect.bottom - 48,
-        bottom: playerRect.bottom
+        left: playerRect.left + 18,
+        right: playerRect.left + 82,
+        top: playerRect.top,
+        bottom: playerRect.top + 35
       };
 
       for (const item of items) {
@@ -667,38 +636,38 @@
 
         if (isHit) {
           locked = true;
-          const q = currentQuestions[questionIndex];
+          const questionData = currentQuestions[questionIndex];
           const correct = item.dataset.correct === "true";
           if (correct) {
             score += 10;
           } else {
             lives--;
-            wrongRecords.push({ question: q.question, chosen: item.textContent, answer: q.answer, reason: q.reason, point: q.point });
+            wrongRecords.push({ question: questionData.question, chosen: item.textContent, answer: questionData.answer, reason: questionData.reason, point: questionData.point });
           }
-          showResult(correct, item.textContent, q);
+          showResult(correct, item.textContent, questionData);
           break;
         }
       }
     }
 
-    function showResult(correct, chosenText, q) {
+    function showResult(correct, chosenText, questionData) {
       cancelAnimationFrame(gameLoopId);
+      clearTimeout(dropTimer);
       updateStatus();
       clearItems();
 
       countdownText.style.display = "none";
       countdownText.textContent = "";
-
       resultBadge.innerHTML = correct ? `<span class="correct">答對了！</span>` : `<span class="wrong">答錯了</span>`;
       resultBadge.style.background = correct ? "#dcfce7" : "#fee2e2";
       knowledgeText.innerHTML = `
         <strong>你接到：</strong>${chosenText}<br>
-        <strong>正確答案：</strong>${q.answer}<br><br>
-        <strong>原因說明：</strong>${q.reason}<br><br>
-        <strong>知識點補充：</strong>${q.point}<br><br>
+        <strong>正確答案：</strong>${questionData.answer}<br><br>
+        <strong>原因說明：</strong>${questionData.reason}<br><br>
+        <strong>知識點補充：</strong>${questionData.point}<br><br>
         <span style="color:#0369a1; font-weight:900;">請先閱讀知識點，下一題開始前會有 3 秒倒數。</span>
       `;
-      updateTeacherText(q);
+      updateTeacherText(questionData);
 
       setTimeout(() => {
         if (lives <= 0 || questionIndex + 1 >= currentQuestions.length) {
@@ -732,6 +701,7 @@
 
     function endGame(lifeOver) {
       cancelAnimationFrame(gameLoopId);
+      clearTimeout(dropTimer);
       clearItems();
       showScreen("endScreen");
       document.getElementById("finalScore").textContent = `你的分數：${score} / ${currentQuestions.length * 10}`;
@@ -771,6 +741,7 @@
 
     function backToTopics() {
       cancelAnimationFrame(gameLoopId);
+      clearTimeout(dropTimer);
       clearItems();
       showScreen("topicScreen");
     }
@@ -808,4 +779,3 @@
   </script>
 </body>
 </html>
-
