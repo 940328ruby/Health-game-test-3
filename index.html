@@ -295,12 +295,12 @@ button:hover { background: #0284c7; }
 
 <section id="homeScreen" class="screen active">
   <div class="card">
-    <h1>大學生健康飲食知識射擊遊戲</h1>
+    <h1>健康飲食知識射擊遊戲</h1>
     <p>
-      主題：飲食健康進階版，適合衛教、營養、健康促進相關科系學生練習。<br>
       每次遊戲會從進階題庫隨機抽出 10 題，題型包含我的餐盤、營養標示、減糖、外食、健康烹調與衛教情境判斷。<br>
       使用滑鼠瞄準答案並點擊射擊，也可以用鍵盤左右鍵調整方向，按空白鍵或上箭頭發射。<br>
-      每題限時 8 秒，射中正確答案加分，射錯或超時會扣生命。
+      每題限時 8 秒，射中正確答案加分，射錯或超時會扣生命。<br>
+      答題結束後，記得看右邊的健康知識補給站，了解答案背後的原因與知識補充。
     </p>
     <button onclick="startGame()">開始遊戲</button>
   </div>
@@ -926,7 +926,7 @@ function showResult(correct, chosenText, q, timeout = false) {
     <strong>正確答案：</strong>${q.answer}<br><br>
     <strong>原因說明：</strong>${q.reason}<br><br>
     <strong>知識點補充：</strong>${q.point}<br><br>
-    <span style="color:#0369a1; font-weight:900;">3 秒後進入下一題。</span>
+    <span style="color:#0369a1; font-weight:900;">6 秒後進入下一題，請先閱讀右邊的知識補充。</span>
   `;
 
   setTimeout(() => {
@@ -938,7 +938,7 @@ function showResult(correct, chosenText, q, timeout = false) {
       questionIndex++;
       loadQuestion();
     }
-  }, 3000);
+  }, 6000);
 }
 
 function endGame(lifeOver) {
