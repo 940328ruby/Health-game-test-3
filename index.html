@@ -131,26 +131,27 @@
     #optionArea {
       position: absolute;
       top: 112px;
-      left: 5%;
-      width: 90%;
+      left: 3%;
+      width: 94%;
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 18px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
       z-index: 20;
     }
     .option-target {
-      min-height: 76px;
-      padding: 12px;
+      min-height: 82px;
+      padding: 10px;
       background: #fff7ed;
       border: 3px solid #fb923c;
-      border-radius: 20px;
+      border-radius: 18px;
       box-shadow: 0 7px 14px rgba(0,0,0,0.16);
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 900;
-      font-size: 17px;
+      font-size: 15px;
       line-height: 1.35;
+      word-break: break-word;
     }
     .option-target.hit-correct {
       background: #dcfce7;
@@ -318,7 +319,7 @@
       .status-row { grid-template-columns: repeat(2, 1fr); font-size: 15px; }
       #questionCard { font-size: 17px; width: 92%; }
       #gameArea { height: 520px; }
-      #optionArea { grid-template-columns: 1fr; gap: 10px; }
+      #optionArea { grid-template-columns: repeat(2, 1fr); gap: 10px; }
       .option-target { min-height: 52px; font-size: 14px; }
     }
   </style>
@@ -338,8 +339,8 @@
 
   <section id="topicScreen" class="screen">
     <div class="card">
-      <h2>請選擇想玩的健康主題</h2>
-      <p>目前保留四個主題。三顆愛心用完會結束遊戲，並進入錯題複習。</p>
+      <h2>請選擇遊玩模式</h2>
+      <p>系統會從睡眠、飲食、健康體位、日常保健預防四大主題中，隨機抽出 10 題進行綜合挑戰。</p>
       <div class="topic-grid" id="topicGrid"></div>
       <button onclick="showScreen('homeScreen')">回首頁</button>
     </div>
@@ -351,7 +352,7 @@
         <div class="status-panel">
           <div class="status-row">
             <span>主題：<strong id="topicName"></strong></span>
-            <span>題數：<strong id="questionNumber">1</strong> / <strong id="totalQuestion">8</strong></span>
+            <span>題數：<strong id="questionNumber">1</strong> / <strong id="totalQuestion">10</strong></span>
             <span>分數：<strong id="score">0</strong></span>
             <span>生命：<strong id="lives" class="heart">❤️❤️❤️</strong></span>
           </div>
@@ -477,13 +478,12 @@
     let teacherMode = false;
     let canShoot = true;
 
-    Object.keys(questionBank).forEach(topic => {
-      const btn = document.createElement("button");
-      btn.className = "topic-btn";
-      btn.textContent = topic;
-      btn.onclick = () => startGame(topic);
-      topicGrid.appendChild(btn);
-    });
+    const topic = "綜合健康挑戰";
+    const btn = document.createElement("button");
+    btn.className = "topic-btn";
+    btn.textContent = "開始綜合挑戰";
+    btn.onclick = () => startGame(topic);
+    topicGrid.appendChild(btn);
 
     function showScreen(id) {
       document.querySelectorAll(".screen").forEach(screen => screen.classList.remove("active"));
@@ -513,7 +513,7 @@
 
     function startGame(topic) {
       currentTopic = topic;
-      currentQuestions = [...questionBank[topic]];
+      currentQuestions = getRandomQuestions(10);
       questionIndex = 0;
       score = 0;
       lives = 3;
@@ -528,6 +528,11 @@
         shooter.style.left = shooterX + "px";
         loadQuestion();
       }, 60);
+    }
+
+    function getRandomQuestions(count) {
+      const allQuestions = Object.values(questionBank).flat().map(item => ({ ...item }));
+      return allQuestions.sort(() => Math.random() - 0.5).slice(0, count);
     }
 
     function updateStatus() {
