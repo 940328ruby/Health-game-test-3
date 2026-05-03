@@ -926,7 +926,7 @@ function showResult(correct, chosenText, q, timeout = false) {
     <strong>正確答案：</strong>${q.answer}<br><br>
     <strong>原因說明：</strong>${q.reason}<br><br>
     <strong>知識點補充：</strong>${q.point}<br><br>
-    <span style="color:#0369a1; font-weight:900;">6 秒後進入下一題，請先閱讀右邊的知識補充。</span>
+    <span style="color:#0369a1; font-weight:900;">請先閱讀右邊的知識補充，稍後會出現下一題準備倒數。</span>
   `;
 
   setTimeout(() => {
@@ -935,10 +935,48 @@ function showResult(correct, chosenText, q, timeout = false) {
     if (lives <= 0 || questionIndex + 1 >= currentQuestions.length) {
       endGame(lives <= 0);
     } else {
+      startNextQuestionCountdown();
+    }
+  }, 9000);
+}
+
+function startNextQuestionCountdown() {
+  clearTargets();
+  clearBullets();
+  locked = true;
+
+  let readyCount = 3;
+  resultBadge.textContent = "準備下一題";
+  resultBadge.style.background = "#fef3c7";
+
+  document.getElementById("questionCard").textContent = `下一題將在 ${readyCount} 秒後開始`;
+  knowledgeText.innerHTML = `
+    <strong>下一題準備中...</strong><br><br>
+    剛才的知識補充閱讀完後，請準備瞄準下一題的答案。<br><br>
+    <span style="color:#0369a1; font-weight:900;">${readyCount} 秒後開始下一題。</span>
+  `;
+
+  const readyTimer = setInterval(() => {
+    if (!document.getElementById("gameScreen").classList.contains("active")) {
+      clearInterval(readyTimer);
+      return;
+    }
+
+    readyCount--;
+
+    if (readyCount > 0) {
+      document.getElementById("questionCard").textContent = `下一題將在 ${readyCount} 秒後開始`;
+      knowledgeText.innerHTML = `
+        <strong>下一題準備中...</strong><br><br>
+        剛才的知識補充閱讀完後，請準備瞄準下一題的答案。<br><br>
+        <span style="color:#0369a1; font-weight:900;">${readyCount} 秒後開始下一題。</span>
+      `;
+    } else {
+      clearInterval(readyTimer);
       questionIndex++;
       loadQuestion();
     }
-  }, 6000);
+  }, 1000);
 }
 
 function endGame(lifeOver) {
