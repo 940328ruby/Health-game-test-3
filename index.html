@@ -1,788 +1,1000 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>健康知識射擊遊戲</title>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: "PingFang TC", "Noto Sans TC", Arial, sans-serif;
-      background: linear-gradient(135deg, #dbeafe, #dcfce7, #fef9c3);
-      color: #1f2937;
-      text-align: center;
-    }
-    .screen {
-      min-height: 100vh;
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-    }
-    .active { display: flex; }
-    .card {
-      width: min(920px, 100%);
-      background: rgba(255,255,255,0.94);
-      border-radius: 28px;
-      padding: 34px;
-      box-shadow: 0 16px 40px rgba(15,23,42,0.16);
-      border: 4px solid rgba(255,255,255,0.8);
-    }
-    h1 { font-size: 42px; margin: 8px 0; }
-    h2 { margin-top: 8px; }
-    p { line-height: 1.75; }
-    button {
-      border: none;
-      border-radius: 16px;
-      padding: 12px 22px;
-      margin: 8px;
-      font-size: 18px;
-      cursor: pointer;
-      background: #38bdf8;
-      color: white;
-      box-shadow: 0 6px 14px rgba(0,0,0,0.16);
-    }
-    button:hover { transform: translateY(-2px); }
-    .topic-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(180px, 1fr));
-      gap: 14px;
-      width: min(680px, 100%);
-      margin: 18px auto 0;
-    }
-    .topic-btn {
-      background: linear-gradient(135deg, #22c55e, #14b8a6);
-      min-height: 74px;
-      font-weight: 900;
-    }
-    #gameScreen {
-      justify-content: flex-start;
-      padding: 18px;
-    }
-    .main-frame {
-      width: min(1280px, 100%);
-      min-height: 760px;
-      border-radius: 28px;
-      padding: 18px;
-      background: rgba(255,255,255,0.28);
-      border: 4px solid rgba(255,255,255,0.88);
-      box-shadow: 0 18px 45px rgba(15,23,42,0.15);
-      display: grid;
-      grid-template-columns: minmax(620px, 2fr) minmax(330px, 0.95fr);
-      gap: 18px;
-      align-items: stretch;
-    }
-    .left-zone {
-      display: grid;
-      grid-template-rows: auto 1fr auto;
-      gap: 14px;
-      min-width: 0;
-    }
-    .status-panel, .knowledge-panel {
-      background: rgba(255,255,255,0.96);
-      border-radius: 22px;
-      padding: 16px 20px;
-      box-shadow: 0 8px 24px rgba(15,23,42,0.12);
-      border: 3px solid rgba(255,255,255,0.86);
-    }
-    .status-row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      align-items: center;
-      font-size: 18px;
-      font-weight: 800;
-      text-align: center;
-    }
-    .heart { font-size: 24px; letter-spacing: 2px; }
-    #gameArea {
-      position: relative;
-      width: 100%;
-      height: 590px;
-      background: linear-gradient(180deg, #bfecff 0%, #e5ffe4 64%, #bbf7d0 100%);
-      border: 6px solid white;
-      border-radius: 28px;
-      overflow: hidden;
-      box-shadow: inset 0 0 22px rgba(14,165,233,0.15), 0 10px 30px rgba(15,23,42,0.14);
-      touch-action: none;
-    }
-    #questionCard {
-      position: absolute;
-      top: 24px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 88%;
-      min-height: 58px;
-      background: rgba(255,255,255,0.94);
-      border: 3px solid #e0f2fe;
-      border-radius: 16px;
-      padding: 10px 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      font-size: 22px;
-      font-weight: 900;
-      z-index: 30;
-      box-shadow: 0 5px 14px rgba(0,0,0,0.13);
-    }
-    #optionArea {
-      position: absolute;
-      top: 112px;
-      left: 3%;
-      width: 94%;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      z-index: 20;
-    }
-    .option-target {
-      min-height: 82px;
-      padding: 10px;
-      background: #fff7ed;
-      border: 3px solid #fb923c;
-      border-radius: 18px;
-      box-shadow: 0 7px 14px rgba(0,0,0,0.16);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 900;
-      font-size: 15px;
-      line-height: 1.35;
-      word-break: break-word;
-    }
-    .option-target.hit-correct {
-      background: #dcfce7;
-      border-color: #22c55e;
-    }
-    .option-target.hit-wrong {
-      background: #fee2e2;
-      border-color: #ef4444;
-    }
-    .sun {
-      position: absolute;
-      top: 260px;
-      right: 38px;
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background: #fde047;
-      box-shadow: 0 0 32px #fde047;
-      z-index: 1;
-    }
-    .cloud {
-      position: absolute;
-      background: rgba(255,255,255,0.83);
-      border-radius: 999px;
-      height: 28px;
-      width: 90px;
-      z-index: 2;
-    }
-    .cloud::before, .cloud::after {
-      content: "";
-      position: absolute;
-      background: rgba(255,255,255,0.94);
-      border-radius: 50%;
-    }
-    .cloud::before { width: 36px; height: 36px; left: 16px; top: -14px; }
-    .cloud::after { width: 46px; height: 46px; left: 40px; top: -20px; }
-    .ground {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 48px;
-      background: repeating-linear-gradient(45deg, #86efac 0, #86efac 12px, #bbf7d0 12px, #bbf7d0 24px);
-      opacity: 0.9;
-      z-index: 2;
-    }
-    #shooter {
-      position: absolute;
-      bottom: 56px;
-      left: 260px;
-      width: 80px;
-      height: 90px;
-      z-index: 25;
-    }
-    .shooter-base {
-      position: absolute;
-      bottom: 0;
-      left: 14px;
-      width: 52px;
-      height: 26px;
-      background: #334155;
-      border-radius: 12px;
-      border: 4px solid #111827;
-    }
-    .shooter-barrel {
-      position: absolute;
-      bottom: 24px;
-      left: 34px;
-      width: 12px;
-      height: 58px;
-      background: #111827;
-      border-radius: 8px 8px 0 0;
-    }
-    .bullet {
-      position: absolute;
-      width: 10px;
-      height: 22px;
-      background: #0f172a;
-      border-radius: 999px;
-      z-index: 40;
-    }
-    .knowledge-panel {
-      text-align: left;
-      min-height: 100%;
-      display: flex;
-      flex-direction: column;
-    }
-    .knowledge-title {
-      font-size: 25px;
-      font-weight: 900;
-      color: #0369a1;
-      margin: 4px 0 12px;
-    }
-    #resultBadge {
-      display: inline-block;
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: #e0f2fe;
-      font-weight: 900;
-      margin-bottom: 12px;
-    }
-    #knowledgeText {
-      font-size: 18px;
-      line-height: 1.75;
-      background: #f8fafc;
-      border-radius: 18px;
-      padding: 16px;
-      border: 2px dashed #bae6fd;
-      flex: 1;
-    }
-    .tip-box {
-      margin-top: 12px;
-      background: #ecfccb;
-      border-radius: 16px;
-      padding: 12px;
-      line-height: 1.6;
-      border: 2px solid #bef264;
-    }
-    #teacherBox {
-      display: none;
-      background: #f5f3ff;
-      border-color: #c4b5fd;
-    }
-    #countdownText {
-      display: none;
-      margin-top: 12px;
-      font-size: 26px;
-      font-weight: 900;
-      color: #0284c7;
-      text-align: center;
-    }
-    .correct { color: #16a34a; font-weight: 900; }
-    .wrong { color: #dc2626; font-weight: 900; }
-    .mobile-controls { display: none; margin-top: 8px; }
-    .mobile-controls button {
-      font-size: 20px;
-      padding: 12px 22px;
-      background: #64748b;
-    }
-    #reviewList {
-      text-align: left;
-      width: min(880px, 100%);
-      max-height: 48vh;
-      overflow: auto;
-      background: white;
-      padding: 18px;
-      border-radius: 20px;
-      box-shadow: 0 8px 24px rgba(15,23,42,0.12);
-    }
-    .review-item {
-      padding: 12px;
-      border-bottom: 1px solid #e5e7eb;
-      line-height: 1.65;
-    }
-    .review-item:last-child { border-bottom: none; }
-    @media (max-width: 980px) {
-      .main-frame { grid-template-columns: 1fr; }
-      #gameArea { height: 540px; }
-      .mobile-controls { display: block; }
-    }
-    @media (max-width: 640px) {
-      .screen { padding: 12px; }
-      .card { padding: 22px; }
-      h1 { font-size: 32px; }
-      .status-row { grid-template-columns: repeat(2, 1fr); font-size: 15px; }
-      #questionCard { font-size: 17px; width: 92%; }
-      #gameArea { height: 520px; }
-      #optionArea { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-      .option-target { min-height: 52px; font-size: 14px; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>大學生健康飲食知識射擊遊戲</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Noto Sans TC", Arial, sans-serif;
+  background: linear-gradient(135deg, #dbeafe, #dcfce7, #fef9c3);
+  color: #1f2937;
+  text-align: center;
+}
+
+.screen {
+  min-height: 100vh;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.active { display: flex; }
+
+.card {
+  width: min(920px, 100%);
+  background: rgba(255,255,255,0.94);
+  border-radius: 28px;
+  padding: 34px;
+  box-shadow: 0 16px 40px rgba(15,23,42,0.16);
+}
+
+h1 { font-size: 42px; margin-bottom: 12px; }
+
+button {
+  border: none;
+  border-radius: 16px;
+  padding: 12px 22px;
+  margin: 8px;
+  font-size: 18px;
+  cursor: pointer;
+  background: #38bdf8;
+  color: white;
+  font-weight: 800;
+}
+
+button:hover { background: #0284c7; }
+
+#gameScreen {
+  justify-content: flex-start;
+  padding: 18px;
+}
+
+.main-frame {
+  width: min(1280px, 100%);
+  min-height: 760px;
+  border-radius: 28px;
+  padding: 18px;
+  background: rgba(255,255,255,0.28);
+  border: 4px solid rgba(255,255,255,0.88);
+  display: grid;
+  grid-template-columns: minmax(620px, 2fr) minmax(330px, 0.95fr);
+  gap: 18px;
+}
+
+.left-zone {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 14px;
+}
+
+.status-panel, .knowledge-panel {
+  background: rgba(255,255,255,0.96);
+  border-radius: 22px;
+  padding: 16px 20px;
+  box-shadow: 0 8px 24px rgba(15,23,42,0.12);
+}
+
+.status-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  font-size: 18px;
+  font-weight: 800;
+  align-items: center;
+}
+
+.timer-box {
+  color: #dc2626;
+  font-size: 22px;
+}
+
+#gameArea {
+  position: relative;
+  width: 100%;
+  height: 590px;
+  background: linear-gradient(180deg, #bfecff 0%, #e5ffe4 64%, #bbf7d0 100%);
+  border: 6px solid white;
+  border-radius: 28px;
+  overflow: hidden;
+  cursor: crosshair;
+}
+
+#questionCard {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  background: white;
+  border-radius: 16px;
+  padding: 12px 16px;
+  font-size: 22px;
+  font-weight: 900;
+  z-index: 30;
+  box-shadow: 0 5px 14px rgba(15,23,42,0.12);
+}
+
+#targetsRow {
+  position: absolute;
+  top: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 92%;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  z-index: 25;
+}
+
+.target {
+  min-height: 78px;
+  padding: 10px;
+  background: #fff7ed;
+  border: 3px solid #fb923c;
+  border-radius: 20px;
+  box-shadow: 0 7px 14px rgba(0,0,0,0.17);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 15px;
+  line-height: 1.35;
+}
+
+.sun {
+  position: absolute;
+  top: 205px;
+  right: 40px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #fde047;
+  box-shadow: 0 0 32px #fde047;
+}
+
+.ground {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 48px;
+  background: repeating-linear-gradient(45deg, #86efac 0, #86efac 12px, #bbf7d0 12px, #bbf7d0 24px);
+}
+
+#player {
+  position: absolute;
+  bottom: 38px;
+  left: 50%;
+  transform: translateX(-50%) scale(0.75);
+  transform-origin: bottom center;
+  width: 90px;
+  height: 120px;
+  z-index: 30;
+}
+
+.head {
+  width: 54px;
+  height: 54px;
+  background: #ffd7a8;
+  border-radius: 50%;
+  margin: 0 auto;
+  border: 3px solid #7c4a22;
+}
+
+.body {
+  width: 64px;
+  height: 54px;
+  background: linear-gradient(180deg, #60a5fa, #2563eb);
+  border-radius: 18px;
+  margin: -2px auto 0;
+  border: 3px solid #1d4ed8;
+}
+
+#aimLine {
+  position: absolute;
+  left: 50%;
+  bottom: 120px;
+  width: 5px;
+  height: 170px;
+  background: rgba(14,165,233,0.55);
+  transform-origin: bottom center;
+  z-index: 24;
+  border-radius: 999px;
+  box-shadow: 0 0 10px rgba(14,165,233,0.6);
+}
+
+.bullet {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background: #0284c7;
+  border-radius: 50%;
+  box-shadow: 0 0 12px #38bdf8;
+  z-index: 28;
+}
+
+.knowledge-panel {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+}
+
+.knowledge-title {
+  font-size: 25px;
+  font-weight: 900;
+  color: #0369a1;
+  margin-bottom: 12px;
+}
+
+#resultBadge {
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #e0f2fe;
+  font-weight: 900;
+  margin-bottom: 12px;
+}
+
+#knowledgeText {
+  font-size: 18px;
+  line-height: 1.75;
+  background: #f8fafc;
+  border-radius: 18px;
+  padding: 16px;
+  border: 2px dashed #bae6fd;
+  flex: 1;
+}
+
+.tip-box {
+  margin-top: 12px;
+  background: #ecfccb;
+  border-radius: 16px;
+  padding: 12px;
+  border: 2px solid #bef264;
+}
+
+.correct { color: #16a34a; font-weight: 900; }
+.wrong { color: #dc2626; font-weight: 900; }
+
+#reviewList {
+  text-align: left;
+  max-height: 48vh;
+  overflow: auto;
+  background: white;
+  padding: 18px;
+  border-radius: 20px;
+}
+
+.review-item {
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.keyboard-hint {
+  font-size: 16px;
+  color: #475569;
+  margin-top: 6px;
+}
+
+@media (max-width: 980px) {
+  .main-frame { grid-template-columns: 1fr; }
+  .status-row { grid-template-columns: 1fr 1fr; }
+  #targetsRow { grid-template-columns: 1fr 1fr; top: 105px; }
+  .target { min-height: 64px; }
+}
+</style>
 </head>
+
 <body>
-  <section id="homeScreen" class="screen active">
-    <div class="card">
-      <h1>健康知識射擊遊戲</h1>
-      <p>選擇主題，閱讀題目與四個固定選項。<br>
-      請使用電腦鍵盤的「← 左鍵」與「→ 右鍵」控制發射器移動，按「↑ 上鍵」發射子彈，射中你認為正確的答案。<br>
-      答題後會暫停並顯示知識點，幫助你把健康觀念記起來。<br><br>
-      <strong>老師模式說明：</strong>開啟後，右側會顯示本題教學重點、引導提問與延伸討論，適合課堂教學或帶領學生思考使用。</p>
-      <button onclick="showScreen('topicScreen')">開始遊戲</button>
-      <button id="teacherModeBtn" onclick="toggleTeacherMode()" style="background:#8b5cf6;">老師模式：關</button>
-    </div>
-  </section>
 
-  <section id="topicScreen" class="screen">
-    <div class="card">
-      <h2>請選擇遊玩模式</h2>
-      <p>系統會從睡眠、飲食、健康體位、日常保健預防四大主題中，隨機抽出 10 題進行綜合挑戰。</p>
-      <div class="topic-grid" id="topicGrid"></div>
-      <button onclick="showScreen('homeScreen')">回首頁</button>
-    </div>
-  </section>
+<section id="homeScreen" class="screen active">
+  <div class="card">
+    <h1>大學生健康飲食知識射擊遊戲</h1>
+    <p>
+      主題：飲食健康進階版，適合衛教、營養、健康促進相關科系學生練習。<br>
+      每次遊戲會從進階題庫隨機抽出 10 題，題型包含我的餐盤、營養標示、減糖、外食、健康烹調與衛教情境判斷。<br>
+      使用滑鼠瞄準答案並點擊射擊，也可以用鍵盤左右鍵調整方向，按空白鍵或上箭頭發射。<br>
+      每題限時 8 秒，射中正確答案加分，射錯或超時會扣生命。
+    </p>
+    <button onclick="startGame()">開始遊戲</button>
+  </div>
+</section>
 
-  <section id="gameScreen" class="screen">
-    <div class="main-frame">
-      <div class="left-zone">
-        <div class="status-panel">
-          <div class="status-row">
-            <span>主題：<strong id="topicName"></strong></span>
-            <span>題數：<strong id="questionNumber">1</strong> / <strong id="totalQuestion">10</strong></span>
-            <span>分數：<strong id="score">0</strong></span>
-            <span>生命：<strong id="lives" class="heart">❤️❤️❤️</strong></span>
-          </div>
+<section id="gameScreen" class="screen">
+  <div class="main-frame">
+    <div class="left-zone">
+      <div class="status-panel">
+        <div class="status-row">
+          <span>主題：<strong>飲食</strong></span>
+          <span>題數：<strong id="questionNumber">1</strong> / <strong id="totalQuestions">10</strong></span>
+          <span>分數：<strong id="score">0</strong></span>
+          <span>生命：<strong id="lives">❤️❤️❤️</strong></span>
+          <span class="timer-box">倒數：<strong id="timer">8</strong> 秒</span>
         </div>
+        <div class="keyboard-hint">鍵盤操作：← → 調整瞄準線，空白鍵 / ↑ 發射</div>
+      </div>
 
-        <div id="gameArea">
-          <div id="questionCard">題目載入中...</div>
-          <div id="optionArea"></div>
-          <div class="sun"></div>
-          <div class="cloud" style="left: 7%; top: 310px;"></div>
-          <div class="cloud" style="left: 59%; top: 345px;"></div>
-          <div class="ground"></div>
-          <div id="shooter">
-            <div class="shooter-barrel"></div>
-            <div class="shooter-base"></div>
-          </div>
-        </div>
+      <div id="gameArea">
+        <div id="questionCard">題目載入中...</div>
+        <div id="targetsRow"></div>
+        <div class="sun"></div>
+        <div class="ground"></div>
+        <div id="aimLine"></div>
 
-        <div>
-          <div class="mobile-controls">
-            <button id="leftBtn">←</button>
-            <button id="shootBtn">發射</button>
-            <button id="rightBtn">→</button>
-          </div>
-          <button onclick="backToTopics()">返回主題選單</button>
+        <div id="player">
+          <div class="head"></div>
+          <div class="body"></div>
         </div>
       </div>
 
-      <aside class="knowledge-panel">
-        <div class="knowledge-title">健康知識補給站</div>
-        <div id="resultBadge">等待作答中</div>
-        <div id="knowledgeText">使用左右鍵移動發射器，按空白鍵射擊正確答案。</div>
-        <div id="countdownText"></div>
-        <div class="tip-box">小提醒：先看完題目與四個選項，再瞄準發射，這樣比較能真正理解健康知識。</div>
-        <div id="teacherBox" class="tip-box">
-          <strong>老師模式</strong><br>
-          <span id="teacherText">開始遊戲後，這裡會顯示本題的教學重點與引導提問。</span>
-        </div>
-      </aside>
+      <div>
+        <button onclick="backHome()">回首頁</button>
+      </div>
     </div>
-  </section>
 
-  <section id="endScreen" class="screen">
-    <div class="card">
-      <h1>遊戲結束！</h1>
-      <h2 id="finalScore"></h2>
-      <p id="finalComment"></p>
-      <h2>錯題複習</h2>
-      <div id="reviewList"></div>
-      <button onclick="restartSameTopic()">再玩一次同主題</button>
-      <button onclick="showScreen('topicScreen')">選擇其他主題</button>
-    </div>
-  </section>
+    <aside class="knowledge-panel">
+      <div class="knowledge-title">健康知識補給站</div>
+      <div id="resultBadge">等待作答中</div>
+      <div id="knowledgeText">移動滑鼠瞄準答案，點擊左鍵射擊；也可以用鍵盤操作。</div>
+      <div class="tip-box">小提醒：不要只記答案，也要看「為什麼」。</div>
+    </aside>
+  </div>
+</section>
 
-  <script>
-    function q(question, options, answer, reason, point) {
-      return { question, options, answer, reason, point };
+<section id="endScreen" class="screen">
+  <div class="card">
+    <h1>遊戲結束！</h1>
+    <h2 id="finalScore"></h2>
+    <p id="finalComment"></p>
+    <h2>錯題複習</h2>
+    <div id="reviewList"></div>
+    <button onclick="startGame()">再玩一次</button>
+    <button onclick="showScreen('homeScreen')">回首頁</button>
+  </div>
+</section>
+
+<script>
+const QUESTION_COUNT = 10;
+const MAX_LIVES = 3;
+const TIME_LIMIT = 8;
+
+const questionBank = [
+  q("以『我的餐盤』進行衛教時，下列哪一組最符合六大類食物概念？",
+    ["全穀雜糧、豆魚蛋肉、蔬菜、水果、乳品、堅果種子", "炸物、甜點、飲料、零食、醬料、冰品", "只要蛋白質、水果和水", "只要白飯、肉類和含糖飲料"],
+    "全穀雜糧、豆魚蛋肉、蔬菜、水果、乳品、堅果種子",
+    "我的餐盤強調六大類食物均衡搭配，不是只強調單一營養素。",
+    "大學生做飲食衛教時，可用六大類食物協助民眾檢視餐點是否完整。"),
+
+  q("『菜比水果多一點』最適合用來提醒哪一件事？",
+    ["蔬菜攝取量應略高於水果，不能只靠水果取代蔬菜", "水果越甜越能代表營養價值高", "只喝果汁就能完全取代蔬菜水果", "水果和蔬菜都不用考慮份量"],
+    "蔬菜攝取量應略高於水果，不能只靠水果取代蔬菜",
+    "蔬菜和水果都重要，但蔬菜在纖維、植化素與熱量控制上有不同角色。",
+    "衛教時可提醒：原型蔬果比果汁更能保留纖維與飽足感。"),
+
+  q("若要向大學生解釋『飯跟蔬菜一樣多』，下列哪個說法最恰當？",
+    ["主食與蔬菜都要有，並避免餐盤被精緻澱粉完全占滿", "只要吃很多飯就一定均衡", "蔬菜可以完全取代所有主食", "不吃澱粉一定比較健康"],
+    "主食與蔬菜都要有，並避免餐盤被精緻澱粉完全占滿",
+    "均衡飲食不是極端限制澱粉，而是調整比例與來源。",
+    "主食可優先選擇全穀雜糧，搭配足量蔬菜。"),
+
+  q("我的餐盤中的『豆魚蛋肉一掌心』主要強調什麼？",
+    ["蛋白質類食物要適量且來源多元", "肉類越多越能補充營養", "只吃加工肉品也能取代所有蛋白質", "完全不能攝取豆魚蛋肉類"],
+    "蛋白質類食物要適量且來源多元",
+    "豆魚蛋肉類提供蛋白質，但仍需注意份量、種類與烹調方式。",
+    "衛教時可鼓勵多選豆類、魚類、蛋類與較少加工的肉類。"),
+
+  q("在營養標示中，判斷包裝食品糖分時最應注意哪一項？",
+    ["每份與每 100 公克或毫升的糖含量", "包裝顏色是否清爽", "商品名稱是否有水果字樣", "代言人是否看起來健康"],
+    "每份與每 100 公克或毫升的糖含量",
+    "營養標示可協助判斷實際攝取的糖量，尤其要注意一包是否含多份。",
+    "讀標示時要同時看『每份』與『本包裝含幾份』。"),
+
+  q("某飲料標示每份糖 12 公克，本包裝含 2 份。若整瓶喝完，糖攝取量是多少？",
+    ["24 公克", "12 公克", "6 公克", "無法判斷，因為只看熱量"],
+    "24 公克",
+    "每份 12 公克乘以 2 份，整瓶就是 24 公克糖。",
+    "衛教時常見錯誤是只看每份，忽略整包裝實際喝完的份數。"),
+
+  q("在包裝食品營養標示中，鈉通常以什麼單位標示？",
+    ["毫克 mg", "公升 L", "公斤 kg", "百分比一定固定為 100%"],
+    "毫克 mg",
+    "鈉含量通常以毫克標示，是判斷鹽分攝取的重要資訊。",
+    "外食與加工食品常是鈉攝取的重要來源，可引導學生練習看鈉含量。"),
+
+  q("想降低外食鈉攝取，下列哪個策略較適合？",
+    ["湯汁、醬料少喝少沾，選擇少鹽烹調", "每餐都把湯喝完", "醬料越多越能補充營養", "只要不吃甜食就不用管鹽分"],
+    "湯汁、醬料少喝少沾，選擇少鹽烹調",
+    "許多外食的鈉來自湯汁、醬料與加工食材。",
+    "衛教時可提供可執行的外食技巧，而不是只說『不要吃太鹹』。"),
+
+  q("下列哪一項最符合健康烹調的核心方向？",
+    ["高纖、低油、低糖、低鹽，善用天然食材風味", "大量油炸讓食物更有營養", "所有食物都應加入大量調味料", "只要熱量低就可以不管食材品質"],
+    "高纖、低油、低糖、低鹽，善用天然食材風味",
+    "健康烹調強調減少過度烹調與調味，保留食物原味。",
+    "營養衛教可把『少油少鹽少糖』轉化成具體烹調方法。"),
+
+  q("下列哪一種烹調方式通常比油炸更適合作為健康飲食建議？",
+    ["蒸、煮、烤、微波", "反覆高溫油炸", "每道菜都先裹粉再炸", "加入大量奶油與糖漿"],
+    "蒸、煮、烤、微波",
+    "蒸、煮、烤、微波通常可降低額外油脂攝取。",
+    "做衛教時可提供替代做法，例如炸雞改烤雞、炸物改滷味或水煮。"),
+
+  q("全穀雜糧類相較於精緻穀物，主要優勢之一是什麼？",
+    ["通常保留較多膳食纖維與部分營養素", "一定完全沒有熱量", "吃越多越不需要運動", "可以完全取代所有蔬菜"],
+    "通常保留較多膳食纖維與部分營養素",
+    "全穀雜糧比精緻穀物保留更多纖維與營養成分。",
+    "可建議從白飯混糙米、燕麥、地瓜開始，而不是一次完全改變。"),
+
+  q("大學生常喝手搖飲，若要進行減糖衛教，最可行的第一步是什麼？",
+    ["從全糖改少糖、微糖或無糖，並降低飲用頻率", "要求所有人立刻永遠不喝飲料", "改喝加糖果汁就一定健康", "只要加鮮奶就不用管糖量"],
+    "從全糖改少糖、微糖或無糖，並降低飲用頻率",
+    "減糖重點是建立可持續的選擇，而不是只靠短期禁止。",
+    "健康促進方案可設定階段性目標，例如每週少喝 1 到 2 杯含糖飲。"),
+
+  q("下列哪個最能代表『原型食物』的選擇？",
+    ["香蕉、地瓜、無調味堅果", "糖果、洋芋片、奶油夾心餅乾", "只看熱量低的代餐餅乾", "含糖果汁和果凍"],
+    "香蕉、地瓜、無調味堅果",
+    "原型食物通常加工較少，較能保留食物本身的營養特性。",
+    "點心衛教可引導學生用原型食物取代高糖高油零食。"),
+
+  q("下列哪個關於堅果種子的說法最正確？",
+    ["富含營養但熱量不低，應注意份量", "可以無限量吃，完全不會有熱量", "一定要選裹糖堅果才健康", "堅果沒有任何營養價值"],
+    "富含營養但熱量不低，應注意份量",
+    "堅果種子含油脂與多種營養，但過量仍可能增加熱量攝取。",
+    "我的餐盤用『一茶匙』提醒份量概念。"),
+
+  q("某學生說：『我每天喝果汁，所以不用吃水果。』最適合的衛教回應是什麼？",
+    ["果汁可能纖維較少且糖分容易過量，建議優先吃原型水果", "完全正確，果汁一定比水果健康", "只要是水果口味都能取代水果", "水果沒有營養，喝飲料就好"],
+    "果汁可能纖維較少且糖分容易過量，建議優先吃原型水果",
+    "原型水果通常比果汁更有飽足感，也能保留較多纖維。",
+    "衛教回應應避免責備，改用替代建議幫助對方調整。"),
+
+  q("某便當包含白飯、炸排骨、滷蛋，幾乎沒有蔬菜。最優先可建議改善哪一點？",
+    ["增加蔬菜並將炸排骨改成滷、烤或水煮蛋白質", "只把白飯全部拿掉", "再加一杯全糖飲料", "只吃炸排骨就好"],
+    "增加蔬菜並將炸排骨改成滷、烤或水煮蛋白質",
+    "外食改善可先從增加蔬菜、減少油炸和含糖飲料開始。",
+    "衛教建議要具體且可執行，才能提高改變可能性。"),
+
+  q("如果要設計大學生飲食衛教前測，下列哪一題最能測『應用能力』？",
+    ["看到營養標示後，判斷整包食品實際糖量", "請背出所有口訣文字", "請說出自己喜歡的飲料店", "請選一個最漂亮的餐盤圖片"],
+    "看到營養標示後，判斷整包食品實際糖量",
+    "應用能力重點是能把知識用在真實情境。",
+    "健康教育評量不只測記憶，也應測選擇、判讀與行動規劃。"),
+
+  q("下列哪個選項最能說明『健康飲食不是極端節食』？",
+    ["重點是均衡、適量、多樣化與可持續", "完全不吃澱粉才是健康", "只吃水煮雞胸肉才是標準", "一天只吃一餐最有效"],
+    "重點是均衡、適量、多樣化與可持續",
+    "極端限制常難以長期維持，也可能造成營養不均。",
+    "對大學生衛教時可強調生活化、可執行的飲食調整。"),
+
+  q("若學生常熬夜後用含糖飲料提神，較好的衛教切入點是什麼？",
+    ["討論睡眠、壓力與飲料選擇，逐步改成無糖或白開水", "只說你不可以喝，其他不管", "建議每天喝更多全糖飲料", "完全忽略作息因素"],
+    "討論睡眠、壓力與飲料選擇，逐步改成無糖或白開水",
+    "飲食行為常受作息、壓力與環境影響。",
+    "健康促進應看見行為背後的情境，而不是只給單一命令。"),
+
+  q("食品原料標示中，若糖或油排在前幾項，通常代表什麼？",
+    ["該成分在產品中比例可能較高，需留意", "這項食品一定完全無糖", "排序和含量完全無關", "一定是最健康的產品"],
+    "該成分在產品中比例可能較高，需留意",
+    "原料通常依含量多寡排列，糖與油排前面時要特別注意。",
+    "選購零食時可同時看原料順序與營養標示。"),
+
+  q("下列哪個最適合作為『減糖』衛教訊息？",
+    ["先辨識含糖飲料來源，再用無糖或低糖選項替代", "只要完全不吃所有食物就能減糖", "甜食可以無限量吃，只要有運動", "水果口味飲料一定不含糖"],
+    "先辨識含糖飲料來源，再用無糖或低糖選項替代",
+    "含糖飲料常是添加糖的重要來源，替換飲品是可行策略。",
+    "減糖衛教要提供替代選擇，讓行為改變更容易。"),
+
+  q("若包裝標示『低脂』，下列哪個判斷最謹慎？",
+    ["仍需查看糖、鈉、總熱量與份量", "低脂就一定可以無限量吃", "低脂一定代表低糖", "低脂一定代表低鈉"],
+    "仍需查看糖、鈉、總熱量與份量",
+    "單一營養宣稱不代表整體一定健康。",
+    "營養相關科系學生應練習整體判讀，而不是只看一個宣稱。"),
+
+  q("下列哪個較符合『外食健康選擇』的實務建議？",
+    ["主菜少油炸、飯量適中、加青菜、飲料選無糖", "主餐、點心、飲料都選最高糖最高油", "只吃肉不吃菜", "只看價格不看內容"],
+    "主菜少油炸、飯量適中、加青菜、飲料選無糖",
+    "外食可透過主菜、配菜、主食與飲料四個面向調整。",
+    "對大學生而言，外食衛教越具體越容易執行。"),
+
+  q("下列哪個選擇較能增加膳食纖維攝取？",
+    ["糙米飯、燕麥、蔬菜與原型水果", "白吐司配含糖飲料", "只吃糖果", "只喝清湯不吃食物"],
+    "糙米飯、燕麥、蔬菜與原型水果",
+    "全穀雜糧、蔬菜和原型水果都是膳食纖維來源。",
+    "高纖飲食可從主食替換與增加蔬果開始。"),
+
+  q("衛教中若只說『你這樣吃很不健康』，可能造成什麼問題？",
+    ["容易讓對方防衛，較難促進行為改變", "一定能讓所有人立刻改變", "完全不會影響溝通", "比提供具體策略更有效"],
+    "容易讓對方防衛，較難促進行為改變",
+    "衛教溝通需要尊重、同理與具體建議。",
+    "大學生進行衛教時，訊息設計和溝通方式也很重要。"),
+
+  q("若要提升健康飲食行為改變，哪個目標較符合 SMART 概念？",
+    ["未來兩週每週至少 3 天把全糖飲改成無糖茶", "我要變健康", "我永遠不吃任何甜食", "我今天開始完美飲食"],
+    "未來兩週每週至少 3 天把全糖飲改成無糖茶",
+    "SMART 目標需要具體、可衡量、可達成、相關且有時間限制。",
+    "衛教方案可用小目標提高可執行性與追蹤性。"),
+
+  q("下列哪一種早餐較符合大學生健康飲食建議？",
+    ["全麥吐司、蛋、無糖豆漿與水果", "只喝全糖奶茶", "只吃糖果餅乾", "完全不吃早餐也不喝水"],
+    "全麥吐司、蛋、無糖豆漿與水果",
+    "早餐若包含主食、蛋白質、飲品與水果，較能支持上午活動。",
+    "早餐衛教可從便利商店也買得到的組合開始設計。"),
+
+  q("關於豆漿與牛奶，下列哪個衛教說法較精確？",
+    ["豆漿可提供蛋白質，但鈣質通常不能直接等同於乳品", "豆漿和牛奶所有營養完全一樣", "牛奶完全沒有蛋白質", "只喝含糖調味乳最能補鈣"],
+    "豆漿可提供蛋白質，但鈣質通常不能直接等同於乳品",
+    "豆漿和乳品的營養組成不同，選擇時應看需求與標示。",
+    "若不能喝牛奶，可討論發酵乳製品或其他鈣來源。"),
+
+  q("下列哪個說法最能避免飲食衛教中的污名化？",
+    ["聚焦行為與環境調整，不批評身材或人格", "用嘲笑方式提醒對方", "把健康完全歸因於意志力", "只用恐嚇語氣要求改變"],
+    "聚焦行為與環境調整，不批評身材或人格",
+    "健康飲食衛教應避免身材羞辱，改以支持行為改變為核心。",
+    "尤其面對同儕衛教時，尊重與安全感會影響學習成效。"),
+
+  q("選擇便利商店餐點時，下列哪個組合相對較均衡？",
+    ["飯糰或地瓜、茶葉蛋、沙拉、無糖飲", "洋芋片、糖果、全糖汽水", "只買甜點當正餐", "泡麵加含糖飲料"],
+    "飯糰或地瓜、茶葉蛋、沙拉、無糖飲",
+    "便利商店也能透過主食、蛋白質、蔬菜與無糖飲品搭配得更均衡。",
+    "衛教可以提供真實可買到的替代方案。"),
+
+  q("若同學說『我有運動，所以每天喝全糖飲沒關係』，較好的回應是什麼？",
+    ["運動很好，但仍需留意添加糖與總攝取量", "有運動就完全不用管飲食", "全糖飲可以取代白開水", "只要流汗就能抵消所有糖分"],
+    "運動很好，但仍需留意添加糖與總攝取量",
+    "運動和飲食都是健康生活的一部分，不能互相完全抵消。",
+    "衛教時可肯定既有好行為，再討論可改善之處。"),
+
+  q("下列哪個最適合用於大學生飲食教育的遊戲化回饋？",
+    ["答題後提供原因、知識點與生活應用建議", "只顯示對或錯，不提供說明", "答錯就嘲笑玩家", "只給分數，不做任何學習回饋"],
+    "答題後提供原因、知識點與生活應用建議",
+    "遊戲化學習若有即時回饋，較能幫助知識轉化成理解。",
+    "健康知識遊戲可結合錯題複習，提高學習效果。"),
+
+  q("下列哪個最能測出學生是否理解『少油』而非只會背口訣？",
+    ["讓學生在炸雞、烤雞、水煮雞中選擇較佳替代方案並說明原因", "請學生重複背少油兩個字", "問學生喜不喜歡炸物", "只要求學生寫出自己的身高"],
+    "讓學生在炸雞、烤雞、水煮雞中選擇較佳替代方案並說明原因",
+    "理解應包含情境判斷與理由說明。",
+    "題庫設計可加入應用題，較適合營養與衛教相關科系學生。"),
+
+  q("下列哪個最能代表『飲食環境』對行為的影響？",
+    ["宿舍附近只有宵夜店，會影響學生晚餐與消夜選擇", "所有飲食選擇都只和個人意志力有關", "菜單設計不會影響點餐", "價格和取得便利性完全不重要"],
+    "宿舍附近只有宵夜店，會影響學生晚餐與消夜選擇",
+    "飲食行為受到可近性、價格、同儕、時間與環境影響。",
+    "健康促進不只教育個人，也要思考環境支持。"),
+
+  q("下列哪個較符合『健康促進』而不只是『健康知識宣導』？",
+    ["除了教知識，也改善選擇環境並提供行動支持", "只貼一張海報就結束", "只責怪沒有改變的人", "只要求大家背營養素名稱"],
+    "除了教知識，也改善選擇環境並提供行動支持",
+    "健康促進重視個人知能、支持環境與可持續行動。",
+    "若設計校園飲食介入，可結合餐廳標示、無糖選項與同儕活動。"),
+
+  q("若要設計校園減糖活動，哪個指標較能作為結果評估？",
+    ["參與者每週含糖飲料飲用次數是否下降", "活動海報顏色是否漂亮", "主持人聲音是否很大", "抽獎獎品是否昂貴"],
+    "參與者每週含糖飲料飲用次數是否下降",
+    "結果評估應對應行為或健康相關目標。",
+    "衛教活動可以同時設計過程指標與結果指標。"),
+
+  q("若某食品標示『0 反式脂肪』，下列哪個判斷較完整？",
+    ["仍要看總脂肪、飽和脂肪、糖、鈉與份量", "一定可以無限制吃", "一定沒有熱量", "一定比所有原型食物健康"],
+    "仍要看總脂肪、飽和脂肪、糖、鈉與份量",
+    "單一項目為 0 不代表整體營養品質一定好。",
+    "營養標示判讀要避免被單一宣稱誤導。"),
+
+  q("下列哪個關於『低熱量』食品的提醒較適合？",
+    ["仍需考量營養密度、份量與是否能取代正餐", "低熱量就一定最健康", "低熱量可以完全不用看成分", "低熱量代表一定高纖"],
+    "仍需考量營養密度、份量與是否能取代正餐",
+    "熱量只是判斷飲食品質的一個面向。",
+    "營養教育應避免把健康飲食簡化成只看熱量。"),
+
+  q("下列哪個最適合用來說明『多樣化飲食』？",
+    ["每天變化蔬菜顏色、蛋白質來源與主食種類", "每天只吃同一種食物", "只吃自己喜歡的炸物", "只喝同一種飲料"],
+    "每天變化蔬菜顏色、蛋白質來源與主食種類",
+    "不同食物提供不同營養素，多樣化可降低營養偏差。",
+    "衛教可用顏色、餐盤與食物分類幫助理解。"),
+
+  q("在餐廳點餐時，哪個做法最能降低額外糖攝取？",
+    ["飲料選無糖，甜點與含糖醬料減量", "主餐已經鹹，所以飲料一定要全糖", "所有醬料都加好加滿", "飯後一定再加一杯全糖飲"],
+    "飲料選無糖，甜點與含糖醬料減量",
+    "添加糖可能來自飲料、甜點與醬料，不只來自糖果。",
+    "大學生外食衛教可提醒隱藏糖來源。"),
+
+  q("若要把這款遊戲用於衛教課程，哪個設計最能促進課後討論？",
+    ["遊戲後讓學生分析錯題原因與可行行為改變", "玩完直接下課，不討論", "只公布最高分", "答錯的人要被公開批評"],
+    "遊戲後讓學生分析錯題原因與可行行為改變",
+    "反思與討論能讓遊戲從娛樂轉為學習。",
+    "可加入小組討論：哪一題最容易錯？為什麼？生活中如何改變？"),
+
+  q("下列哪個情境最需要提醒『看整包裝份數』？",
+    ["一包餅乾標示每份熱量不高，但整包共有 4 份", "一顆蘋果沒有包裝", "一杯白開水", "一份現切青菜"],
+    "一包餅乾標示每份熱量不高，但整包共有 4 份",
+    "包裝食品常以每份標示，但實際可能一次吃完整包。",
+    "營養標示教學可設計換算題，訓練實際判讀能力。"),
+
+  q("下列哪個最適合作為大學生飲食介入的環境策略？",
+    ["校園餐廳標示無糖飲、蔬菜加量與全穀選項", "只叫學生自己克制，不改變任何選擇環境", "取消所有午餐時間", "只提供高油高糖食物"],
+    "校園餐廳標示無糖飲、蔬菜加量與全穀選項",
+    "環境提示和可近性會影響選擇。",
+    "健康促進方案可結合標示、供應與價格策略。"),
+
+  q("下列哪一題最適合營養相關科系學生進行進階討論？",
+    ["如何把我的餐盤原則轉化成便利商店可購買的餐點組合？", "你最喜歡什麼顏色？", "哪個圖案最可愛？", "你今天幾點起床？"],
+    "如何把我的餐盤原則轉化成便利商店可購買的餐點組合？",
+    "進階學習重點在於把理論轉化為真實生活建議。",
+    "衛教與營養科系學生可練習從知識、行為到環境的轉譯。"),
+
+  q("若同學認為『健康飲食一定很貴』，下列哪個回應較合適？",
+    ["可討論當季蔬果、豆製品、蛋、地瓜等相對可負擔選擇", "健康飲食一定只能買昂貴食材", "沒錢就完全不能吃健康", "只要買最貴就是最健康"],
+    "可討論當季蔬果、豆製品、蛋、地瓜等相對可負擔選擇",
+    "價格會影響飲食選擇，因此衛教需提供符合情境的替代方案。",
+    "健康飲食建議應考慮可近性、價格與文化習慣。"),
+
+  q("下列哪個最能體現營養衛教中的『同理』？",
+    ["先了解對方作息、預算與外食限制，再共同找可行做法", "直接批評對方都不努力", "要求對方照自己的飲食方式做", "完全不聽對方的困難"],
+    "先了解對方作息、預算與外食限制，再共同找可行做法",
+    "同理能增加信任，也讓建議更貼近生活。",
+    "大學生衛教實作可加入訪談與需求評估概念。"),
+
+  q("下列哪個最適合作為本遊戲的學習目標？",
+    ["能判讀常見飲食情境，選出較健康且可執行的選擇", "只追求射擊速度，不理解題目", "背下所有答案但不會應用", "只看分數不看錯題"],
+    "能判讀常見飲食情境，選出較健康且可執行的選擇",
+    "健康知識遊戲的重點是把知識轉化為判斷與行動。",
+    "對衛教與營養科系學生，可把遊戲當作情境判斷與衛教溝通練習。")
+];
+
+function q(question, options, answer, reason, point) {
+  return { question, options, answer, reason, point };
+}
+
+const gameArea = document.getElementById("gameArea");
+const targetsRow = document.getElementById("targetsRow");
+const aimLine = document.getElementById("aimLine");
+const resultBadge = document.getElementById("resultBadge");
+const knowledgeText = document.getElementById("knowledgeText");
+
+let currentQuestions = [];
+let questionIndex = 0;
+let score = 0;
+let lives = MAX_LIVES;
+let targets = [];
+let bullets = [];
+let wrongRecords = [];
+let locked = false;
+let angle = 0;
+let loopId = null;
+let timerId = null;
+let timeLeft = TIME_LIMIT;
+
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+function startGame() {
+  currentQuestions = pickRandomQuestions(questionBank, QUESTION_COUNT);
+  questionIndex = 0;
+  score = 0;
+  lives = MAX_LIVES;
+  wrongRecords = [];
+  locked = false;
+  angle = 0;
+  setAimAngle(angle);
+  document.getElementById("totalQuestions").textContent = QUESTION_COUNT;
+  showScreen("gameScreen");
+  updateStatus();
+  loadQuestion();
+  startLoop();
+}
+
+function pickRandomQuestions(bank, count) {
+  return [...bank].sort(() => Math.random() - 0.5).slice(0, count);
+}
+
+function updateStatus() {
+  document.getElementById("questionNumber").textContent = Math.min(questionIndex + 1, currentQuestions.length || QUESTION_COUNT);
+  document.getElementById("score").textContent = score;
+  document.getElementById("lives").textContent = "❤️".repeat(lives) + "🤍".repeat(MAX_LIVES - lives);
+  document.getElementById("timer").textContent = timeLeft;
+}
+
+function loadQuestion() {
+  clearTargets();
+  clearBullets();
+  stopTimer();
+  locked = false;
+  timeLeft = TIME_LIMIT;
+  updateStatus();
+
+  const item = currentQuestions[questionIndex];
+  document.getElementById("questionCard").textContent = item.question;
+  resultBadge.textContent = `第 ${questionIndex + 1} 題`;
+  resultBadge.style.background = "#e0f2fe";
+  knowledgeText.innerHTML = "移動滑鼠瞄準答案，點擊左鍵射擊；也可以用 ← → 調整方向，空白鍵或 ↑ 發射。";
+
+  createTargets(item.options, item.answer);
+  startTimer();
+}
+
+function createTargets(options, answer) {
+  const shuffled = [...options].sort(() => Math.random() - 0.5);
+
+  shuffled.forEach(text => {
+    const div = document.createElement("div");
+    div.className = "target";
+    div.textContent = text;
+    div.dataset.correct = text === answer ? "true" : "false";
+    targetsRow.appendChild(div);
+    targets.push(div);
+  });
+}
+
+function startTimer() {
+  stopTimer();
+  timerId = setInterval(() => {
+    if (locked) return;
+    timeLeft--;
+    updateStatus();
+
+    if (timeLeft <= 0) {
+      handleTimeout();
     }
+  }, 1000);
+}
 
-    const questionBank = {
-      "睡眠": [
-        q("想提升睡眠品質，睡前較適合做什麼？", ["放下手機並放鬆", "狂滑短影音", "喝很多咖啡", "睡前劇烈運動"], "放下手機並放鬆", "睡前減少刺激，有助於身體進入休息狀態。", "建立睡前放鬆習慣，可以幫助穩定睡眠節奏。"),
-        q("睡前使用手機可能造成什麼影響？", ["延後入睡時間", "一定會睡更深", "完全不影響作息", "讓眼睛自動休息"], "延後入睡時間", "睡前滑手機會增加光線與內容刺激，可能讓大腦比較難進入睡眠。", "睡前可以設定手機休息時間，降低對睡眠的干擾。"),
-        q("長期睡眠不足最可能影響什麼？", ["注意力與情緒", "記憶力必定變強", "身體永遠不累", "完全不影響學習"], "注意力與情緒", "睡眠不足可能影響專注力、情緒穩定與學習表現。", "睡眠是學習與身心健康的重要基礎。"),
-        q("建立規律作息，哪個做法較合適？", ["固定上床與起床時間", "每天熬夜到不同時間", "週末完全日夜顛倒", "想睡才睡、想醒才醒"], "固定上床與起床時間", "固定作息能幫助生理時鐘穩定。", "規律比偶爾補眠更能支持長期睡眠品質。"),
-        q("睡前如果覺得緊張，可以先嘗試什麼？", ["深呼吸或聽輕音樂", "喝大量咖啡", "看刺激影片", "立刻打電動到半夜"], "深呼吸或聽輕音樂", "放鬆活動可以降低身心緊繃。", "睡前放鬆方法有助於進入睡眠。"),
-        q("晚上攝取太多咖啡因可能會怎樣？", ["比較難入睡", "一定馬上熟睡", "完全沒有影響", "能取代睡眠"], "比較難入睡", "咖啡因可能讓人保持清醒，太晚攝取會影響入睡。", "想睡得好，要留意咖啡、茶與能量飲料的攝取時間。"),
-        q("下列哪個環境比較有助睡眠？", ["安靜、昏暗、舒適", "燈光很亮又吵", "房間很熱又雜亂", "邊睡邊開刺激影片"], "安靜、昏暗、舒適", "刺激較少的環境有助於放鬆入睡。", "睡眠環境也是睡眠品質的一部分。"),
-        q("如果晚上睡不夠，白天最可能出現什麼情況？", ["上課容易想睡", "體力永遠滿格", "不需要休息", "學習一定更快"], "上課容易想睡", "睡眠不足會讓白天精神較差。", "對學生來說，睡眠與學習表現密切相關。")
-      ],
-      "飲食": [
-        q("下列哪個飲食習慣比較健康？", ["每天吃多樣化食物", "只吃炸物", "用手搖飲代替水", "完全不吃蔬菜"], "每天吃多樣化食物", "多樣化飲食能幫助身體獲得不同營養素。", "均衡飲食不是只吃某一類食物，而是各類食物適量搭配。"),
-        q("想減少糖分攝取，下列哪個選擇比較好？", ["白開水", "全糖珍珠奶茶", "含糖汽水", "每天喝能量飲料"], "白開水", "白開水不含糖，是日常補充水分的好選擇。", "含糖飲料容易讓糖分攝取過量，建議以白開水為主。"),
-        q("選擇點心時，哪一個比較符合健康飲食？", ["水果或無糖優格", "每天炸雞配可樂", "糖果當正餐", "只吃洋芋片"], "水果或無糖優格", "水果與無糖優格比高糖零食更適合作為點心。", "點心也可以選擇較少糖、少油、營養較高的食物。"),
-        q("下列哪一種吃法比較有助於均衡？", ["蔬菜、蛋白質、全穀雜糧都搭配", "只吃白飯", "只吃肉不吃菜", "每天只吃甜點"], "蔬菜、蛋白質、全穀雜糧都搭配", "不同食物提供不同營養，搭配更完整。", "一餐中可包含主食、蛋白質、蔬菜與水分。"),
-        q("外食時想吃得健康，下列哪個做法較適合？", ["少油少鹽並加蔬菜", "每餐都加大炸物", "只喝甜湯", "完全不看食物內容"], "少油少鹽並加蔬菜", "外食常油、鹽、糖較多，選擇時可增加蔬菜。", "外食族可從減少調味、增加蔬菜開始。"),
-        q("下列哪個做法可以幫助避免吃太多？", ["慢慢吃並注意飽足感", "邊滑手機邊狂吃", "看到吃到飽就硬撐", "每餐都吃到很不舒服"], "慢慢吃並注意飽足感", "慢慢吃較容易感覺飽足，減少吃過量。", "健康飲食也包含覺察自己的飢餓與飽足感。"),
-        q("早餐比較適合選擇哪一種？", ["蛋、全麥吐司與無糖飲品", "只有含糖飲料", "一大包糖果", "完全不吃也不喝水"], "蛋、全麥吐司與無糖飲品", "含有蛋白質、主食與水分的早餐較能支持上午活動。", "早餐內容應盡量均衡。"),
-        q("下列哪個是健康飲食的核心觀念？", ["適量、均衡、多樣化", "越甜越健康", "只吃單一食物", "完全不喝水"], "適量、均衡、多樣化", "健康飲食強調適量搭配，而不是極端限制。", "飲食教育重點是建立可持續的生活習慣。")
-      ],
-      "健康體位": [
-        q("BMI主要是用來初步評估什麼？", ["體位狀態", "視力好壞", "牙齒數量", "血型種類"], "體位狀態", "BMI由身高與體重計算，可作為初步體位參考。", "BMI是簡易指標，仍需搭配生活習慣判斷。"),
-        q("成人 BMI 18.5 到未滿 24 通常代表什麼？", ["健康體重範圍", "肥胖", "體重過重", "一定生病"], "健康體重範圍", "台灣成人標準中，BMI 18.5 到未滿 24 屬健康體重範圍。", "BMI標準需看適用對象。"),
-        q("想維持健康體位，下列哪個做法較適合？", ["規律活動與均衡飲食", "完全不吃晚餐", "只喝含糖飲料", "整天久坐不動"], "規律活動與均衡飲食", "健康體位需要活動、飲食與睡眠支持。", "健康體位不是極端減重。"),
-        q("下列哪個行為較容易增加體重管理困難？", ["久坐且常喝含糖飲料", "規律運動", "多喝白開水", "均衡吃三餐"], "久坐且常喝含糖飲料", "久坐降低活動量，含糖飲料也增加多餘熱量。", "體位管理可從減少久坐與含糖飲料開始。"),
-        q("除了 BMI，下列哪個指標也常用來觀察腹部脂肪？", ["腰圍", "鞋碼", "頭髮長度", "血型"], "腰圍", "腰圍可反映腹部脂肪堆積情形。", "健康體位評估不只看體重。"),
-        q("體重管理比較健康的目標是什麼？", ["逐步建立健康習慣", "越快瘦越好", "完全不吃任何東西", "只靠偏方"], "逐步建立健康習慣", "快速或極端方式不容易維持，也可能影響健康。", "體位教育應避免身材羞辱。"),
-        q("下列哪個活動較能增加日常活動量？", ["走樓梯或快走", "整天躺著", "一直坐著不動", "只滑手機"], "走樓梯或快走", "日常活動量增加有助身體健康。", "運動不一定只能去健身房。"),
-        q("健康體位課程最適合強調哪個觀念？", ["健康行為比外表更重要", "只追求很瘦", "用嘲笑督促別人", "不吃東西最快"], "健康行為比外表更重要", "健康體位教育應重視功能、習慣與健康風險。", "避免身材羞辱，健康教育更安全有效。")
-      ],
-      "日常保健預防": [
-        q("日常保健最重要的觀念是什麼？", ["平時就建立健康習慣", "生病才開始注意", "完全不運動", "只靠保健食品"], "平時就建立健康習慣", "預防勝於治療，平時習慣能降低健康風險。", "日常保健是把健康行為放進生活中。"),
-        q("預防傳染病，最基本的好習慣之一是什麼？", ["正確洗手", "共用餐具", "生病也不休息", "打噴嚏不遮掩"], "正確洗手", "正確洗手可減少病原體透過手部接觸進入口鼻眼。", "手部衛生是重要的日常保健行為。"),
-        q("咳嗽或打噴嚏時，較適合怎麼做？", ["用衛生紙或手肘遮住口鼻", "對著別人咳嗽", "不用清潔雙手", "故意靠近人群"], "用衛生紙或手肘遮住口鼻", "遮住口鼻可減少飛沫擴散。", "咳嗽禮節可以保護自己也保護他人。"),
-        q("下列哪一項屬於日常保健行為？", ["定期健康檢查", "熬夜到天亮", "不喝水", "每天久坐十小時"], "定期健康檢查", "健康檢查可協助早期發現健康問題。", "健康檢查不能取代日常健康習慣。"),
-        q("想保護眼睛，下列哪個習慣較適合？", ["用眼一段時間就休息", "關燈滑手機很久", "眼睛累也不休息", "螢幕貼很近"], "用眼一段時間就休息", "長時間近距離用眼容易疲勞。", "視力保健是學生常見日常保健議題。"),
-        q("平時喝水的好處是什麼？", ["幫助身體維持正常運作", "可以完全不用吃飯", "能取代睡眠", "越甜越補水"], "幫助身體維持正常運作", "水分參與身體許多生理功能。", "白開水是最基本的日常保健選擇。"),
-        q("壓力大時，下列哪個做法較健康？", ["找人聊聊或做放鬆活動", "完全不睡覺", "一直喝含糖飲料", "把壓力都悶著"], "找人聊聊或做放鬆活動", "適當表達與放鬆能幫助調節壓力。", "日常保健也包含心理健康與壓力調適。"),
-        q("保護口腔健康，下列哪個組合較適合？", ["刷牙、牙線、定期檢查", "牙痛才刷牙", "用糖果清新口氣", "完全不看牙醫"], "刷牙、牙線、定期檢查", "口腔健康需要日常清潔與專業檢查一起配合。", "口腔保健也可以融入日常保健預防。")
-      ]
-    };
+function stopTimer() {
+  if (timerId) {
+    clearInterval(timerId);
+    timerId = null;
+  }
+}
 
-    const topicGrid = document.getElementById("topicGrid");
-    const gameArea = document.getElementById("gameArea");
-    const shooter = document.getElementById("shooter");
-    const optionArea = document.getElementById("optionArea");
-    const resultBadge = document.getElementById("resultBadge");
-    const knowledgeText = document.getElementById("knowledgeText");
-    const countdownText = document.getElementById("countdownText");
+function handleTimeout() {
+  if (locked) return;
+  locked = true;
+  stopTimer();
 
-    let currentTopic = "";
-    let currentQuestions = [];
-    let questionIndex = 0;
-    let score = 0;
-    let lives = 3;
-    let shooterX = 260;
-    let moveLeft = false;
-    let moveRight = false;
-    let bullets = [];
-    let gameLoopId = null;
-    let locked = false;
-    let wrongRecords = [];
-    let teacherMode = false;
-    let canShoot = true;
+  const current = currentQuestions[questionIndex];
+  lives--;
+  wrongRecords.push({
+    question: current.question,
+    chosen: "未作答（時間到）",
+    answer: current.answer,
+    reason: current.reason,
+    point: current.point
+  });
 
-    const topic = "綜合健康挑戰";
-    const btn = document.createElement("button");
-    btn.className = "topic-btn";
-    btn.textContent = "開始綜合挑戰";
-    btn.onclick = () => startGame(topic);
-    topicGrid.appendChild(btn);
+  showResult(false, "未作答（時間到）", current, true);
+}
 
-    function showScreen(id) {
-      document.querySelectorAll(".screen").forEach(screen => screen.classList.remove("active"));
-      document.getElementById(id).classList.add("active");
-    }
+gameArea.addEventListener("mousemove", e => {
+  if (!document.getElementById("gameScreen").classList.contains("active")) return;
 
-    function toggleTeacherMode() {
-      teacherMode = !teacherMode;
-      const btn = document.getElementById("teacherModeBtn");
-      const teacherBox = document.getElementById("teacherBox");
-      btn.textContent = teacherMode ? "老師模式：開" : "老師模式：關";
-      btn.style.background = teacherMode ? "#7c3aed" : "#8b5cf6";
-      if (teacherBox) teacherBox.style.display = teacherMode ? "block" : "none";
-    }
+  const rect = gameArea.getBoundingClientRect();
+  const mouseX = e.clientX - rect.left;
+  const mouseY = e.clientY - rect.top;
 
-    function updateTeacherText(questionData) {
-      const teacherBox = document.getElementById("teacherBox");
-      const teacherText = document.getElementById("teacherText");
-      if (!teacherBox || !teacherText) return;
-      teacherBox.style.display = teacherMode ? "block" : "none";
-      teacherText.innerHTML = `
-        <strong>本題教學重點：</strong>${questionData.point}<br><br>
-        <strong>可提問：</strong>你在生活中有遇過類似情境嗎？你會怎麼選擇？<br><br>
-        <strong>延伸討論：</strong>請學生說明「為什麼其他選項不適合」，訓練判斷與表達能力。
-      `;
-    }
+  const originX = rect.width / 2;
+  const originY = rect.height - 150;
 
-    function startGame(topic) {
-      currentTopic = topic;
-      currentQuestions = getRandomQuestions(10);
-      questionIndex = 0;
-      score = 0;
-      lives = 3;
-      wrongRecords = [];
-      clearBullets();
-      document.getElementById("topicName").textContent = topic;
-      document.getElementById("totalQuestion").textContent = currentQuestions.length;
-      updateStatus();
-      showScreen("gameScreen");
-      setTimeout(() => {
-        shooterX = Math.max(0, (gameArea.clientWidth - shooter.offsetWidth) / 2);
-        shooter.style.left = shooterX + "px";
-        loadQuestion();
-      }, 60);
-    }
+  const dx = mouseX - originX;
+  const dy = mouseY - originY;
 
-    function getRandomQuestions(count) {
-      const allQuestions = Object.values(questionBank).flat().map(item => ({ ...item }));
-      return allQuestions.sort(() => Math.random() - 0.5).slice(0, count);
-    }
+  const rawAngle = Math.atan2(dy, dx) * 180 / Math.PI + 90;
+  setAimAngle(rawAngle);
+});
 
-    function updateStatus() {
-      document.getElementById("questionNumber").textContent = Math.min(questionIndex + 1, currentQuestions.length);
-      document.getElementById("score").textContent = score;
-      document.getElementById("lives").textContent = "❤️".repeat(lives) + "🤍".repeat(3 - lives);
-    }
+gameArea.addEventListener("click", () => {
+  if (locked) return;
+  shootBullet();
+});
 
-    function loadQuestion() {
-      clearBullets();
-      locked = false;
-      canShoot = true;
-      const questionData = currentQuestions[questionIndex];
-      updateStatus();
-      document.getElementById("questionCard").textContent = questionData.question;
-      resultBadge.textContent = `第 ${questionIndex + 1} 題`;
-      resultBadge.style.background = "#e0f2fe";
-      knowledgeText.innerHTML = "閱讀題目與四個固定選項，移動發射器並按空白鍵射擊你認為正確的答案。";
-      countdownText.style.display = "none";
-      countdownText.textContent = "";
-      updateTeacherText(questionData);
-      renderOptions(questionData);
-      startLoop();
-    }
+document.addEventListener("keydown", e => {
+  if (!document.getElementById("gameScreen").classList.contains("active")) return;
 
-    function renderOptions(questionData) {
-      optionArea.innerHTML = "";
-      const shuffled = [...questionData.options].sort(() => Math.random() - 0.5);
-      shuffled.forEach(text => {
-        const div = document.createElement("div");
-        div.className = "option-target";
-        div.textContent = text;
-        div.dataset.correct = text === questionData.answer ? "true" : "false";
-        optionArea.appendChild(div);
-      });
-    }
+  if (e.key === "ArrowLeft") {
+    e.preventDefault();
+    setAimAngle(angle - 6);
+  }
 
-    function startLoop() {
-      cancelAnimationFrame(gameLoopId);
-      gameLoop();
-    }
+  if (e.key === "ArrowRight") {
+    e.preventDefault();
+    setAimAngle(angle + 6);
+  }
 
-    function gameLoop() {
-      if (!document.getElementById("gameScreen").classList.contains("active")) return;
-      moveShooter();
-      moveBullets();
-      checkBulletCollision();
-      gameLoopId = requestAnimationFrame(gameLoop);
-    }
+  if (e.key === " " || e.key === "ArrowUp") {
+    e.preventDefault();
+    if (!locked) shootBullet();
+  }
+});
 
-    function moveShooter() {
-      const areaWidth = gameArea.clientWidth;
-      const shooterWidth = shooter.offsetWidth;
-      if (moveLeft) shooterX -= 7;
-      if (moveRight) shooterX += 7;
-      shooterX = Math.max(0, Math.min(areaWidth - shooterWidth, shooterX));
-      shooter.style.left = shooterX + "px";
-    }
+function setAimAngle(newAngle) {
+  angle = Math.max(-80, Math.min(80, newAngle));
+  aimLine.style.transform = `rotate(${angle}deg)`;
+}
 
-    function shoot() {
-      if (locked || !canShoot || !document.getElementById("gameScreen").classList.contains("active")) return;
-      canShoot = false;
-      setTimeout(() => { canShoot = true; }, 350);
+function shootBullet() {
+  const rect = gameArea.getBoundingClientRect();
+  const originX = rect.width / 2;
+  const originY = rect.height - 150;
 
-      const bullet = document.createElement("div");
-      bullet.className = "bullet";
-      bullet.style.left = (shooterX + shooter.offsetWidth / 2 - 5) + "px";
-      bullet.style.top = (gameArea.clientHeight - 142) + "px";
-      gameArea.appendChild(bullet);
-      bullets.push(bullet);
-    }
+  const bullet = document.createElement("div");
+  bullet.className = "bullet";
+  bullet.style.left = originX + "px";
+  bullet.style.top = originY + "px";
 
-    function moveBullets() {
-      bullets.forEach(bullet => {
-        const top = parseFloat(bullet.style.top);
-        bullet.style.top = (top - 9) + "px";
-      });
-      bullets = bullets.filter(bullet => {
-        if (parseFloat(bullet.style.top) < -30) {
-          bullet.remove();
-          return false;
-        }
-        return true;
-      });
-    }
+  const rad = (angle - 90) * Math.PI / 180;
+  bullet.vx = Math.cos(rad) * 10;
+  bullet.vy = Math.sin(rad) * 10;
 
-    function checkBulletCollision() {
-      if (locked) return;
-      const targets = Array.from(document.querySelectorAll(".option-target"));
-      for (const bullet of bullets) {
-        const bulletRect = bullet.getBoundingClientRect();
-        for (const target of targets) {
-          const targetRect = target.getBoundingClientRect();
-          const isHit = !(bulletRect.right < targetRect.left || bulletRect.left > targetRect.right || bulletRect.bottom < targetRect.top || bulletRect.top > targetRect.bottom);
-          if (isHit) {
-            locked = true;
-            const questionData = currentQuestions[questionIndex];
-            const correct = target.dataset.correct === "true";
-            target.classList.add(correct ? "hit-correct" : "hit-wrong");
-            if (correct) {
-              score += 10;
-            } else {
-              lives--;
-              wrongRecords.push({ question: questionData.question, chosen: target.textContent, answer: questionData.answer, reason: questionData.reason, point: questionData.point });
-            }
-            bullet.remove();
-            showResult(correct, target.textContent, questionData);
-            return;
-          }
-        }
-      }
-    }
+  gameArea.appendChild(bullet);
+  bullets.push(bullet);
+}
 
-    function showResult(correct, chosenText, questionData) {
-      cancelAnimationFrame(gameLoopId);
-      updateStatus();
-      setTimeout(() => {
-        clearBullets();
-        optionArea.innerHTML = "";
-      }, 500);
+function startLoop() {
+  cancelAnimationFrame(loopId);
+  loop();
+}
 
-      countdownText.style.display = "none";
-      countdownText.textContent = "";
-      resultBadge.innerHTML = correct ? `<span class="correct">答對了！</span>` : `<span class="wrong">答錯了</span>`;
-      resultBadge.style.background = correct ? "#dcfce7" : "#fee2e2";
-      knowledgeText.innerHTML = `
-        <strong>你射中的答案：</strong>${chosenText}<br>
-        <strong>正確答案：</strong>${questionData.answer}<br><br>
-        <strong>原因說明：</strong>${questionData.reason}<br><br>
-        <strong>知識點補充：</strong>${questionData.point}<br><br>
-        <span style="color:#0369a1; font-weight:900;">請先閱讀知識點，下一題開始前會有 3 秒倒數。</span>
-      `;
-      updateTeacherText(questionData);
+function loop() {
+  moveBullets();
+  checkBulletHit();
+  loopId = requestAnimationFrame(loop);
+}
 
-      setTimeout(() => {
-        if (lives <= 0 || questionIndex + 1 >= currentQuestions.length) {
-          endGame(lives <= 0);
-          return;
-        }
-        startCountdown();
-      }, 5500);
-    }
+function moveBullets() {
+  const areaWidth = gameArea.clientWidth;
+  const areaHeight = gameArea.clientHeight;
 
-    function startCountdown() {
-      let count = 3;
-      countdownText.style.display = "block";
-      countdownText.textContent = `下一題準備：${count}`;
+  bullets.forEach(b => {
+    const x = parseFloat(b.style.left);
+    const y = parseFloat(b.style.top);
+    b.style.left = (x + b.vx) + "px";
+    b.style.top = (y + b.vy) + "px";
+  });
 
-      const timer = setInterval(() => {
-        count--;
-        if (count > 0) {
-          countdownText.textContent = `下一題準備：${count}`;
+  bullets = bullets.filter(b => {
+    const x = parseFloat(b.style.left);
+    const y = parseFloat(b.style.top);
+    const inside = x > -20 && x < areaWidth + 20 && y > -20 && y < areaHeight + 20;
+    if (!inside) b.remove();
+    return inside;
+  });
+}
+
+function checkBulletHit() {
+  if (locked) return;
+
+  for (const bullet of bullets) {
+    const bRect = bullet.getBoundingClientRect();
+
+    for (const target of targets) {
+      const tRect = target.getBoundingClientRect();
+
+      const hit = !(bRect.right < tRect.left ||
+                    bRect.left > tRect.right ||
+                    bRect.bottom < tRect.top ||
+                    bRect.top > tRect.bottom);
+
+      if (hit) {
+        locked = true;
+        stopTimer();
+        const current = currentQuestions[questionIndex];
+        const correct = target.dataset.correct === "true";
+
+        if (correct) {
+          score += 10;
         } else {
-          clearInterval(timer);
-          countdownText.textContent = "開始！";
-          setTimeout(() => {
-            countdownText.style.display = "none";
-            questionIndex++;
-            loadQuestion();
-          }, 500);
+          lives--;
+          wrongRecords.push({
+            question: current.question,
+            chosen: target.textContent,
+            answer: current.answer,
+            reason: current.reason,
+            point: current.point
+          });
         }
-      }, 1000);
-    }
 
-    function endGame(lifeOver) {
-      cancelAnimationFrame(gameLoopId);
-      clearBullets();
-      optionArea.innerHTML = "";
-      showScreen("endScreen");
-      document.getElementById("finalScore").textContent = `你的分數：${score} / ${currentQuestions.length * 10}`;
-      document.getElementById("finalComment").textContent = lifeOver
-        ? "三顆愛心都用完了，先看看錯題複習，再挑戰一次！"
-        : score >= 60
-          ? "太棒了！你已經掌握不少健康知識。"
-          : "不錯，繼續複習知識點會更有印象。";
-      renderReview();
-    }
-
-    function renderReview() {
-      const list = document.getElementById("reviewList");
-      if (wrongRecords.length === 0) {
-        list.innerHTML = "<p>恭喜你沒有錯題！可以挑戰其他主題。</p>";
+        bullet.remove();
+        showResult(correct, target.textContent, current, false);
         return;
       }
-      list.innerHTML = wrongRecords.map((record, index) => `
-        <div class="review-item">
-          <strong>錯題 ${index + 1}：</strong>${record.question}<br>
-          <strong>你的答案：</strong>${record.chosen}<br>
-          <strong>正確答案：</strong>${record.answer}<br>
-          <strong>原因：</strong>${record.reason}<br>
-          <strong>知識點：</strong>${record.point}
-        </div>
-      `).join("");
     }
+  }
+}
 
-    function clearBullets() {
-      bullets.forEach(bullet => bullet.remove());
-      bullets = [];
+function showResult(correct, chosenText, q, timeout = false) {
+  updateStatus();
+  clearTargets();
+  clearBullets();
+
+  resultBadge.innerHTML = correct
+    ? `<span class="correct">射中了正確答案！</span>`
+    : timeout
+      ? `<span class="wrong">時間到！</span>`
+      : `<span class="wrong">射錯了！</span>`;
+
+  resultBadge.style.background = correct ? "#dcfce7" : "#fee2e2";
+
+  knowledgeText.innerHTML = `
+    <strong>你的答案：</strong>${chosenText}<br>
+    <strong>正確答案：</strong>${q.answer}<br><br>
+    <strong>原因說明：</strong>${q.reason}<br><br>
+    <strong>知識點補充：</strong>${q.point}<br><br>
+    <span style="color:#0369a1; font-weight:900;">3 秒後進入下一題。</span>
+  `;
+
+  setTimeout(() => {
+    if (!document.getElementById("gameScreen").classList.contains("active")) return;
+
+    if (lives <= 0 || questionIndex + 1 >= currentQuestions.length) {
+      endGame(lives <= 0);
+    } else {
+      questionIndex++;
+      loadQuestion();
     }
+  }, 3000);
+}
 
-    function restartSameTopic() {
-      startGame(currentTopic);
-    }
+function endGame(lifeOver) {
+  cancelAnimationFrame(loopId);
+  stopTimer();
+  clearTargets();
+  clearBullets();
+  showScreen("endScreen");
 
-    function backToTopics() {
-      cancelAnimationFrame(gameLoopId);
-      clearBullets();
-      optionArea.innerHTML = "";
-      showScreen("topicScreen");
-    }
+  document.getElementById("finalScore").textContent =
+    `你的分數：${score} / ${currentQuestions.length * 10}`;
 
-    document.addEventListener("keydown", e => {
-      if (e.key === "ArrowLeft") moveLeft = true;
-      if (e.key === "ArrowRight") moveRight = true;
-      if (e.key === "ArrowUp") {
-        e.preventDefault();
-        shoot();
-      }
-    });
+  document.getElementById("finalComment").textContent =
+    lifeOver ? "生命用完了，先看看錯題複習，再挑戰一次！"
+             : "太棒了！你完成了健康飲食挑戰。";
 
-    document.addEventListener("keyup", e => {
-      if (e.key === "ArrowLeft") moveLeft = false;
-      if (e.key === "ArrowRight") moveRight = false;
-    });
+  renderReview();
+}
 
-    function bindHoldButton(buttonId, action) {
-      const btn = document.getElementById(buttonId);
-      if (!btn) return;
-      if (action === "shoot") {
-        btn.addEventListener("click", shoot);
-        return;
-      }
-      const start = () => action === "left" ? moveLeft = true : moveRight = true;
-      const stop = () => action === "left" ? moveLeft = false : moveRight = false;
-      btn.addEventListener("mousedown", start);
-      btn.addEventListener("mouseup", stop);
-      btn.addEventListener("mouseleave", stop);
-      btn.addEventListener("touchstart", e => { e.preventDefault(); start(); });
-      btn.addEventListener("touchend", stop);
-    }
+function renderReview() {
+  const list = document.getElementById("reviewList");
 
-    bindHoldButton("leftBtn", "left");
-    bindHoldButton("rightBtn", "right");
-    bindHoldButton("shootBtn", "shoot");
+  if (wrongRecords.length === 0) {
+    list.innerHTML = "<p>恭喜你沒有錯題！</p>";
+    return;
+  }
 
-    window.addEventListener("resize", () => {
-      const areaWidth = gameArea.clientWidth;
-      shooterX = Math.min(shooterX, areaWidth - shooter.offsetWidth);
-      shooter.style.left = shooterX + "px";
-    });
-  </script>
+  list.innerHTML = wrongRecords.map((r, i) => `
+    <div class="review-item">
+      <strong>錯題 ${i + 1}：</strong>${r.question}<br>
+      <strong>你的答案：</strong>${r.chosen}<br>
+      <strong>正確答案：</strong>${r.answer}<br>
+      <strong>原因：</strong>${r.reason}<br>
+      <strong>知識點：</strong>${r.point}
+    </div>
+  `).join("");
+}
+
+function clearTargets() {
+  targets.forEach(t => t.remove());
+  targets = [];
+  targetsRow.innerHTML = "";
+}
+
+function clearBullets() {
+  bullets.forEach(b => b.remove());
+  bullets = [];
+}
+
+function backHome() {
+  cancelAnimationFrame(loopId);
+  stopTimer();
+  clearTargets();
+  clearBullets();
+  showScreen("homeScreen");
+}
+</script>
 </body>
 </html>
