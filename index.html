@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>健康知識接接樂</title>
+  <title>健康知識射擊遊戲</title>
   <style>
     * { box-sizing: border-box; }
     body {
@@ -128,9 +128,41 @@
       z-index: 30;
       box-shadow: 0 5px 14px rgba(0,0,0,0.13);
     }
+    #optionArea {
+      position: absolute;
+      top: 112px;
+      left: 5%;
+      width: 90%;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+      z-index: 20;
+    }
+    .option-target {
+      min-height: 76px;
+      padding: 12px;
+      background: #fff7ed;
+      border: 3px solid #fb923c;
+      border-radius: 20px;
+      box-shadow: 0 7px 14px rgba(0,0,0,0.16);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 17px;
+      line-height: 1.35;
+    }
+    .option-target.hit-correct {
+      background: #dcfce7;
+      border-color: #22c55e;
+    }
+    .option-target.hit-wrong {
+      background: #fee2e2;
+      border-color: #ef4444;
+    }
     .sun {
       position: absolute;
-      top: 82px;
+      top: 260px;
       right: 38px;
       width: 60px;
       height: 60px;
@@ -165,78 +197,40 @@
       opacity: 0.9;
       z-index: 2;
     }
-    #player {
+    #shooter {
       position: absolute;
-      bottom: 20px;
+      bottom: 56px;
       left: 260px;
-      width: 100px;
-      height: 150px;
-      z-index: 20;
+      width: 80px;
+      height: 90px;
+      z-index: 25;
     }
-    .stick-basket {
+    .shooter-base {
       position: absolute;
-      top: 0;
-      left: 18px;
-      width: 64px;
-      height: 28px;
-      border: 5px solid #111827;
-      border-top: none;
-      border-radius: 0 0 20px 20px;
-      background: rgba(255,255,255,0.35);
-    }
-    .stick-head {
-      position: absolute;
-      top: 34px;
-      left: 36px;
-      width: 28px;
-      height: 28px;
+      bottom: 0;
+      left: 14px;
+      width: 52px;
+      height: 26px;
+      background: #334155;
+      border-radius: 12px;
       border: 4px solid #111827;
-      border-radius: 50%;
-      background: transparent;
     }
-    .stick-body {
+    .shooter-barrel {
       position: absolute;
-      top: 62px;
-      left: 48px;
-      width: 4px;
-      height: 48px;
+      bottom: 24px;
+      left: 34px;
+      width: 12px;
+      height: 58px;
       background: #111827;
+      border-radius: 8px 8px 0 0;
     }
-    .stick-arm {
+    .bullet {
       position: absolute;
-      top: 76px;
-      left: 26px;
-      width: 48px;
-      height: 4px;
-      background: #111827;
-      transform: rotate(-8deg);
-    }
-    .stick-leg-left, .stick-leg-right {
-      position: absolute;
-      top: 106px;
-      left: 48px;
-      width: 4px;
-      height: 44px;
-      background: #111827;
-      transform-origin: top;
-    }
-    .stick-leg-left { transform: rotate(25deg); }
-    .stick-leg-right { transform: rotate(-25deg); }
-    .item {
-      position: absolute;
-      width: 138px;
-      min-height: 62px;
-      padding: 8px;
-      background: #fff7ed;
-      border: 3px solid #fb923c;
-      border-radius: 20px;
-      box-shadow: 0 7px 14px rgba(0,0,0,0.17);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 900;
-      font-size: 15px;
-      z-index: 12;
+      width: 10px;
+      height: 22px;
+      background: #0f172a;
+      border-radius: 999px;
+      z-index: 40;
     }
     .knowledge-panel {
       text-align: left;
@@ -292,8 +286,8 @@
     .wrong { color: #dc2626; font-weight: 900; }
     .mobile-controls { display: none; margin-top: 8px; }
     .mobile-controls button {
-      font-size: 24px;
-      padding: 12px 28px;
+      font-size: 20px;
+      padding: 12px 22px;
       background: #64748b;
     }
     #reviewList {
@@ -314,7 +308,7 @@
     .review-item:last-child { border-bottom: none; }
     @media (max-width: 980px) {
       .main-frame { grid-template-columns: 1fr; }
-      #gameArea { height: 520px; }
+      #gameArea { height: 540px; }
       .mobile-controls { display: block; }
     }
     @media (max-width: 640px) {
@@ -323,17 +317,18 @@
       h1 { font-size: 32px; }
       .status-row { grid-template-columns: repeat(2, 1fr); font-size: 15px; }
       #questionCard { font-size: 17px; width: 92%; }
-      #gameArea { height: 470px; }
-      .item { width: 112px; font-size: 13px; }
+      #gameArea { height: 520px; }
+      #optionArea { grid-template-columns: 1fr; gap: 10px; }
+      .option-target { min-height: 52px; font-size: 14px; }
     }
   </style>
 </head>
 <body>
   <section id="homeScreen" class="screen active">
     <div class="card">
-      <h1>健康知識接接樂</h1>
-      <p>選擇主題，移動人物接住正確答案。<br>
-      請使用電腦鍵盤的「← 左鍵」與「→ 右鍵」控制人物移動。<br>
+      <h1>健康知識射擊遊戲</h1>
+      <p>選擇主題，閱讀題目與四個固定選項。<br>
+      請使用電腦鍵盤的「← 左鍵」與「→ 右鍵」控制發射器移動，按「↑ 上鍵」發射子彈，射中你認為正確的答案。<br>
       答題後會暫停並顯示知識點，幫助你把健康觀念記起來。<br><br>
       <strong>老師模式說明：</strong>開啟後，右側會顯示本題教學重點、引導提問與延伸討論，適合課堂教學或帶領學生思考使用。</p>
       <button onclick="showScreen('topicScreen')">開始遊戲</button>
@@ -364,23 +359,21 @@
 
         <div id="gameArea">
           <div id="questionCard">題目載入中...</div>
+          <div id="optionArea"></div>
           <div class="sun"></div>
-          <div class="cloud" style="left: 7%; top: 122px;"></div>
-          <div class="cloud" style="left: 59%; top: 142px;"></div>
+          <div class="cloud" style="left: 7%; top: 310px;"></div>
+          <div class="cloud" style="left: 59%; top: 345px;"></div>
           <div class="ground"></div>
-          <div id="player">
-            <div class="stick-basket"></div>
-            <div class="stick-head"></div>
-            <div class="stick-body"></div>
-            <div class="stick-arm"></div>
-            <div class="stick-leg-left"></div>
-            <div class="stick-leg-right"></div>
+          <div id="shooter">
+            <div class="shooter-barrel"></div>
+            <div class="shooter-base"></div>
           </div>
         </div>
 
         <div>
           <div class="mobile-controls">
             <button id="leftBtn">←</button>
+            <button id="shootBtn">發射</button>
             <button id="rightBtn">→</button>
           </div>
           <button onclick="backToTopics()">返回主題選單</button>
@@ -390,9 +383,9 @@
       <aside class="knowledge-panel">
         <div class="knowledge-title">健康知識補給站</div>
         <div id="resultBadge">等待作答中</div>
-        <div id="knowledgeText">使用鍵盤左右鍵移動人物，接住你認為正確的答案。手機可以使用下方左右按鈕。</div>
+        <div id="knowledgeText">使用左右鍵移動發射器，按空白鍵射擊正確答案。</div>
         <div id="countdownText"></div>
-        <div class="tip-box">小提醒：不要只記答案，也要看「為什麼」，這樣報告或教學時比較能說明清楚。</div>
+        <div class="tip-box">小提醒：先看完題目與四個選項，再瞄準發射，這樣比較能真正理解健康知識。</div>
         <div id="teacherBox" class="tip-box">
           <strong>老師模式</strong><br>
           <span id="teacherText">開始遊戲後，這裡會顯示本題的教學重點與引導提問。</span>
@@ -463,7 +456,8 @@
 
     const topicGrid = document.getElementById("topicGrid");
     const gameArea = document.getElementById("gameArea");
-    const player = document.getElementById("player");
+    const shooter = document.getElementById("shooter");
+    const optionArea = document.getElementById("optionArea");
     const resultBadge = document.getElementById("resultBadge");
     const knowledgeText = document.getElementById("knowledgeText");
     const countdownText = document.getElementById("countdownText");
@@ -473,16 +467,15 @@
     let questionIndex = 0;
     let score = 0;
     let lives = 3;
-    let playerX = 260;
+    let shooterX = 260;
     let moveLeft = false;
     let moveRight = false;
-    let items = [];
+    let bullets = [];
     let gameLoopId = null;
-    let itemSpeed = 0;
     let locked = false;
     let wrongRecords = [];
     let teacherMode = false;
-    let dropTimer = null;
+    let canShoot = true;
 
     Object.keys(questionBank).forEach(topic => {
       const btn = document.createElement("button");
@@ -525,14 +518,14 @@
       score = 0;
       lives = 3;
       wrongRecords = [];
-      clearTimeout(dropTimer);
+      clearBullets();
       document.getElementById("topicName").textContent = topic;
       document.getElementById("totalQuestion").textContent = currentQuestions.length;
       updateStatus();
       showScreen("gameScreen");
       setTimeout(() => {
-        playerX = Math.max(0, (gameArea.clientWidth - player.offsetWidth) / 2);
-        player.style.left = playerX + "px";
+        shooterX = Math.max(0, (gameArea.clientWidth - shooter.offsetWidth) / 2);
+        shooter.style.left = shooterX + "px";
         loadQuestion();
       }, 60);
     }
@@ -544,41 +537,31 @@
     }
 
     function loadQuestion() {
-      clearItems();
-      clearTimeout(dropTimer);
+      clearBullets();
       locked = false;
-      itemSpeed = 0;
+      canShoot = true;
       const questionData = currentQuestions[questionIndex];
       updateStatus();
       document.getElementById("questionCard").textContent = questionData.question;
       resultBadge.textContent = `第 ${questionIndex + 1} 題`;
       resultBadge.style.background = "#e0f2fe";
-      knowledgeText.innerHTML = "觀察左側題目，接住你認為正確的答案。<br><br>選項會先停 1 秒，再慢慢掉落。";
+      knowledgeText.innerHTML = "閱讀題目與四個固定選項，移動發射器並按空白鍵射擊你認為正確的答案。";
       countdownText.style.display = "none";
       countdownText.textContent = "";
       updateTeacherText(questionData);
-      createItems(questionData.options, questionData.answer);
+      renderOptions(questionData);
       startLoop();
-      dropTimer = setTimeout(() => {
-        itemSpeed = 0.7;
-      }, 1000);
     }
 
-    function createItems(options, answer) {
-      const shuffled = [...options].sort(() => Math.random() - 0.5);
-      const areaWidth = gameArea.clientWidth;
-      const safeWidth = Math.max(areaWidth - 150, 100);
-      const positions = [0.04, 0.30, 0.56, 0.78].map(p => Math.min(p * areaWidth, safeWidth));
-
-      shuffled.forEach((text, i) => {
+    function renderOptions(questionData) {
+      optionArea.innerHTML = "";
+      const shuffled = [...questionData.options].sort(() => Math.random() - 0.5);
+      shuffled.forEach(text => {
         const div = document.createElement("div");
-        div.className = "item";
+        div.className = "option-target";
         div.textContent = text;
-        div.dataset.correct = text === answer ? "true" : "false";
-        div.style.left = positions[i] + "px";
-        div.style.top = "96px";
-        gameArea.appendChild(div);
-        items.push(div);
+        div.dataset.correct = text === questionData.answer ? "true" : "false";
+        optionArea.appendChild(div);
       });
     }
 
@@ -589,79 +572,89 @@
 
     function gameLoop() {
       if (!document.getElementById("gameScreen").classList.contains("active")) return;
-      movePlayer();
-      moveItems();
-      checkCollision();
+      moveShooter();
+      moveBullets();
+      checkBulletCollision();
       gameLoopId = requestAnimationFrame(gameLoop);
     }
 
-    function movePlayer() {
+    function moveShooter() {
       const areaWidth = gameArea.clientWidth;
-      const playerWidth = player.offsetWidth;
-      if (moveLeft) playerX -= 7;
-      if (moveRight) playerX += 7;
-      playerX = Math.max(0, Math.min(areaWidth - playerWidth, playerX));
-      player.style.left = playerX + "px";
+      const shooterWidth = shooter.offsetWidth;
+      if (moveLeft) shooterX -= 7;
+      if (moveRight) shooterX += 7;
+      shooterX = Math.max(0, Math.min(areaWidth - shooterWidth, shooterX));
+      shooter.style.left = shooterX + "px";
     }
 
-    function moveItems() {
-      items.forEach(item => {
-        const top = parseFloat(item.style.top);
-        item.style.top = (top + itemSpeed) + "px";
+    function shoot() {
+      if (locked || !canShoot || !document.getElementById("gameScreen").classList.contains("active")) return;
+      canShoot = false;
+      setTimeout(() => { canShoot = true; }, 350);
+
+      const bullet = document.createElement("div");
+      bullet.className = "bullet";
+      bullet.style.left = (shooterX + shooter.offsetWidth / 2 - 5) + "px";
+      bullet.style.top = (gameArea.clientHeight - 142) + "px";
+      gameArea.appendChild(bullet);
+      bullets.push(bullet);
+    }
+
+    function moveBullets() {
+      bullets.forEach(bullet => {
+        const top = parseFloat(bullet.style.top);
+        bullet.style.top = (top - 9) + "px";
       });
-
-      const allMissed = items.length > 0 && items.every(item => parseFloat(item.style.top) > gameArea.clientHeight + 40);
-      if (allMissed && !locked) {
-        locked = true;
-        const questionData = currentQuestions[questionIndex];
-        lives--;
-        wrongRecords.push({ question: questionData.question, chosen: "沒有接到答案", answer: questionData.answer, reason: questionData.reason, point: questionData.point });
-        showResult(false, "沒有接到答案", questionData);
-      }
+      bullets = bullets.filter(bullet => {
+        if (parseFloat(bullet.style.top) < -30) {
+          bullet.remove();
+          return false;
+        }
+        return true;
+      });
     }
 
-    function checkCollision() {
+    function checkBulletCollision() {
       if (locked) return;
-      const playerRect = player.getBoundingClientRect();
-      const basketRect = {
-        left: playerRect.left + 18,
-        right: playerRect.left + 82,
-        top: playerRect.top,
-        bottom: playerRect.top + 35
-      };
-
-      for (const item of items) {
-        const itemRect = item.getBoundingClientRect();
-        const isHit = !(itemRect.right < basketRect.left || itemRect.left > basketRect.right || itemRect.bottom < basketRect.top || itemRect.top > basketRect.bottom);
-
-        if (isHit) {
-          locked = true;
-          const questionData = currentQuestions[questionIndex];
-          const correct = item.dataset.correct === "true";
-          if (correct) {
-            score += 10;
-          } else {
-            lives--;
-            wrongRecords.push({ question: questionData.question, chosen: item.textContent, answer: questionData.answer, reason: questionData.reason, point: questionData.point });
+      const targets = Array.from(document.querySelectorAll(".option-target"));
+      for (const bullet of bullets) {
+        const bulletRect = bullet.getBoundingClientRect();
+        for (const target of targets) {
+          const targetRect = target.getBoundingClientRect();
+          const isHit = !(bulletRect.right < targetRect.left || bulletRect.left > targetRect.right || bulletRect.bottom < targetRect.top || bulletRect.top > targetRect.bottom);
+          if (isHit) {
+            locked = true;
+            const questionData = currentQuestions[questionIndex];
+            const correct = target.dataset.correct === "true";
+            target.classList.add(correct ? "hit-correct" : "hit-wrong");
+            if (correct) {
+              score += 10;
+            } else {
+              lives--;
+              wrongRecords.push({ question: questionData.question, chosen: target.textContent, answer: questionData.answer, reason: questionData.reason, point: questionData.point });
+            }
+            bullet.remove();
+            showResult(correct, target.textContent, questionData);
+            return;
           }
-          showResult(correct, item.textContent, questionData);
-          break;
         }
       }
     }
 
     function showResult(correct, chosenText, questionData) {
       cancelAnimationFrame(gameLoopId);
-      clearTimeout(dropTimer);
       updateStatus();
-      clearItems();
+      setTimeout(() => {
+        clearBullets();
+        optionArea.innerHTML = "";
+      }, 500);
 
       countdownText.style.display = "none";
       countdownText.textContent = "";
       resultBadge.innerHTML = correct ? `<span class="correct">答對了！</span>` : `<span class="wrong">答錯了</span>`;
       resultBadge.style.background = correct ? "#dcfce7" : "#fee2e2";
       knowledgeText.innerHTML = `
-        <strong>你接到：</strong>${chosenText}<br>
+        <strong>你射中的答案：</strong>${chosenText}<br>
         <strong>正確答案：</strong>${questionData.answer}<br><br>
         <strong>原因說明：</strong>${questionData.reason}<br><br>
         <strong>知識點補充：</strong>${questionData.point}<br><br>
@@ -701,8 +694,8 @@
 
     function endGame(lifeOver) {
       cancelAnimationFrame(gameLoopId);
-      clearTimeout(dropTimer);
-      clearItems();
+      clearBullets();
+      optionArea.innerHTML = "";
       showScreen("endScreen");
       document.getElementById("finalScore").textContent = `你的分數：${score} / ${currentQuestions.length * 10}`;
       document.getElementById("finalComment").textContent = lifeOver
@@ -730,9 +723,9 @@
       `).join("");
     }
 
-    function clearItems() {
-      items.forEach(item => item.remove());
-      items = [];
+    function clearBullets() {
+      bullets.forEach(bullet => bullet.remove());
+      bullets = [];
     }
 
     function restartSameTopic() {
@@ -741,14 +734,18 @@
 
     function backToTopics() {
       cancelAnimationFrame(gameLoopId);
-      clearTimeout(dropTimer);
-      clearItems();
+      clearBullets();
+      optionArea.innerHTML = "";
       showScreen("topicScreen");
     }
 
     document.addEventListener("keydown", e => {
       if (e.key === "ArrowLeft") moveLeft = true;
       if (e.key === "ArrowRight") moveRight = true;
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        shoot();
+      }
     });
 
     document.addEventListener("keyup", e => {
@@ -756,11 +753,15 @@
       if (e.key === "ArrowRight") moveRight = false;
     });
 
-    function bindHoldButton(buttonId, direction) {
+    function bindHoldButton(buttonId, action) {
       const btn = document.getElementById(buttonId);
       if (!btn) return;
-      const start = () => direction === "left" ? moveLeft = true : moveRight = true;
-      const stop = () => direction === "left" ? moveLeft = false : moveRight = false;
+      if (action === "shoot") {
+        btn.addEventListener("click", shoot);
+        return;
+      }
+      const start = () => action === "left" ? moveLeft = true : moveRight = true;
+      const stop = () => action === "left" ? moveLeft = false : moveRight = false;
       btn.addEventListener("mousedown", start);
       btn.addEventListener("mouseup", stop);
       btn.addEventListener("mouseleave", stop);
@@ -770,11 +771,12 @@
 
     bindHoldButton("leftBtn", "left");
     bindHoldButton("rightBtn", "right");
+    bindHoldButton("shootBtn", "shoot");
 
     window.addEventListener("resize", () => {
       const areaWidth = gameArea.clientWidth;
-      playerX = Math.min(playerX, areaWidth - player.offsetWidth);
-      player.style.left = playerX + "px";
+      shooterX = Math.min(shooterX, areaWidth - shooter.offsetWidth);
+      shooter.style.left = shooterX + "px";
     });
   </script>
 </body>
