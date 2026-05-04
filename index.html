@@ -3,12 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>大學生健康生活生存戰</title>
+  <title>大學生健康生活跑跑人</title>
 
   <style>
-    /* =========================================================
-       一、基本設定與整體視覺
-    ========================================================= */
     * {
       box-sizing: border-box;
     }
@@ -18,10 +15,10 @@
       --deep-blue: #0369a1;
       --green: #22c55e;
       --red: #ef4444;
-      --yellow-bg: #fef3c7;
-      --green-bg: #dcfce7;
-      --light-bg: #f8fafc;
-      --border: #e2e8f0;
+      --yellow: #facc15;
+      --orange: #fb923c;
+      --purple: #a78bfa;
+      --bg: #f8fafc;
       --text: #1f2937;
       --muted: #64748b;
     }
@@ -31,63 +28,7 @@
       font-family: "Noto Sans TC", Arial, sans-serif;
       color: var(--text);
       background: linear-gradient(135deg, #dbeafe, #dcfce7, #fef9c3);
-      overflow-x: hidden;
-    }
-
-    body::before {
-      content: "🍙 💤 🌿 🧘 🥗 ☀️ 📚";
-      position: fixed;
-      top: 18px;
-      left: -20%;
-      width: 140%;
-      font-size: 32px;
-      opacity: 0.18;
-      animation: floatText 18s linear infinite;
-      pointer-events: none;
-    }
-
-    @keyframes floatText {
-      from { transform: translateX(-10%); }
-      to { transform: translateX(10%); }
-    }
-
-    .screen {
-      min-height: 100vh;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-    }
-
-    .screen.active {
-      display: flex;
-    }
-
-    .card,
-    .panel {
-      background: rgba(255, 255, 255, 0.96);
-      border-radius: 28px;
-      padding: 26px;
-      box-shadow: 0 16px 42px rgba(15, 23, 42, 0.15);
-    }
-
-    .card {
-      width: min(1000px, 100%);
-      text-align: center;
-    }
-
-    h1 {
-      font-size: 42px;
-      margin: 8px 0 10px;
-    }
-
-    h2 {
-      margin: 6px 0 14px;
-    }
-
-    p {
-      font-size: 18px;
-      line-height: 1.75;
+      overflow: hidden;
     }
 
     button {
@@ -109,12 +50,6 @@
       transform: translateY(-2px);
     }
 
-    button:disabled {
-      background: #cbd5e1;
-      transform: none;
-      cursor: not-allowed;
-    }
-
     button.success {
       background: var(--green);
     }
@@ -123,133 +58,348 @@
       background: #94a3b8;
     }
 
-    button.danger {
-      background: var(--red);
+    .screen {
+      width: 100vw;
+      height: 100vh;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .screen.active {
+      display: flex;
+    }
+
+    .card {
+      width: min(980px, 100%);
+      background: rgba(255, 255, 255, 0.96);
+      border-radius: 30px;
+      padding: 32px;
+      text-align: center;
+      box-shadow: 0 18px 48px rgba(15, 23, 42, 0.16);
+    }
+
+    h1 {
+      font-size: 44px;
+      margin: 10px 0;
+    }
+
+    h2 {
+      margin: 8px 0 14px;
+    }
+
+    p {
+      font-size: 18px;
+      line-height: 1.8;
     }
 
     .home-icons {
-      font-size: 56px;
-      margin: 12px 0;
-      animation: bounce 2.4s ease-in-out infinite;
+      font-size: 60px;
+      animation: bounce 2.2s ease-in-out infinite;
     }
 
     @keyframes bounce {
       0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
+      50% { transform: translateY(-12px); }
+    }
+
+    .how-to-play {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 20px;
+    }
+
+    .rule-box {
+      background: #f8fafc;
+      border-radius: 20px;
+      padding: 16px;
+      border: 2px dashed #bae6fd;
+    }
+
+    .rule-box .emoji {
+      font-size: 36px;
+      display: block;
+      margin-bottom: 6px;
     }
 
     /* =========================================================
-       二、遊戲畫面版面
+       遊戲主畫面
     ========================================================= */
     #gameScreen {
-      align-items: flex-start;
-      padding: 18px;
+      padding: 14px;
+      align-items: stretch;
     }
 
-    .game-container {
-      width: 100%;
+    .game-layout {
+      width: min(1420px, 100%);
+      margin: auto;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 16px;
+      height: calc(100vh - 28px);
     }
 
-    .status-row {
-      width: min(1380px, 100%);
-      margin: 0 auto 16px;
+    .game-panel,
+    .side-panel {
+      background: rgba(255, 255, 255, 0.96);
+      border-radius: 28px;
+      box-shadow: 0 16px 42px rgba(15, 23, 42, 0.15);
+      overflow: hidden;
+    }
+
+    .game-panel {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .top-bar {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 12px;
+      gap: 8px;
+      padding: 12px;
+      background: #f8fafc;
+      border-bottom: 2px solid #e2e8f0;
+      z-index: 5;
     }
 
     .status-box {
-      background: rgba(255, 255, 255, 0.96);
-      border-radius: 20px;
-      padding: 12px;
+      background: white;
+      border-radius: 16px;
+      padding: 8px;
       text-align: center;
       font-weight: 900;
-      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.1);
+      box-shadow: 0 6px 14px rgba(15, 23, 42, 0.08);
+      font-size: 14px;
     }
 
     .status-box strong {
       color: var(--deep-blue);
-      font-size: 24px;
+      font-size: 22px;
     }
 
-    .game-frame {
-      width: min(1380px, 100%);
-      margin: auto;
-      display: grid;
-      grid-template-columns: 1.05fr 1.2fr 0.95fr;
-      gap: 18px;
-    }
-
-    /* =========================================================
-       三、左側個案轉盤
-    ========================================================= */
-    .wheel-wrap {
+    .stage-banner {
+      padding: 10px 16px;
+      background: #e0f2fe;
+      color: #075985;
+      font-weight: 900;
       display: flex;
-      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
       align-items: center;
+      border-bottom: 2px solid #bae6fd;
+      z-index: 5;
     }
 
-    .pointer {
-      width: 0;
-      height: 0;
-      border-left: 18px solid transparent;
-      border-right: 18px solid transparent;
-      border-top: 34px solid var(--red);
-      margin-bottom: -6px;
-      z-index: 2;
-      filter: drop-shadow(0 5px 4px rgba(0, 0, 0, 0.2));
-    }
-
-    #wheel {
-      width: 255px;
-      height: 255px;
-      border-radius: 50%;
-      border: 10px solid white;
-      background: conic-gradient(#bae6fd 0deg 60deg, #bbf7d0 60deg 120deg, #fde68a 120deg 180deg, #fecaca 180deg 240deg, #ddd6fe 240deg 300deg, #fed7aa 300deg 360deg);
-      box-shadow: 0 14px 35px rgba(15, 23, 42, 0.2);
+    .game-area {
       position: relative;
-      transition: transform 2.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+      flex: 1;
+      overflow: hidden;
+      background: linear-gradient(180deg, #bfdbfe 0%, #dbeafe 42%, #bbf7d0 43%, #86efac 100%);
     }
 
-    #wheel::after {
-      content: "個案轉盤";
+    .cloud {
       position: absolute;
-      inset: 72px;
+      top: 40px;
+      width: 120px;
+      height: 42px;
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 999px;
+      animation: cloudMove 18s linear infinite;
+    }
+
+    .cloud::before,
+    .cloud::after {
+      content: "";
+      position: absolute;
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 50%;
+    }
+
+    .cloud::before {
+      width: 50px;
+      height: 50px;
+      left: 18px;
+      top: -22px;
+    }
+
+    .cloud::after {
+      width: 64px;
+      height: 64px;
+      left: 52px;
+      top: -32px;
+    }
+
+    .cloud.c1 { left: -140px; top: 50px; animation-duration: 20s; }
+    .cloud.c2 { left: -260px; top: 110px; animation-duration: 28s; transform: scale(0.75); }
+
+    @keyframes cloudMove {
+      from { transform: translateX(0); }
+      to { transform: translateX(calc(100vw + 360px)); }
+    }
+
+    .road {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 150px;
+      background: linear-gradient(180deg, #64748b, #334155);
+      border-top: 8px solid #f8fafc;
+    }
+
+    .road-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 70px;
+      height: 8px;
+      background: repeating-linear-gradient(90deg, #fef3c7 0 60px, transparent 60px 115px);
+      animation: roadMove 1.1s linear infinite;
+    }
+
+    @keyframes roadMove {
+      from { background-position-x: 0; }
+      to { background-position-x: -115px; }
+    }
+
+    #player {
+      position: absolute;
+      bottom: 115px;
+      left: 50%;
+      width: 74px;
+      height: 74px;
+      transform: translateX(-50%);
       border-radius: 50%;
       background: white;
+      border: 5px solid #38bdf8;
       display: flex;
       align-items: center;
       justify-content: center;
+      font-size: 42px;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.24);
+      z-index: 4;
+      transition: transform 0.08s;
+      animation: runBounce 0.45s ease-in-out infinite;
+    }
+
+    @keyframes runBounce {
+      0%, 100% { margin-bottom: 0; }
+      50% { margin-bottom: 8px; }
+    }
+
+    .falling-item {
+      position: absolute;
+      width: 74px;
+      height: 74px;
+      border-radius: 18px;
+      background: white;
+      border: 4px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      font-weight: 900;
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.18);
+      z-index: 3;
+    }
+
+    .falling-item.good-item {
+      border-color: #22c55e;
+      background: #f0fdf4;
+    }
+
+    .falling-item.bad-item {
+      border-color: #ef4444;
+      background: #fef2f2;
+    }
+
+    .item-emoji {
+      font-size: 30px;
+      line-height: 1;
+    }
+
+    .item-label {
+      margin-top: 4px;
+      font-size: 11px;
+      width: 68px;
       text-align: center;
+      line-height: 1.15;
+      white-space: normal;
+    }
+
+    .floating-text {
+      position: absolute;
+      font-size: 30px;
       font-weight: 900;
-      color: var(--deep-blue);
-      font-size: 23px;
-      box-shadow: inset 0 0 0 5px #e0f2fe;
+      pointer-events: none;
+      z-index: 10;
+      animation: floatUp 0.8s ease-out forwards;
     }
 
-    .case-tag,
-    .stage-tag {
-      display: inline-block;
-      border-radius: 999px;
-      padding: 8px 14px;
+    .floating-text.good {
+      color: #16a34a;
+    }
+
+    .floating-text.bad {
+      color: #dc2626;
+    }
+
+    @keyframes floatUp {
+      from { transform: translateY(0); opacity: 1; }
+      to { transform: translateY(-60px); opacity: 0; }
+    }
+
+    .countdown-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.5);
+      color: white;
+      z-index: 20;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .countdown-overlay.show {
+      display: flex;
+    }
+
+    .countdown-number {
+      font-size: 90px;
       font-weight: 900;
-      margin-top: 12px;
+      animation: pop 0.45s ease-out;
     }
 
-    .case-tag {
-      background: #e0f2fe;
-      color: var(--deep-blue);
+    @keyframes pop {
+      from { transform: scale(0.6); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
     }
 
-    .stage-tag {
-      background: var(--yellow-bg);
-      color: #92400e;
+    .side-panel {
+      padding: 20px;
+      overflow: auto;
     }
 
-    .mascot {
-      font-size: 54px;
-      margin: 6px 0;
+    .case-card,
+    .tip-card,
+    .log-card {
+      background: #f8fafc;
+      border-radius: 20px;
+      padding: 16px;
+      margin-bottom: 14px;
+      border: 2px dashed #cbd5e1;
+      line-height: 1.65;
+    }
+
+    .case-emoji {
+      font-size: 48px;
       animation: wobble 2s ease-in-out infinite;
+      display: inline-block;
     }
 
     @keyframes wobble {
@@ -257,146 +407,31 @@
       50% { transform: rotate(5deg); }
     }
 
-    .mission-box {
-      background: var(--light-bg);
-      border: 2px dashed #bae6fd;
-      border-radius: 18px;
-      padding: 14px;
-      line-height: 1.75;
-      text-align: left;
-    }
-
-    .mission-box strong {
-      color: #0f766e;
-    }
-
-    .progress {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin: 12px 0;
-    }
-
-    .progress-step {
-      border-radius: 14px;
-      padding: 10px 8px;
-      text-align: center;
-      font-weight: 900;
-      background: #e2e8f0;
-      color: #475569;
-    }
-
-    .progress-step.now {
-      background: var(--yellow-bg);
+    .stage-pill {
+      display: inline-block;
+      background: #fef3c7;
       color: #92400e;
-      animation: pulse 1.4s infinite;
-    }
-
-    .progress-step.done {
-      background: var(--green-bg);
-      color: #166534;
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.04); }
-    }
-
-    /* =========================================================
-       四、中間玩家方案區
-    ========================================================= */
-    .plan-board {
-      min-height: 450px;
-      border-radius: 30px;
-      border: 6px solid #bae6fd;
-      background: linear-gradient(180deg, #f8fafc, #eff6ff);
-      padding: 20px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      align-content: start;
-    }
-
-    .empty-note {
-      grid-column: 1 / -1;
-      align-self: center;
-      justify-self: center;
-      text-align: center;
-      color: var(--muted);
-      font-size: 20px;
+      border-radius: 999px;
+      padding: 6px 12px;
       font-weight: 900;
-      line-height: 1.8;
+      margin-bottom: 8px;
     }
 
-    /* =========================================================
-       五、右側健康行動卡
-    ========================================================= */
-    .action-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      max-height: 650px;
-      overflow: auto;
-      padding-right: 4px;
+    .small-list {
+      padding-left: 20px;
+      margin: 8px 0;
     }
 
-    .action-card {
-      border: 3px solid var(--border);
-      background: white;
-      border-radius: 20px;
-      padding: 12px;
-      cursor: grab;
-      user-select: none;
-      box-shadow: 0 7px 18px rgba(15, 23, 42, 0.08);
-      transition: 0.18s transform, 0.18s border-color, 0.18s background;
+    .small-list li {
+      margin-bottom: 4px;
     }
 
-    .action-card:hover {
-      transform: translateY(-4px) rotate(-1deg);
-      border-color: var(--blue);
+    .heart {
+      color: #ef4444;
+      font-size: 22px;
+      letter-spacing: 2px;
     }
 
-    .action-card.selected {
-      border-color: var(--green);
-      background: #f0fdf4;
-      cursor: pointer;
-      animation: pop 0.18s ease-out;
-    }
-
-    @keyframes pop {
-      from { transform: scale(0.92); }
-      to { transform: scale(1); }
-    }
-
-    .action-emoji {
-      font-size: 32px;
-      display: block;
-    }
-
-    .action-name {
-      font-weight: 900;
-      margin-top: 4px;
-    }
-
-    .action-meta {
-      font-size: 13px;
-      color: var(--muted);
-      margin-top: 4px;
-      line-height: 1.45;
-    }
-
-    .info-box {
-      background: var(--light-bg);
-      border-radius: 18px;
-      padding: 14px;
-      line-height: 1.75;
-      border: 2px dashed #cbd5e1;
-      margin-bottom: 12px;
-    }
-
-    /* =========================================================
-       六、結果視窗與回顧
-    ========================================================= */
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -413,9 +448,9 @@
     }
 
     .modal {
-      width: min(820px, 100%);
+      width: min(840px, 100%);
       background: white;
-      border-radius: 28px;
+      border-radius: 30px;
       padding: 28px;
       box-shadow: 0 20px 60px rgba(15, 23, 42, 0.35);
       animation: modalIn 0.25s ease-out;
@@ -426,61 +461,84 @@
       to { transform: translateY(0) scale(1); opacity: 1; }
     }
 
+    .modal h2 {
+      text-align: center;
+      font-size: 34px;
+    }
+
     .big-score {
       text-align: center;
-      font-size: 44px;
+      font-size: 42px;
       font-weight: 900;
       color: var(--deep-blue);
-      margin: 8px 0 16px;
+      margin: 10px 0;
     }
 
     .result-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: 14px;
     }
 
     .result-box {
-      background: var(--light-bg);
+      background: #f8fafc;
       border-radius: 18px;
-      padding: 14px;
+      padding: 16px;
       line-height: 1.7;
     }
 
-    .good {
+    .good-text {
       color: #16a34a;
       font-weight: 900;
     }
 
-    .bad {
+    .bad-text {
       color: #dc2626;
       font-weight: 900;
     }
 
     .review-list {
-      text-align: left;
-      max-height: 52vh;
+      max-height: 48vh;
       overflow: auto;
+      text-align: left;
       background: white;
-      padding: 18px;
-      border-radius: 20px;
+      border-radius: 18px;
+      padding: 14px;
     }
 
     .review-item {
-      padding: 12px;
       border-bottom: 1px solid #e5e7eb;
+      padding: 12px;
       line-height: 1.7;
     }
 
     @media (max-width: 1100px) {
-      .game-frame { grid-template-columns: 1fr; }
-      .status-row { grid-template-columns: 1fr 1fr; }
-    }
+      body {
+        overflow: auto;
+      }
 
-    @media (max-width: 640px) {
-      h1 { font-size: 32px; }
-      .action-grid, .plan-board, .result-grid { grid-template-columns: 1fr; }
-      .status-row { grid-template-columns: 1fr; }
+      .screen {
+        height: auto;
+        min-height: 100vh;
+      }
+
+      .game-layout {
+        height: auto;
+        grid-template-columns: 1fr;
+      }
+
+      .game-area {
+        height: 600px;
+      }
+
+      .top-bar {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .how-to-play,
+      .result-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -491,15 +549,33 @@
   ========================================================== -->
   <section id="homeScreen" class="screen active">
     <div class="card">
-      <div class="home-icons">🍙 💤 🧘</div>
-      <h1>大學生健康生活生存戰</h1>
-      <h2>飲食 × 睡眠作息 × 壓力調適</h2>
+      <div class="home-icons">🏃‍♀️ 🍙 💤 🧘</div>
+      <h1>大學生健康生活跑跑人</h1>
+      <h2>飲食補給站 × 睡眠修復站 × 壓力調適站</h2>
       <p>
-        你將扮演校園健康顧問，先用轉盤抽出一位大學生個案。<br>
-        每位個案都要完成三階段任務：先處理飲食，再調整睡眠作息，最後選擇壓力調適策略。<br>
-        請依照情境拖曳或點選健康行動卡，送出後會顯示分數、對錯分析與衛教提醒。
+        你是一位正在校園中奔跑的大學生，需要在限定時間內接住健康行動，避開不健康行為。<br>
+        遊戲共有三關：飲食、睡眠作息、壓力調適。每一關結束後，系統會給你衛教回饋。
       </p>
-      <button onclick="startGame()">開始健康任務</button>
+
+      <div class="how-to-play">
+        <div class="rule-box">
+          <span class="emoji">⬅️ ➡️</span>
+          <strong>操作方式</strong><br>
+          使用鍵盤左右鍵移動，也可以用 A / D 鍵。
+        </div>
+        <div class="rule-box">
+          <span class="emoji">✅</span>
+          <strong>接健康行動</strong><br>
+          接到健康行動會加分，例如無糖飲品、固定作息、腹式呼吸。
+        </div>
+        <div class="rule-box">
+          <span class="emoji">⚠️</span>
+          <strong>避開風險行為</strong><br>
+          碰到風險行為會扣生命，例如全糖飲、熬夜滑手機、拖延逃避。
+        </div>
+      </div>
+
+      <button onclick="startGame()">開始跑跑人挑戰</button>
     </div>
   </section>
 
@@ -507,64 +583,57 @@
        遊戲主畫面
   ========================================================== -->
   <section id="gameScreen" class="screen">
-    <div class="game-container">
-      <div class="status-row">
-        <div class="status-box">個案<br><strong id="caseNumber">1</strong> / <strong id="caseTotal">3</strong></div>
-        <div class="status-box">階段<br><strong id="stageName">--</strong></div>
-        <div class="status-box">總分<br><strong id="totalScore">0</strong></div>
-        <div class="status-box">本階段<br><strong id="stageScore">--</strong></div>
-        <div class="status-box">已選<br><strong id="selectedCount">0</strong> 張</div>
-      </div>
+    <div class="game-layout">
+      <main class="game-panel">
+        <div class="top-bar">
+          <div class="status-box">關卡<br><strong id="stageNumber">1</strong> / <strong>3</strong></div>
+          <div class="status-box">主題<br><strong id="stageTitle">飲食</strong></div>
+          <div class="status-box">分數<br><strong id="scoreText">0</strong></div>
+          <div class="status-box">時間<br><strong id="timeText">30</strong></div>
+          <div class="status-box">生命<br><span class="heart" id="heartText">❤❤❤</span></div>
+        </div>
 
-      <div class="game-frame">
-        <aside class="panel">
-          <div class="wheel-wrap">
-            <div class="pointer"></div>
-            <div id="wheel"></div>
-            <button id="spinBtn" onclick="spinWheel()">轉出這次個案</button>
+        <div class="stage-banner">
+          <span id="missionText">接住適合的健康飲食，避開高糖、高油、高鈉選擇。</span>
+          <span>操作：← → 或 A / D</span>
+        </div>
+
+        <div id="gameArea" class="game-area">
+          <div class="cloud c1"></div>
+          <div class="cloud c2"></div>
+          <div class="road"><div class="road-line"></div></div>
+          <div id="player">🧑‍🎓</div>
+          <div id="countdownOverlay" class="countdown-overlay">
+            <div id="countdownNumber" class="countdown-number">3</div>
+            <h2 id="countdownText">準備開始</h2>
           </div>
+        </div>
+      </main>
 
-          <div id="caseInfo" style="display:none;">
-            <div class="case-tag" id="caseTag">個案</div>
-            <div class="mascot" id="caseEmoji">👩‍🎓</div>
-            <h2 id="caseTitle"></h2>
-            <div class="mission-box"><p id="caseStory"></p></div>
-            <div class="progress">
-              <div id="p0" class="progress-step">🍙 飲食</div>
-              <div id="p1" class="progress-step">💤 睡眠</div>
-              <div id="p2" class="progress-step">🧘 壓力</div>
-            </div>
-          </div>
-        </aside>
+      <aside class="side-panel">
+        <div class="case-card">
+          <div class="case-emoji" id="caseEmoji">👩‍💻</div>
+          <h2 id="caseTitle">熬夜趕報告的大學生</h2>
+          <p id="caseStory">
+            這週報告和考試擠在一起，你需要幫這位大學生在飲食、睡眠與壓力調適上做出比較好的選擇。
+          </p>
+        </div>
 
-        <main class="panel">
-          <div class="stage-tag" id="stageTag">請先轉出個案</div>
-          <h2 id="missionTitle">等待任務開始</h2>
+        <div class="tip-card">
+          <span class="stage-pill" id="stagePill">第一關｜飲食補給站</span>
+          <h3>本關目標</h3>
+          <p id="stageGoal">接住較均衡的食物與無糖飲品，避開高糖、高油、高鈉選擇。</p>
+        </div>
 
-          <div class="mission-box">
-            <p><strong>任務情境：</strong><span id="missionStory">按下左側轉盤，抽出這次要協助的大學生。</span></p>
-            <p><strong>任務目標：</strong><span id="missionGoal">請依照任務選擇 2 到 3 張行動卡。</span></p>
-          </div>
-
-          <h2>我的健康方案</h2>
-          <div id="planBoard" class="plan-board" ondragover="event.preventDefault()" ondrop="dropAction(event)"></div>
-
-          <div style="text-align:center; margin-top:14px;">
-            <button class="success" onclick="submitPlan()">送出方案</button>
-            <button class="secondary" onclick="clearPlan()">清空方案</button>
-            <button class="danger" onclick="endGame()">結束遊戲</button>
-          </div>
-        </main>
-
-        <aside class="panel">
-          <h2>健康行動卡</h2>
-          <div class="info-box">
-            每一階段的卡片都不同。請選擇 2 到 3 張最適合個案的行動卡。<br>
-            可以拖曳到中間，也可以直接點擊卡片加入方案。
-          </div>
-          <div id="actionGrid" class="action-grid"></div>
-        </aside>
-      </div>
+        <div class="log-card">
+          <h3>本關紀錄</h3>
+          <ul class="small-list">
+            <li>接到健康行動：<strong id="goodCountText">0</strong></li>
+            <li>碰到風險行為：<strong id="badCountText">0</strong></li>
+          </ul>
+          <button class="secondary" onclick="pauseOrResumeGame()" id="pauseBtn">暫停</button>
+        </div>
+      </aside>
     </div>
   </section>
 
@@ -574,10 +643,10 @@
   <section id="endScreen" class="screen">
     <div class="card">
       <div class="home-icons">🎉</div>
-      <h1>任務完成！</h1>
-      <h2 id="finalScore"></h2>
+      <h1>挑戰完成！</h1>
+      <h2 id="finalScore">總分：0</h2>
       <p id="finalComment"></p>
-      <h2>任務回顧</h2>
+      <h2>關卡回顧</h2>
       <div id="reviewList" class="review-list"></div>
       <button onclick="startGame()">再玩一次</button>
       <button onclick="showScreen('homeScreen')">回首頁</button>
@@ -585,141 +654,142 @@
   </section>
 
   <!-- =========================================================
-       結果彈出視窗
+       關卡結果視窗
   ========================================================== -->
   <div id="resultModal" class="modal-backdrop">
     <div class="modal">
-      <h2 id="modalTitle">任務結果</h2>
-      <div class="big-score" id="modalScore">0 分</div>
-
+      <h2 id="resultTitle">關卡完成</h2>
+      <div class="big-score" id="stageScoreText">本關得分：0</div>
       <div class="result-grid">
         <div class="result-box">
-          <h3>對錯分析</h3>
-          <div id="choiceAnalysis"></div>
+          <h3>你做得好的地方</h3>
+          <div id="goodResultText"></div>
         </div>
         <div class="result-box">
-          <h3>怎麼做比較好？</h3>
-          <div id="betterAdvice"></div>
+          <h3>需要注意的地方</h3>
+          <div id="badResultText"></div>
         </div>
       </div>
-
-      <div class="result-box" style="margin-top:12px;">
-        <h3>本次選擇</h3>
-        <div id="selectedSummary"></div>
+      <div class="result-box" style="margin-top:14px;">
+        <h3>衛教提醒</h3>
+        <div id="healthTipText"></div>
       </div>
-
       <div style="text-align:center; margin-top:18px;">
-        <button onclick="nextStep()" id="nextBtn">下一階段</button>
+        <button onclick="goNextStage()" id="nextStageBtn">進入下一關</button>
       </div>
     </div>
   </div>
 
   <script>
     /* =========================================================
-       一、遊戲基本設定
+       一、遊戲資料設定
     ========================================================== */
-    const TOTAL_CASES = 3;
-    const MIN_SELECTED = 2;
-    const MAX_SELECTED = 3;
+    const TOTAL_STAGES = 3;
+    const STAGE_TIME = 30;
+    const PLAYER_SPEED = 18;
+    const ITEM_SIZE = 74;
 
-    const stageKeys = ["diet", "sleep", "stress"];
-    const stageLabels = ["飲食", "睡眠", "壓力"];
-
-    /* =========================================================
-       二、健康行動卡資料庫
-       tags 是計分用的標籤
-    ========================================================== */
-    const actionBank = {
-      diet: [
-        action("d1", "🍙", "飯糰＋茶葉蛋＋無糖茶", ["balanced", "protein", "noSugar"], "有主食、蛋白質與無糖飲品，適合快速補充能量。"),
-        action("d2", "🥗", "沙拉＋舒肥雞胸＋地瓜", ["balanced", "protein", "veg"], "蔬菜、蛋白質與主食都有，整體較均衡。"),
-        action("d3", "🧋", "全糖珍奶＋甜甜圈", ["sugar", "lowBalance"], "糖分偏高，飽足與營養密度較不足。"),
-        action("d4", "🍜", "泡麵＋含糖汽水", ["highSodium", "sugar", "lowBalance"], "方便但鈉與糖偏高，蔬菜與蛋白質不足。"),
-        action("d5", "🍠", "地瓜＋無糖豆漿＋水果", ["balanced", "fiber", "noSugar"], "纖維、蛋白質與無糖飲品都有，適合早餐或點心。"),
-        action("d6", "🍖", "炸雞排＋全糖飲料", ["fried", "sugar"], "油脂與糖分偏高，不適合作為主要建議。")
-      ],
-
-      sleep: [
-        action("s1", "📵", "睡前 30 分鐘放下手機", ["sleepHygiene"], "降低睡前刺激，有助於建立入睡準備。"),
-        action("s2", "⏰", "固定起床時間", ["routine"], "固定起床有助於穩定生理時鐘。"),
-        action("s3", "☕", "晚上喝大杯咖啡提神", ["badSleep"], "晚間咖啡因可能影響入睡與睡眠品質。"),
-        action("s4", "🛏️", "午睡 20 分鐘內", ["recovery"], "短時間午睡可恢復精神，但不宜太晚或太久。"),
-        action("s5", "🌙", "睡前做簡單伸展與放鬆", ["sleepHygiene", "recovery"], "放鬆身體可幫助從讀書狀態切換到睡眠狀態。"),
-        action("s6", "📱", "躺在床上滑手機到凌晨", ["badSleep"], "容易延後入睡，也會讓床和清醒活動連結在一起。")
-      ],
-
-      stress: [
-        action("p1", "🧘", "腹式呼吸 3 分鐘", ["coping"], "短時間呼吸練習可協助穩定情緒與注意力。"),
-        action("p2", "📝", "列出待辦並排優先順序", ["planning"], "把壓力轉化成可處理的任務，有助於降低混亂感。"),
-        action("p3", "👥", "找同學或師長討論困難", ["support"], "尋求支持是有效的壓力調適策略。"),
-        action("p4", "😵", "拖延到最後一刻再熬夜完成", ["avoidance"], "短期逃避可能讓壓力累積，最後更難處理。"),
-        action("p5", "🚶", "快走或伸展 10 分鐘", ["coping", "activity"], "輕度活動可幫助轉換情緒與恢復專注。"),
-        action("p6", "🍟", "壓力大就暴吃高糖高油零食", ["avoidance"], "情緒性進食可能暫時舒緩，但不一定真正解決壓力來源。")
-      ]
+    const caseInfo = {
+      emoji: "👩‍💻",
+      title: "熬夜趕報告的大學生",
+      story: "這週報告和考試擠在一起，常常想用含糖飲料、熬夜和拖延撐過去。請幫他在飲食、睡眠與壓力調適上做出比較好的選擇。"
     };
 
-    /* =========================================================
-       三、大學生個案資料庫
-    ========================================================== */
-    const cases = [
-      makeCase("👩‍💻", "熬夜趕報告的大學生", "小安這週有三份報告，常常熬夜到凌晨。她晚餐常用甜食和飲料解決，隔天早八又很沒精神。", {
-        diet: stage("第一階段：飲食救援", "小安今晚要趕報告，但不能只靠糖分撐精神。", "請選出 2 到 3 張比較能提供穩定能量、減少含糖飲料的飲食行動卡。", ["balanced", "protein", "noSugar", "fiber"], ["sugar", "lowBalance", "fried"], "熬夜時更需要穩定能量來源。建議選擇有主食、蛋白質與無糖飲品的組合，避免只靠甜食或含糖飲料。"),
-        sleep: stage("第二階段：睡眠作息調整", "報告週不能保證每天睡很久，但仍可以減少睡眠被干擾。", "請選出 2 到 3 張有助於睡眠衛生或恢復精神的行動卡。", ["sleepHygiene", "routine", "recovery"], ["badSleep"], "睡眠作息的重點不是一次完美，而是先減少晚間刺激、固定起床時間，並用短午睡補充精神。"),
-        stress: stage("第三階段：壓力調適", "小安覺得任務太多，不知道從哪裡開始。", "請選出 2 到 3 張能幫助她整理壓力與恢復行動感的策略卡。", ["coping", "planning", "support"], ["avoidance"], "壓力調適可以從呼吸、拆解任務、尋求支持開始，比單純拖延或情緒性進食更能處理問題。")
-      }),
-
-      makeCase("🏋️", "健身又課業很滿的大學生", "阿哲開始健身，但最近課業變重。他常訓練後只買炸物補充熱量，晚上又因為讀書喝咖啡睡不好。", {
-        diet: stage("第一階段：運動後飲食", "阿哲想補充蛋白質，但不希望每次都靠炸物。", "請選出 2 到 3 張有蛋白質、主食與較少油炸的飲食行動卡。", ["balanced", "protein", "veg", "fiber"], ["fried", "sugar"], "運動後可補充蛋白質與適量碳水，但油炸食品不是最理想的主要來源。"),
-        sleep: stage("第二階段：咖啡因與睡眠", "阿哲晚上讀書常喝咖啡，結果越來越晚睡。", "請選出 2 到 3 張能降低睡前刺激、幫助穩定作息的行動卡。", ["sleepHygiene", "routine", "recovery"], ["badSleep"], "晚間咖啡因與滑手機都可能影響睡眠。可以改用白天安排讀書、固定起床與睡前放鬆來調整。"),
-        stress: stage("第三階段：訓練與課業壓力", "阿哲擔心健身和課業無法兼顧，開始感到焦慮。", "請選出 2 到 3 張能幫助他規劃時間與調適壓力的策略卡。", ["planning", "coping", "activity", "support"], ["avoidance"], "把壓力拆成可管理的任務，並保留短時間活動或伸展，有助於維持身心狀態。")
-      }),
-
-      makeCase("💸", "預算有限的外宿大學生", "小宏外宿後常覺得健康生活很花錢，所以三餐不穩定，也常用泡麵和零食解決。", {
-        diet: stage("第一階段：平價飲食選擇", "小宏今天預算有限，但仍希望吃得有飽足感。", "請選出 2 到 3 張平價、較均衡、不要只靠零食的飲食行動卡。", ["balanced", "protein", "fiber", "noSugar"], ["highSodium", "sugar", "lowBalance"], "健康飲食不一定昂貴。地瓜、茶葉蛋、無糖豆漿等也能組合成相對可行的選擇。"),
-        sleep: stage("第二階段：外宿作息", "小宏外宿後作息自由，常常越睡越晚。", "請選出 2 到 3 張能幫助他建立基本作息的行動卡。", ["routine", "sleepHygiene", "recovery"], ["badSleep"], "外宿作息可先從固定起床、睡前減少手機刺激開始，不需要一開始就追求完美。"),
-        stress: stage("第三階段：金錢與生活壓力", "小宏覺得預算、課業和生活管理都讓他很煩。", "請選出 2 到 3 張能協助他整理問題與尋求支持的策略卡。", ["planning", "support", "coping"], ["avoidance"], "壓力來自生活條件時，具體規劃和尋求資源比責備自己更有幫助。")
-      }),
-
-      makeCase("🧋", "愛喝手搖飲的大學生", "小杰每天一杯全糖飲料，知道要減糖但覺得完全戒掉太困難。考試週也常用飲料安慰自己。", {
-        diet: stage("第一階段：減糖飲食任務", "小杰想開始減糖，但不想一次完全禁止。", "請選出 2 到 3 張能降低含糖飲料、又能維持可行性的飲食行動卡。", ["noSugar", "balanced", "fiber", "protein"], ["sugar", "lowBalance"], "減糖可先從全糖改半糖、微糖或無糖，並降低頻率。提供替代選擇比單純禁止更可行。"),
-        sleep: stage("第二階段：考試週睡眠", "小杰考試週常熬夜讀書，白天靠飲料提神。", "請選出 2 到 3 張能減少熬夜循環的作息調整卡。", ["routine", "sleepHygiene", "recovery"], ["badSleep"], "考試週更需要保留睡眠。短午睡、固定起床和睡前放下手機，都能降低惡性循環。"),
-        stress: stage("第三階段：考試壓力調適", "小杰壓力大時想靠甜飲和零食安慰自己。", "請選出 2 到 3 張能替代情緒性進食的壓力調適卡。", ["coping", "planning", "support", "activity"], ["avoidance"], "壓力大時可以先用呼吸、散步或列待辦降低焦慮，再決定下一步，而不是只靠高糖食物舒緩。")
-      })
+    const stages = [
+      {
+        key: "diet",
+        title: "飲食",
+        pill: "第一關｜飲食補給站",
+        mission: "接住適合的健康飲食，避開高糖、高油、高鈉選擇。",
+        goal: "接住較均衡的食物與無糖飲品，避開高糖、高油、高鈉選擇。",
+        tip: "大學生忙碌時常用含糖飲料或泡麵快速解決，但比較好的方向是選擇有主食、蛋白質與無糖飲品的組合。外食不一定要完美，先做到少糖、少油、不要只吃零食，就是很好的開始。",
+        goodItems: [
+          item("🍙", "飯糰＋蛋", 12),
+          item("🥗", "沙拉雞胸", 14),
+          item("🍠", "地瓜豆漿", 12),
+          item("🍵", "無糖茶", 10),
+          item("🍎", "水果", 10)
+        ],
+        badItems: [
+          item("🧋", "全糖珍奶", -12),
+          item("🍜", "泡麵汽水", -14),
+          item("🍖", "炸物飲料", -12),
+          item("🍩", "甜甜圈", -10)
+        ]
+      },
+      {
+        key: "sleep",
+        title: "睡眠",
+        pill: "第二關｜睡眠修復站",
+        mission: "接住有助睡眠作息的行動，避開讓睡眠更混亂的行為。",
+        goal: "接住睡眠衛生與恢復精神的選擇，避開晚上咖啡因、熬夜滑手機等行為。",
+        tip: "睡眠作息不一定要一次變完美。可以先從固定起床時間、睡前減少手機刺激、短時間午睡開始。晚上大量咖啡因和躺在床上滑手機，容易讓入睡時間更晚。",
+        goodItems: [
+          item("📵", "睡前放手機", 12),
+          item("⏰", "固定起床", 12),
+          item("🛏️", "午睡20分", 10),
+          item("🌙", "睡前放鬆", 12),
+          item("☀️", "早晨曬太陽", 10)
+        ],
+        badItems: [
+          item("☕", "晚上咖啡", -12),
+          item("📱", "滑到凌晨", -14),
+          item("🎬", "追劇熬夜", -12),
+          item("😵", "補眠一整天", -10)
+        ]
+      },
+      {
+        key: "stress",
+        title: "壓力",
+        pill: "第三關｜壓力調適站",
+        mission: "接住有效的壓力調適策略，避開逃避或讓壓力累積的行為。",
+        goal: "接住呼吸、規劃、尋求支持與輕度活動，避開拖延、暴吃或完全逃避。",
+        tip: "壓力調適不是要立刻消除所有壓力，而是把壓力轉成可以處理的行動。腹式呼吸、列待辦、找人討論和短時間活動，都比拖延到最後或情緒性暴食更有幫助。",
+        goodItems: [
+          item("🧘", "腹式呼吸", 12),
+          item("📝", "列待辦", 12),
+          item("👥", "找人討論", 12),
+          item("🚶", "快走伸展", 10),
+          item("🎧", "短暫放鬆", 10)
+        ],
+        badItems: [
+          item("😵", "拖到最後", -14),
+          item("🍟", "暴吃零食", -12),
+          item("🙈", "完全逃避", -14),
+          item("💥", "自我責備", -10)
+        ]
+      }
     ];
 
-    /* =========================================================
-       四、資料建立函式
-    ========================================================== */
-    function action(id, emoji, name, tags, note) {
-      return { id, emoji, name, tags, note };
-    }
-
-    function stage(title, story, goal, goodTags, badTags, tip) {
-      return { title, story, goal, goodTags, badTags, tip };
-    }
-
-    function makeCase(emoji, title, story, stages) {
-      return { emoji, title, story, stages };
+    function item(emoji, label, points) {
+      return { emoji, label, points };
     }
 
     /* =========================================================
-       五、遊戲狀態變數
+       二、遊戲狀態變數
     ========================================================== */
-    let currentCaseNumber = 1;
     let currentStageIndex = 0;
-    let totalScore = 0;
-    let currentCase = null;
-    let selectedActions = [];
-    let usedCaseIndexes = [];
-    let missionHistory = [];
-    let wheelRotation = 0;
-    let lastResult = null;
+    let score = 0;
+    let lives = 3;
+    let timeLeft = STAGE_TIME;
+    let goodCaught = 0;
+    let badCaught = 0;
+    let stageScoreStart = 0;
+    let playerX = 0;
+    let keys = {};
+    let items = [];
+    let spawnTimer = null;
+    let gameTimer = null;
+    let animationFrame = null;
+    let isPlaying = false;
+    let isPaused = false;
+    let stageHistory = [];
 
-    const planBoard = document.getElementById("planBoard");
-    const actionGrid = document.getElementById("actionGrid");
+    const gameArea = document.getElementById("gameArea");
+    const player = document.getElementById("player");
 
     /* =========================================================
-       六、畫面切換與遊戲初始化
+       三、畫面切換與遊戲開始
     ========================================================== */
     function showScreen(id) {
       document.querySelectorAll(".screen").forEach(screen => {
@@ -729,413 +799,400 @@
     }
 
     function startGame() {
-      currentCaseNumber = 1;
       currentStageIndex = 0;
-      totalScore = 0;
-      currentCase = null;
-      selectedActions = [];
-      usedCaseIndexes = [];
-      missionHistory = [];
-      wheelRotation = 0;
-      lastResult = null;
-
-      document.getElementById("wheel").style.transform = "rotate(0deg)";
-      document.getElementById("caseTotal").textContent = TOTAL_CASES;
-      document.getElementById("caseInfo").style.display = "none";
-      document.getElementById("spinBtn").disabled = false;
-
-      resetMissionText();
-      clearPlan();
-      updateStatus();
+      score = 0;
+      lives = 3;
+      stageHistory = [];
       showScreen("gameScreen");
+      setupCaseInfo();
+      startStage();
     }
 
-    function updateStatus() {
-      document.getElementById("caseNumber").textContent = currentCaseNumber;
-      document.getElementById("stageName").textContent = currentCase ? stageLabels[currentStageIndex] : "--";
-      document.getElementById("totalScore").textContent = totalScore;
-      document.getElementById("stageScore").textContent = lastResult ? lastResult.score : "--";
-      document.getElementById("selectedCount").textContent = selectedActions.length;
+    function setupCaseInfo() {
+      document.getElementById("caseEmoji").textContent = caseInfo.emoji;
+      document.getElementById("caseTitle").textContent = caseInfo.title;
+      document.getElementById("caseStory").textContent = caseInfo.story;
     }
 
     /* =========================================================
-       七、轉盤抽個案
+       四、關卡流程
     ========================================================== */
-    function spinWheel() {
-      const spinButton = document.getElementById("spinBtn");
-      spinButton.disabled = true;
+    function startStage() {
+      clearGameLoops();
+      removeAllItems();
 
-      wheelRotation += 1080 + Math.floor(Math.random() * 360);
-      document.getElementById("wheel").style.transform = `rotate(${wheelRotation}deg)`;
+      const stage = stages[currentStageIndex];
+      timeLeft = STAGE_TIME;
+      goodCaught = 0;
+      badCaught = 0;
+      stageScoreStart = score;
+      isPlaying = false;
+      isPaused = false;
+      keys = {};
+
+      const areaWidth = gameArea.clientWidth;
+      playerX = areaWidth / 2 - player.offsetWidth / 2;
+      player.style.left = playerX + "px";
+
+      document.getElementById("stageNumber").textContent = currentStageIndex + 1;
+      document.getElementById("stageTitle").textContent = stage.title;
+      document.getElementById("missionText").textContent = stage.mission;
+      document.getElementById("stagePill").textContent = stage.pill;
+      document.getElementById("stageGoal").textContent = stage.goal;
+      document.getElementById("pauseBtn").textContent = "暫停";
+
+      updateHUD();
+      showCountdown(3);
+    }
+
+    function showCountdown(number) {
+      const overlay = document.getElementById("countdownOverlay");
+      const countdownNumber = document.getElementById("countdownNumber");
+      const countdownText = document.getElementById("countdownText");
+
+      overlay.classList.add("show");
+      countdownNumber.textContent = number;
+      countdownText.textContent = "準備開始";
+
+      let current = number;
+      const countdownInterval = setInterval(() => {
+        current--;
+        if (current > 0) {
+          countdownNumber.textContent = current;
+        } else {
+          clearInterval(countdownInterval);
+          countdownNumber.textContent = "GO!";
+          countdownText.textContent = stages[currentStageIndex].title + "挑戰開始";
+
+          setTimeout(() => {
+            overlay.classList.remove("show");
+            beginStageLoops();
+          }, 700);
+        }
+      }, 900);
+    }
+
+    function beginStageLoops() {
+      isPlaying = true;
+      isPaused = false;
+
+      spawnTimer = setInterval(spawnItem, 820);
+      gameTimer = setInterval(() => {
+        if (!isPlaying || isPaused) return;
+        timeLeft--;
+        updateHUD();
+
+        if (timeLeft <= 0) {
+          finishStage();
+        }
+      }, 1000);
+
+      animationFrame = requestAnimationFrame(gameLoop);
+    }
+
+    function pauseOrResumeGame() {
+      if (!isPlaying) return;
+
+      isPaused = !isPaused;
+      document.getElementById("pauseBtn").textContent = isPaused ? "繼續" : "暫停";
+    }
+
+    function finishStage() {
+      if (!isPlaying) return;
+
+      isPlaying = false;
+      clearGameLoops();
+      removeAllItems();
+
+      const stage = stages[currentStageIndex];
+      const stageScore = score - stageScoreStart;
+
+      stageHistory.push({
+        title: stage.title,
+        pill: stage.pill,
+        stageScore,
+        goodCaught,
+        badCaught,
+        tip: stage.tip
+      });
+
+      showStageResult(stageScore);
+    }
+
+    function goNextStage() {
+      document.getElementById("resultModal").classList.remove("show");
+
+      if (lives <= 0) {
+        endGame();
+        return;
+      }
+
+      if (currentStageIndex < TOTAL_STAGES - 1) {
+        currentStageIndex++;
+        startStage();
+      } else {
+        endGame();
+      }
+    }
+
+    function endGame() {
+      clearGameLoops();
+      removeAllItems();
+      showScreen("endScreen");
+
+      document.getElementById("finalScore").textContent = "總分：" + score;
+
+      let comment = "";
+      if (score >= 230) {
+        comment = "太棒了！你很能辨識大學生生活中的健康行動，並且避開常見風險行為。";
+      } else if (score >= 160) {
+        comment = "表現不錯！你大多能選出正向的健康策略，但仍可以再注意一些容易混淆的風險行為。";
+      } else if (score >= 90) {
+        comment = "已經有基本概念，但可以再練習分辨哪些行為只是短暫方便，長期可能反而造成負擔。";
+      } else {
+        comment = "建議重新挑戰一次，特別注意含糖飲料、熬夜滑手機、拖延逃避等常見健康風險。";
+      }
+
+      document.getElementById("finalComment").textContent = comment;
+      renderReview();
+    }
+
+    /* =========================================================
+       五、角色移動與物件生成
+    ========================================================== */
+    document.addEventListener("keydown", event => {
+      keys[event.key.toLowerCase()] = true;
+    });
+
+    document.addEventListener("keyup", event => {
+      keys[event.key.toLowerCase()] = false;
+    });
+
+    function gameLoop() {
+      if (!isPlaying) return;
+
+      if (!isPaused) {
+        movePlayer();
+        moveItems();
+        checkCollisions();
+      }
+
+      animationFrame = requestAnimationFrame(gameLoop);
+    }
+
+    function movePlayer() {
+      const areaWidth = gameArea.clientWidth;
+      const playerWidth = player.offsetWidth;
+
+      if (keys["arrowleft"] || keys["a"]) {
+        playerX -= PLAYER_SPEED;
+      }
+
+      if (keys["arrowright"] || keys["d"]) {
+        playerX += PLAYER_SPEED;
+      }
+
+      playerX = Math.max(0, Math.min(areaWidth - playerWidth, playerX));
+      player.style.left = playerX + "px";
+    }
+
+    function spawnItem() {
+      if (!isPlaying || isPaused) return;
+
+      const stage = stages[currentStageIndex];
+      const isGood = Math.random() < 0.62;
+      const source = isGood ? stage.goodItems : stage.badItems;
+      const chosen = source[Math.floor(Math.random() * source.length)];
+
+      const element = document.createElement("div");
+      element.className = "falling-item " + (isGood ? "good-item" : "bad-item");
+      element.innerHTML = `
+        <div class="item-emoji">${chosen.emoji}</div>
+        <div class="item-label">${chosen.label}</div>
+      `;
+
+      const areaWidth = gameArea.clientWidth;
+      const x = Math.random() * (areaWidth - ITEM_SIZE);
+      const speed = 3.6 + Math.random() * 2.4 + currentStageIndex * 0.4;
+
+      element.style.left = x + "px";
+      element.style.top = "-90px";
+      gameArea.appendChild(element);
+
+      items.push({
+        element,
+        x,
+        y: -90,
+        speed,
+        isGood,
+        points: chosen.points,
+        label: chosen.label
+      });
+    }
+
+    function moveItems() {
+      const areaHeight = gameArea.clientHeight;
+
+      items.forEach(itemObj => {
+        itemObj.y += itemObj.speed;
+        itemObj.element.style.top = itemObj.y + "px";
+      });
+
+      items = items.filter(itemObj => {
+        if (itemObj.y > areaHeight + 90) {
+          itemObj.element.remove();
+          return false;
+        }
+        return true;
+      });
+    }
+
+    function checkCollisions() {
+      const playerRect = player.getBoundingClientRect();
+
+      items = items.filter(itemObj => {
+        const itemRect = itemObj.element.getBoundingClientRect();
+        const hit = !(
+          playerRect.right < itemRect.left ||
+          playerRect.left > itemRect.right ||
+          playerRect.bottom < itemRect.top ||
+          playerRect.top > itemRect.bottom
+        );
+
+        if (hit) {
+          handleItemCaught(itemObj);
+          itemObj.element.remove();
+          return false;
+        }
+
+        return true;
+      });
+    }
+
+    function handleItemCaught(itemObj) {
+      score += itemObj.points;
+
+      if (itemObj.isGood) {
+        goodCaught++;
+        showFloatingText("+" + itemObj.points, itemObj.x, itemObj.y, true);
+      } else {
+        badCaught++;
+        lives--;
+        showFloatingText(itemObj.points, itemObj.x, itemObj.y, false);
+        shakePlayer();
+
+        if (lives <= 0) {
+          updateHUD();
+          finishStage();
+          return;
+        }
+      }
+
+      updateHUD();
+    }
+
+    function showFloatingText(text, x, y, isGood) {
+      const element = document.createElement("div");
+      element.className = "floating-text " + (isGood ? "good" : "bad");
+      element.textContent = text;
+      element.style.left = x + "px";
+      element.style.top = y + "px";
+      gameArea.appendChild(element);
 
       setTimeout(() => {
-        chooseCase();
-        spinButton.disabled = true;
-      }, 2200);
+        element.remove();
+      }, 800);
     }
 
-    function chooseCase() {
-      const availableIndexes = cases
-        .map((item, index) => index)
-        .filter(index => !usedCaseIndexes.includes(index));
-
-      const selectedIndex = availableIndexes.length > 0
-        ? availableIndexes[Math.floor(Math.random() * availableIndexes.length)]
-        : Math.floor(Math.random() * cases.length);
-
-      usedCaseIndexes.push(selectedIndex);
-      currentCase = cases[selectedIndex];
-      currentStageIndex = 0;
-      selectedActions = [];
-      lastResult = null;
-
-      document.getElementById("caseInfo").style.display = "block";
-      document.getElementById("caseTag").textContent = `個案 ${currentCaseNumber}`;
-      document.getElementById("caseEmoji").textContent = currentCase.emoji;
-      document.getElementById("caseTitle").textContent = currentCase.title;
-      document.getElementById("caseStory").textContent = currentCase.story;
-
-      loadStage();
-      updateStatus();
+    function shakePlayer() {
+      player.style.transform = "translateX(-50%) scale(1.12) rotate(-8deg)";
+      setTimeout(() => {
+        player.style.transform = "translateX(-50%)";
+      }, 160);
     }
 
     /* =========================================================
-       八、載入三階段任務
+       六、畫面數值更新與結果
     ========================================================== */
-    function resetMissionText() {
-      document.getElementById("stageTag").textContent = "請先轉出個案";
-      document.getElementById("missionTitle").textContent = "等待任務開始";
-      document.getElementById("missionStory").textContent = "按下左側轉盤，抽出這次要協助的大學生。";
-      document.getElementById("missionGoal").textContent = "請依照任務選擇 2 到 3 張行動卡。";
-      actionGrid.innerHTML = "";
-      updateProgress();
+    function updateHUD() {
+      document.getElementById("scoreText").textContent = score;
+      document.getElementById("timeText").textContent = timeLeft;
+      document.getElementById("heartText").textContent = "❤".repeat(Math.max(0, lives));
+      document.getElementById("goodCountText").textContent = goodCaught;
+      document.getElementById("badCountText").textContent = badCaught;
     }
 
-    function loadStage() {
-      selectedActions = [];
-      clearPlan();
-      lastResult = null;
+    function showStageResult(stageScore) {
+      const stage = stages[currentStageIndex];
 
-      const stageKey = stageKeys[currentStageIndex];
-      const currentStage = currentCase.stages[stageKey];
+      document.getElementById("resultTitle").textContent = stage.pill + "完成";
+      document.getElementById("stageScoreText").textContent = "本關得分：" + stageScore;
 
-      document.getElementById("stageTag").textContent = `第 ${currentStageIndex + 1} 階段｜${stageLabels[currentStageIndex]}`;
-      document.getElementById("missionTitle").textContent = currentStage.title;
-      document.getElementById("missionStory").textContent = currentStage.story;
-      document.getElementById("missionGoal").textContent = currentStage.goal;
-
-      renderActionCards(stageKey);
-      updateProgress();
-      updateStatus();
-    }
-
-    function updateProgress() {
-      for (let i = 0; i < 3; i++) {
-        const step = document.getElementById("p" + i);
-        if (!step) continue;
-
-        step.className = "progress-step";
-        if (!currentCase) continue;
-
-        if (i < currentStageIndex) {
-          step.classList.add("done");
-        } else if (i === currentStageIndex) {
-          step.classList.add("now");
-        }
-      }
-    }
-
-    /* =========================================================
-       九、行動卡片操作
-    ========================================================== */
-    function renderActionCards(stageKey) {
-      actionGrid.innerHTML = actionBank[stageKey]
-        .map(item => createActionCardHtml(item))
-        .join("");
-    }
-
-    function createActionCardHtml(item) {
-      return `
-        <div class="action-card" draggable="true" ondragstart="dragAction(event, '${item.id}')" onclick="addActionById('${item.id}')">
-          <span class="action-emoji">${item.emoji}</span>
-          <div class="action-name">${item.name}</div>
-          <div class="action-meta">${item.note}</div>
-        </div>
+      document.getElementById("goodResultText").innerHTML = `
+        <span class="good-text">你接到了 ${goodCaught} 個健康行動。</span><br>
+        這代表你能辨識本關中比較適合大學生的健康選擇。
       `;
-    }
 
-    function dragAction(event, id) {
-      event.dataTransfer.setData("actionId", id);
-    }
-
-    function dropAction(event) {
-      event.preventDefault();
-      const id = event.dataTransfer.getData("actionId");
-      addActionById(id);
-    }
-
-    function getCurrentActionList() {
-      return actionBank[stageKeys[currentStageIndex]] || [];
-    }
-
-    function addActionById(id) {
-      if (!currentCase) {
-        alert("請先轉出這次的個案任務！");
-        return;
-      }
-
-      if (selectedActions.length >= MAX_SELECTED) {
-        alert("每階段最多選擇 3 張行動卡喔！");
-        return;
-      }
-
-      if (selectedActions.some(item => item.id === id)) {
-        alert("這張卡已經選過囉！");
-        return;
-      }
-
-      const item = getCurrentActionList().find(action => action.id === id);
-      if (!item) return;
-
-      selectedActions.push(item);
-      renderPlan();
-      updateStatus();
-    }
-
-    function removeAction(index) {
-      selectedActions.splice(index, 1);
-      renderPlan();
-      updateStatus();
-    }
-
-    function renderPlan() {
-      if (selectedActions.length === 0) {
-        planBoard.innerHTML = `<div class="empty-note">把健康行動卡拖曳到這裡<br>或點擊右側卡片加入方案</div>`;
-        return;
-      }
-
-      planBoard.innerHTML = selectedActions
-        .map((item, index) => `
-          <div class="action-card selected" onclick="removeAction(${index})">
-            <span class="action-emoji">${item.emoji}</span>
-            <div class="action-name">${item.name}</div>
-            <div class="action-meta">點擊可移除｜${item.note}</div>
-          </div>
-        `)
-        .join("");
-    }
-
-    function clearPlan() {
-      selectedActions = [];
-      renderPlan();
-      updateStatus();
-    }
-
-    /* =========================================================
-       十、送出、計分與回饋
-    ========================================================== */
-    function submitPlan() {
-      if (!currentCase) {
-        alert("請先轉出這次的個案任務！");
-        return;
-      }
-
-      if (selectedActions.length < MIN_SELECTED) {
-        alert("請至少選擇 2 張行動卡，方案會比較完整喔！");
-        return;
-      }
-
-      const result = evaluatePlan();
-      const currentStage = currentCase.stages[stageKeys[currentStageIndex]];
-
-      lastResult = result;
-      totalScore += result.score;
-
-      missionHistory.push({
-        caseTitle: currentCase.title,
-        stageName: stageLabels[currentStageIndex],
-        score: result.score,
-        selected: selectedActions.map(item => item.name).join("、"),
-        analysis: result.analysis.join("<br>"),
-        tip: currentStage.tip
-      });
-
-      showResult(result);
-      updateStatus();
-    }
-
-    function evaluatePlan() {
-      const currentStage = currentCase.stages[stageKeys[currentStageIndex]];
-      const selectedTags = selectedActions.flatMap(item => item.tags);
-      const analysis = [];
-      let score = 45;
-
-      currentStage.goodTags.forEach(tag => {
-        if (selectedTags.includes(tag)) {
-          score += 10;
-          analysis.push(`<span class="good">✓ 適合：</span>${tagText(tag)}`);
-        }
-      });
-
-      currentStage.badTags.forEach(tag => {
-        if (selectedTags.includes(tag)) {
-          score -= 12;
-          analysis.push(`<span class="bad">✗ 不太適合：</span>${tagText(tag)}`);
-        }
-      });
-
-      if (selectedActions.length === 3) {
-        score += 5;
-        analysis.push(`<span class="good">✓ 方案完整：</span>選擇 3 張行動卡`);
-      }
-
-      const hasGoodChoice = currentStage.goodTags.some(tag => selectedTags.includes(tag));
-      const hasBadChoice = currentStage.badTags.some(tag => selectedTags.includes(tag));
-
-      if (!hasGoodChoice) {
-        score -= 15;
-        analysis.push(`<span class="bad">✗ 方向不足：</span>沒有選到關鍵的健康策略`);
-      }
-
-      if (!hasBadChoice && hasGoodChoice) {
-        score += 10;
-        analysis.push(`<span class="good">✓ 風險較低：</span>沒有選到明顯不適合的行動`);
-      }
-
-      score = Math.max(0, Math.min(100, score));
-
-      let level = "";
-      if (score >= 85) {
-        level = "方案很適合！";
-      } else if (score >= 70) {
-        level = "方向不錯！";
-      } else if (score >= 55) {
-        level = "可以再修正";
+      if (badCaught === 0) {
+        document.getElementById("badResultText").innerHTML = `
+          <span class="good-text">很棒！這一關沒有碰到風險行為。</span><br>
+          你成功避開了本關主要健康風險。
+        `;
       } else {
-        level = "需要重新思考";
+        document.getElementById("badResultText").innerHTML = `
+          <span class="bad-text">你碰到了 ${badCaught} 個風險行為。</span><br>
+          下次可以更注意紅色框框的選項，這些通常是短期方便但長期不利健康的行為。
+        `;
       }
 
-      return { score, level, analysis };
-    }
-
-    function tagText(tag) {
-      const map = {
-        balanced: "均衡搭配",
-        protein: "蛋白質",
-        noSugar: "減少含糖飲料",
-        fiber: "纖維與飽足感",
-        veg: "蔬菜攝取",
-        sugar: "高糖選擇",
-        lowBalance: "營養不均衡",
-        fried: "油炸食品",
-        highSodium: "高鈉食品",
-        sleepHygiene: "睡眠衛生",
-        routine: "固定作息",
-        recovery: "恢復精神",
-        badSleep: "干擾睡眠",
-        coping: "情緒調適",
-        planning: "任務規劃",
-        support: "尋求支持",
-        activity: "輕度活動",
-        avoidance: "逃避型因應"
-      };
-
-      return map[tag] || tag;
-    }
-
-    function showResult(result) {
-      const currentStage = currentCase.stages[stageKeys[currentStageIndex]];
-
-      document.getElementById("modalTitle").textContent = result.level;
-      document.getElementById("modalScore").textContent = `${result.score} 分`;
-      document.getElementById("choiceAnalysis").innerHTML = result.analysis.join("<br>");
-      document.getElementById("betterAdvice").innerHTML = currentStage.tip;
-
-      document.getElementById("selectedSummary").innerHTML = `
-        <strong>你選擇了：</strong>${selectedActions.map(item => item.name).join("、")}<br><br>
-        <strong>判斷重點：</strong>這一階段主要看你的選擇是否符合個案需求，並且是否避免明顯會增加健康風險的行動。
-      `;
-
-      document.getElementById("nextBtn").textContent = currentStageIndex < 2
-        ? "進入下一階段"
-        : currentCaseNumber < TOTAL_CASES
-          ? "抽下一位個案"
+      document.getElementById("healthTipText").textContent = stage.tip;
+      document.getElementById("nextStageBtn").textContent = lives <= 0
+        ? "查看總結"
+        : currentStageIndex < TOTAL_STAGES - 1
+          ? "進入下一關"
           : "查看總結";
 
       document.getElementById("resultModal").classList.add("show");
     }
 
-    function nextStep() {
-      document.getElementById("resultModal").classList.remove("show");
-
-      if (currentStageIndex < 2) {
-        currentStageIndex++;
-        loadStage();
-        return;
-      }
-
-      if (currentCaseNumber < TOTAL_CASES) {
-        currentCaseNumber++;
-        currentCase = null;
-        selectedActions = [];
-        lastResult = null;
-
-        document.getElementById("caseInfo").style.display = "none";
-        document.getElementById("spinBtn").disabled = false;
-
-        resetMissionText();
-        clearPlan();
-        updateStatus();
-        return;
-      }
-
-      endGame();
-    }
-
-    /* =========================================================
-       十一、結束遊戲與任務回顧
-    ========================================================== */
-    function endGame() {
-      document.getElementById("resultModal").classList.remove("show");
-      showScreen("endScreen");
-
-      const maxScore = TOTAL_CASES * 3 * 100;
-      const averageScore = missionHistory.length ? totalScore / missionHistory.length : 0;
-
-      document.getElementById("finalScore").textContent = `總分：${totalScore} / ${maxScore}`;
-
-      if (averageScore >= 85) {
-        document.getElementById("finalComment").textContent = "太棒了！你能依照個案需求，整合飲食、睡眠與壓力調適策略。";
-      } else if (averageScore >= 70) {
-        document.getElementById("finalComment").textContent = "表現不錯！多數階段都能選出合理的健康行動。";
-      } else if (averageScore >= 55) {
-        document.getElementById("finalComment").textContent = "已有基本概念，但可以再練習如何避開不適合的行動卡。";
-      } else {
-        document.getElementById("finalComment").textContent = "建議回顧任務分析，重新思考每個個案真正需要的支持。";
-      }
-
-      renderReview();
-    }
-
     function renderReview() {
       const reviewList = document.getElementById("reviewList");
 
-      if (missionHistory.length === 0) {
-        reviewList.innerHTML = "<p>尚未完成任務。</p>";
+      if (stageHistory.length === 0) {
+        reviewList.innerHTML = "<p>尚未完成任何關卡。</p>";
         return;
       }
 
-      reviewList.innerHTML = missionHistory
-        .map((record, index) => `
-          <div class="review-item">
-            <strong>${index + 1}. ${record.caseTitle}｜${record.stageName}</strong><br>
-            <strong>得分：</strong>${record.score} 分<br>
-            <strong>你的方案：</strong>${record.selected}<br>
-            <strong>分析：</strong><br>${record.analysis}<br>
-            <strong>衛教提醒：</strong>${record.tip}
-          </div>
-        `)
-        .join("");
+      reviewList.innerHTML = stageHistory.map((record, index) => `
+        <div class="review-item">
+          <strong>${index + 1}. ${record.pill}</strong><br>
+          <strong>本關得分：</strong>${record.stageScore}<br>
+          <strong>接到健康行動：</strong>${record.goodCaught} 個<br>
+          <strong>碰到風險行為：</strong>${record.badCaught} 個<br>
+          <strong>衛教提醒：</strong>${record.tip}
+        </div>
+      `).join("");
+    }
+
+    /* =========================================================
+       七、清除遊戲物件與計時器
+    ========================================================== */
+    function clearGameLoops() {
+      if (spawnTimer) clearInterval(spawnTimer);
+      if (gameTimer) clearInterval(gameTimer);
+      if (animationFrame) cancelAnimationFrame(animationFrame);
+      spawnTimer = null;
+      gameTimer = null;
+      animationFrame = null;
+    }
+
+    function removeAllItems() {
+      items.forEach(itemObj => itemObj.element.remove());
+      items = [];
+
+      document.querySelectorAll(".floating-text").forEach(element => {
+        element.remove();
+      });
     }
   </script>
 </body>
