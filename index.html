@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>大學生健康生活跑跑人</title>
+  <title>大學生健康金礦鉤子</title>
 
   <style>
     * {
@@ -17,7 +17,6 @@
       --red: #ef4444;
       --yellow: #facc15;
       --orange: #fb923c;
-      --purple: #a78bfa;
       --bg: #f8fafc;
       --text: #1f2937;
       --muted: #64748b;
@@ -162,7 +161,7 @@
       padding: 12px;
       background: #f8fafc;
       border-bottom: 2px solid #e2e8f0;
-      z-index: 5;
+      z-index: 10;
     }
 
     .status-box {
@@ -190,111 +189,93 @@
       gap: 12px;
       align-items: center;
       border-bottom: 2px solid #bae6fd;
-      z-index: 5;
+      z-index: 10;
     }
 
-    .game-area {
+    .mine-area {
       position: relative;
       flex: 1;
       overflow: hidden;
-      background: linear-gradient(180deg, #bfdbfe 0%, #dbeafe 42%, #bbf7d0 43%, #86efac 100%);
+      background: linear-gradient(180deg, #bfdbfe 0%, #dbeafe 32%, #fde68a 33%, #f59e0b 100%);
     }
 
-    .cloud {
-      position: absolute;
-      top: 40px;
-      width: 120px;
-      height: 42px;
-      background: rgba(255, 255, 255, 0.85);
-      border-radius: 999px;
-      animation: cloudMove 18s linear infinite;
-    }
-
-    .cloud::before,
-    .cloud::after {
-      content: "";
-      position: absolute;
-      background: rgba(255, 255, 255, 0.85);
-      border-radius: 50%;
-    }
-
-    .cloud::before {
-      width: 50px;
-      height: 50px;
-      left: 18px;
-      top: -22px;
-    }
-
-    .cloud::after {
-      width: 64px;
-      height: 64px;
-      left: 52px;
-      top: -32px;
-    }
-
-    .cloud.c1 { left: -140px; top: 50px; animation-duration: 20s; }
-    .cloud.c2 { left: -260px; top: 110px; animation-duration: 28s; transform: scale(0.75); }
-
-    @keyframes cloudMove {
-      from { transform: translateX(0); }
-      to { transform: translateX(calc(100vw + 360px)); }
-    }
-
-    .road {
+    .ground-line {
       position: absolute;
       left: 0;
       right: 0;
-      bottom: 0;
-      height: 150px;
-      background: linear-gradient(180deg, #64748b, #334155);
-      border-top: 8px solid #f8fafc;
-    }
-
-    .road-line {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 70px;
+      top: 32%;
       height: 8px;
-      background: repeating-linear-gradient(90deg, #fef3c7 0 60px, transparent 60px 115px);
-      animation: roadMove 1.1s linear infinite;
+      background: #92400e;
+      opacity: 0.5;
     }
 
-    @keyframes roadMove {
-      from { background-position-x: 0; }
-      to { background-position-x: -115px; }
-    }
-
-    #player {
+    .miner {
       position: absolute;
-      bottom: 115px;
       left: 50%;
-      width: 74px;
-      height: 74px;
+      top: 18px;
       transform: translateX(-50%);
+      width: 92px;
+      height: 92px;
       border-radius: 50%;
       background: white;
-      border: 5px solid #38bdf8;
+      border: 5px solid var(--blue);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 42px;
+      font-size: 48px;
       box-shadow: 0 10px 24px rgba(15, 23, 42, 0.24);
       z-index: 4;
-      transition: transform 0.08s;
-      animation: runBounce 0.45s ease-in-out infinite;
+      animation: minerBounce 1.2s ease-in-out infinite;
     }
 
-    @keyframes runBounce {
-      0%, 100% { margin-bottom: 0; }
-      50% { margin-bottom: 8px; }
+    @keyframes minerBounce {
+      0%, 100% { margin-top: 0; }
+      50% { margin-top: 6px; }
     }
 
-    .falling-item {
+    .pivot {
       position: absolute;
-      width: 74px;
-      height: 74px;
-      border-radius: 18px;
+      left: 50%;
+      top: 110px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #0f172a;
+      transform: translateX(-50%);
+      z-index: 5;
+    }
+
+    #hookArm {
+      position: absolute;
+      left: 50%;
+      top: 116px;
+      width: 6px;
+      height: 130px;
+      background: #334155;
+      transform-origin: top center;
+      transform: translateX(-50%) rotate(0deg);
+      border-radius: 999px;
+      z-index: 4;
+    }
+
+    #hookHead {
+      position: absolute;
+      left: 50%;
+      top: 240px;
+      width: 42px;
+      height: 42px;
+      border: 6px solid #334155;
+      border-top: none;
+      border-radius: 0 0 28px 28px;
+      transform: translateX(-50%);
+      z-index: 5;
+    }
+
+    .mine-item {
+      position: absolute;
+      width: 92px;
+      height: 82px;
+      border-radius: 20px;
       background: white;
       border: 4px solid #e2e8f0;
       display: flex;
@@ -303,15 +284,16 @@
       flex-direction: column;
       font-weight: 900;
       box-shadow: 0 10px 22px rgba(15, 23, 42, 0.18);
-      z-index: 3;
+      z-index: 2;
+      user-select: none;
     }
 
-    .falling-item.good-item {
+    .mine-item.good-item {
       border-color: #22c55e;
       background: #f0fdf4;
     }
 
-    .falling-item.bad-item {
+    .mine-item.bad-item {
       border-color: #ef4444;
       background: #fef2f2;
     }
@@ -323,8 +305,8 @@
 
     .item-label {
       margin-top: 4px;
-      font-size: 11px;
-      width: 68px;
+      font-size: 12px;
+      width: 82px;
       text-align: center;
       line-height: 1.15;
       white-space: normal;
@@ -335,7 +317,7 @@
       font-size: 30px;
       font-weight: 900;
       pointer-events: none;
-      z-index: 10;
+      z-index: 12;
       animation: floatUp 0.8s ease-out forwards;
     }
 
@@ -420,10 +402,6 @@
     .small-list {
       padding-left: 20px;
       margin: 8px 0;
-    }
-
-    .small-list li {
-      margin-bottom: 4px;
     }
 
     .heart {
@@ -527,14 +505,11 @@
         grid-template-columns: 1fr;
       }
 
-      .game-area {
-        height: 600px;
+      .mine-area {
+        height: 620px;
       }
 
-      .top-bar {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
+      .top-bar,
       .how-to-play,
       .result-grid {
         grid-template-columns: 1fr;
@@ -549,33 +524,33 @@
   ========================================================== -->
   <section id="homeScreen" class="screen active">
     <div class="card">
-      <div class="home-icons">🏃‍♀️ 🍙 💤 🧘</div>
-      <h1>大學生健康生活跑跑人</h1>
-      <h2>飲食補給站 × 睡眠修復站 × 壓力調適站</h2>
+      <div class="home-icons">⛏️ 🍙 💤 🧘</div>
+      <h1>大學生健康金礦鉤子</h1>
+      <h2>抓取健康行動，避開生活風險</h2>
       <p>
-        你是一位正在校園中奔跑的大學生，需要在限定時間內接住健康行動，避開不健康行為。<br>
-        遊戲共有三關：飲食、睡眠作息、壓力調適。每一關結束後，系統會給你衛教回饋。
+        你要控制健康鉤子，在每一關抓取適合大學生的健康行動卡。<br>
+        鉤子會左右擺動，請看準時機按下空白鍵或點擊發射，抓到健康行動加分，抓到風險行為扣生命。
       </p>
 
       <div class="how-to-play">
         <div class="rule-box">
-          <span class="emoji">⬅️ ➡️</span>
+          <span class="emoji">⛏️</span>
           <strong>操作方式</strong><br>
-          使用鍵盤左右鍵移動，也可以用 A / D 鍵。
+          按空白鍵發射鉤子，也可以按畫面上的「發射鉤子」。
         </div>
         <div class="rule-box">
           <span class="emoji">✅</span>
-          <strong>接健康行動</strong><br>
-          接到健康行動會加分，例如無糖飲品、固定作息、腹式呼吸。
+          <strong>抓健康行動</strong><br>
+          綠色框框代表較好的健康選擇，抓到會加分。
         </div>
         <div class="rule-box">
           <span class="emoji">⚠️</span>
           <strong>避開風險行為</strong><br>
-          碰到風險行為會扣生命，例如全糖飲、熬夜滑手機、拖延逃避。
+          紅色框框代表容易造成健康負擔的行為，抓到會扣生命。
         </div>
       </div>
 
-      <button onclick="startGame()">開始跑跑人挑戰</button>
+      <button onclick="startGame()">開始金礦鉤子挑戰</button>
     </div>
   </section>
 
@@ -589,20 +564,22 @@
           <div class="status-box">關卡<br><strong id="stageNumber">1</strong> / <strong>3</strong></div>
           <div class="status-box">主題<br><strong id="stageTitle">飲食</strong></div>
           <div class="status-box">分數<br><strong id="scoreText">0</strong></div>
-          <div class="status-box">時間<br><strong id="timeText">30</strong></div>
+          <div class="status-box">時間<br><strong id="timeText">35</strong></div>
           <div class="status-box">生命<br><span class="heart" id="heartText">❤❤❤</span></div>
         </div>
 
         <div class="stage-banner">
-          <span id="missionText">接住適合的健康飲食，避開高糖、高油、高鈉選擇。</span>
-          <span>操作：← → 或 A / D</span>
+          <span id="missionText">抓取適合的健康飲食，避開高糖、高油、高鈉選擇。</span>
+          <span>操作：空白鍵發射</span>
         </div>
 
-        <div id="gameArea" class="game-area">
-          <div class="cloud c1"></div>
-          <div class="cloud c2"></div>
-          <div class="road"><div class="road-line"></div></div>
-          <div id="player">🧑‍🎓</div>
+        <div id="mineArea" class="mine-area">
+          <div class="ground-line"></div>
+          <div class="miner">🧑‍🎓</div>
+          <div class="pivot"></div>
+          <div id="hookArm"></div>
+          <div id="hookHead"></div>
+
           <div id="countdownOverlay" class="countdown-overlay">
             <div id="countdownNumber" class="countdown-number">3</div>
             <h2 id="countdownText">準備開始</h2>
@@ -615,22 +592,23 @@
           <div class="case-emoji" id="caseEmoji">👩‍💻</div>
           <h2 id="caseTitle">熬夜趕報告的大學生</h2>
           <p id="caseStory">
-            這週報告和考試擠在一起，你需要幫這位大學生在飲食、睡眠與壓力調適上做出比較好的選擇。
+            這週報告和考試擠在一起，你需要幫這位大學生抓取合適的健康行動。
           </p>
         </div>
 
         <div class="tip-card">
           <span class="stage-pill" id="stagePill">第一關｜飲食補給站</span>
           <h3>本關目標</h3>
-          <p id="stageGoal">接住較均衡的食物與無糖飲品，避開高糖、高油、高鈉選擇。</p>
+          <p id="stageGoal">抓取較均衡的食物與無糖飲品，避開高糖、高油、高鈉選擇。</p>
         </div>
 
         <div class="log-card">
           <h3>本關紀錄</h3>
           <ul class="small-list">
-            <li>接到健康行動：<strong id="goodCountText">0</strong></li>
-            <li>碰到風險行為：<strong id="badCountText">0</strong></li>
+            <li>抓到健康行動：<strong id="goodCountText">0</strong></li>
+            <li>抓到風險行為：<strong id="badCountText">0</strong></li>
           </ul>
+          <button class="success" onclick="fireHook()">發射鉤子</button>
           <button class="secondary" onclick="pauseOrResumeGame()" id="pauseBtn">暫停</button>
         </div>
       </aside>
@@ -685,14 +663,20 @@
        一、遊戲資料設定
     ========================================================== */
     const TOTAL_STAGES = 3;
-    const STAGE_TIME = 30;
-    const PLAYER_SPEED = 18;
-    const ITEM_SIZE = 74;
+    const STAGE_TIME = 35;
+    const HOOK_BASE_LENGTH = 130;
+    const HOOK_MAX_LENGTH = 560;
+    const HOOK_SWING_LIMIT = 65;
+    const HOOK_SWING_SPEED = 0.035;
+    const HOOK_EXTEND_SPEED = 9;
+    const HOOK_RETRACT_SPEED = 11;
+    const ITEM_WIDTH = 92;
+    const ITEM_HEIGHT = 82;
 
     const caseInfo = {
       emoji: "👩‍💻",
       title: "熬夜趕報告的大學生",
-      story: "這週報告和考試擠在一起，常常想用含糖飲料、熬夜和拖延撐過去。請幫他在飲食、睡眠與壓力調適上做出比較好的選擇。"
+      story: "這週報告和考試擠在一起，常常想用含糖飲料、熬夜和拖延撐過去。請幫他抓取飲食、睡眠與壓力調適的健康行動。"
     };
 
     const stages = [
@@ -700,8 +684,8 @@
         key: "diet",
         title: "飲食",
         pill: "第一關｜飲食補給站",
-        mission: "接住適合的健康飲食，避開高糖、高油、高鈉選擇。",
-        goal: "接住較均衡的食物與無糖飲品，避開高糖、高油、高鈉選擇。",
+        mission: "抓取適合的健康飲食，避開高糖、高油、高鈉選擇。",
+        goal: "抓取較均衡的食物與無糖飲品，避開高糖、高油、高鈉選擇。",
         tip: "大學生忙碌時常用含糖飲料或泡麵快速解決，但比較好的方向是選擇有主食、蛋白質與無糖飲品的組合。外食不一定要完美，先做到少糖、少油、不要只吃零食，就是很好的開始。",
         goodItems: [
           item("🍙", "飯糰＋蛋", 12),
@@ -721,8 +705,8 @@
         key: "sleep",
         title: "睡眠",
         pill: "第二關｜睡眠修復站",
-        mission: "接住有助睡眠作息的行動，避開讓睡眠更混亂的行為。",
-        goal: "接住睡眠衛生與恢復精神的選擇，避開晚上咖啡因、熬夜滑手機等行為。",
+        mission: "抓取有助睡眠作息的行動，避開讓睡眠更混亂的行為。",
+        goal: "抓取睡眠衛生與恢復精神的選擇，避開晚上咖啡因、熬夜滑手機等行為。",
         tip: "睡眠作息不一定要一次變完美。可以先從固定起床時間、睡前減少手機刺激、短時間午睡開始。晚上大量咖啡因和躺在床上滑手機，容易讓入睡時間更晚。",
         goodItems: [
           item("📵", "睡前放手機", 12),
@@ -742,8 +726,8 @@
         key: "stress",
         title: "壓力",
         pill: "第三關｜壓力調適站",
-        mission: "接住有效的壓力調適策略，避開逃避或讓壓力累積的行為。",
-        goal: "接住呼吸、規劃、尋求支持與輕度活動，避開拖延、暴吃或完全逃避。",
+        mission: "抓取有效的壓力調適策略，避開逃避或讓壓力累積的行為。",
+        goal: "抓取呼吸、規劃、尋求支持與輕度活動，避開拖延、暴吃或完全逃避。",
         tip: "壓力調適不是要立刻消除所有壓力，而是把壓力轉成可以處理的行動。腹式呼吸、列待辦、找人討論和短時間活動，都比拖延到最後或情緒性暴食更有幫助。",
         goodItems: [
           item("🧘", "腹式呼吸", 12),
@@ -775,18 +759,23 @@
     let goodCaught = 0;
     let badCaught = 0;
     let stageScoreStart = 0;
-    let playerX = 0;
-    let keys = {};
+    let stageHistory = [];
+
     let items = [];
-    let spawnTimer = null;
     let gameTimer = null;
     let animationFrame = null;
     let isPlaying = false;
     let isPaused = false;
-    let stageHistory = [];
 
-    const gameArea = document.getElementById("gameArea");
-    const player = document.getElementById("player");
+    let swingTick = 0;
+    let hookAngle = 0;
+    let hookLength = HOOK_BASE_LENGTH;
+    let hookState = "swing";
+    let caughtItem = null;
+
+    const mineArea = document.getElementById("mineArea");
+    const hookArm = document.getElementById("hookArm");
+    const hookHead = document.getElementById("hookHead");
 
     /* =========================================================
        三、畫面切換與遊戲開始
@@ -828,11 +817,10 @@
       stageScoreStart = score;
       isPlaying = false;
       isPaused = false;
-      keys = {};
-
-      const areaWidth = gameArea.clientWidth;
-      playerX = areaWidth / 2 - player.offsetWidth / 2;
-      player.style.left = playerX + "px";
+      hookState = "swing";
+      hookLength = HOOK_BASE_LENGTH;
+      caughtItem = null;
+      swingTick = 0;
 
       document.getElementById("stageNumber").textContent = currentStageIndex + 1;
       document.getElementById("stageTitle").textContent = stage.title;
@@ -876,7 +864,9 @@
       isPlaying = true;
       isPaused = false;
 
-      spawnTimer = setInterval(spawnItem, 820);
+      createMineItems();
+      updateHookDisplay();
+
       gameTimer = setInterval(() => {
         if (!isPlaying || isPaused) return;
         timeLeft--;
@@ -892,7 +882,6 @@
 
     function pauseOrResumeGame() {
       if (!isPlaying) return;
-
       isPaused = !isPaused;
       document.getElementById("pauseBtn").textContent = isPaused ? "繼續" : "暫停";
     }
@@ -902,7 +891,6 @@
 
       isPlaying = false;
       clearGameLoops();
-      removeAllItems();
 
       const stage = stages[currentStageIndex];
       const stageScore = score - stageScoreStart;
@@ -943,12 +931,12 @@
       document.getElementById("finalScore").textContent = "總分：" + score;
 
       let comment = "";
-      if (score >= 230) {
-        comment = "太棒了！你很能辨識大學生生活中的健康行動，並且避開常見風險行為。";
-      } else if (score >= 160) {
-        comment = "表現不錯！你大多能選出正向的健康策略，但仍可以再注意一些容易混淆的風險行為。";
-      } else if (score >= 90) {
-        comment = "已經有基本概念，但可以再練習分辨哪些行為只是短暫方便，長期可能反而造成負擔。";
+      if (score >= 190) {
+        comment = "太棒了！你很能抓準大學生生活中的健康行動，也能避開常見風險行為。";
+      } else if (score >= 130) {
+        comment = "表現不錯！你大多能抓到正向的健康策略，但仍可以再注意容易混淆的風險行為。";
+      } else if (score >= 70) {
+        comment = "已有基本概念，但可以再練習判斷哪些行為只是短期方便，長期可能造成健康負擔。";
       } else {
         comment = "建議重新挑戰一次，特別注意含糖飲料、熬夜滑手機、拖延逃避等常見健康風險。";
       }
@@ -958,137 +946,200 @@
     }
 
     /* =========================================================
-       五、角色移動與物件生成
+       五、建立金礦物件
+    ========================================================== */
+    function createMineItems() {
+      removeAllItems();
+
+      const stage = stages[currentStageIndex];
+      const allItems = [];
+
+      stage.goodItems.forEach(itemData => {
+        allItems.push({ ...itemData, isGood: true });
+      });
+
+      stage.badItems.forEach(itemData => {
+        allItems.push({ ...itemData, isGood: false });
+      });
+
+      const areaWidth = mineArea.clientWidth;
+      const areaHeight = mineArea.clientHeight;
+      const topLimit = areaHeight * 0.38;
+      const bottomLimit = areaHeight - ITEM_HEIGHT - 30;
+
+      shuffleArray(allItems).forEach((itemData, index) => {
+        const element = document.createElement("div");
+        element.className = "mine-item " + (itemData.isGood ? "good-item" : "bad-item");
+        element.innerHTML = `
+          <div class="item-emoji">${itemData.emoji}</div>
+          <div class="item-label">${itemData.label}</div>
+        `;
+
+        const x = 40 + Math.random() * (areaWidth - ITEM_WIDTH - 80);
+        const y = topLimit + Math.random() * (bottomLimit - topLimit);
+
+        element.style.left = x + "px";
+        element.style.top = y + "px";
+        mineArea.appendChild(element);
+
+        items.push({
+          element,
+          x,
+          y,
+          width: ITEM_WIDTH,
+          height: ITEM_HEIGHT,
+          emoji: itemData.emoji,
+          label: itemData.label,
+          points: itemData.points,
+          isGood: itemData.isGood
+        });
+      });
+    }
+
+    function shuffleArray(array) {
+      return array.sort(() => Math.random() - 0.5);
+    }
+
+    /* =========================================================
+       六、鉤子控制
     ========================================================== */
     document.addEventListener("keydown", event => {
-      keys[event.key.toLowerCase()] = true;
+      if (event.code === "Space") {
+        event.preventDefault();
+        fireHook();
+      }
     });
 
-    document.addEventListener("keyup", event => {
-      keys[event.key.toLowerCase()] = false;
-    });
+    function fireHook() {
+      if (!isPlaying || isPaused) return;
+      if (hookState !== "swing") return;
+      hookState = "extend";
+    }
 
     function gameLoop() {
       if (!isPlaying) return;
 
       if (!isPaused) {
-        movePlayer();
-        moveItems();
-        checkCollisions();
+        updateHook();
       }
 
       animationFrame = requestAnimationFrame(gameLoop);
     }
 
-    function movePlayer() {
-      const areaWidth = gameArea.clientWidth;
-      const playerWidth = player.offsetWidth;
-
-      if (keys["arrowleft"] || keys["a"]) {
-        playerX -= PLAYER_SPEED;
+    function updateHook() {
+      if (hookState === "swing") {
+        swingTick += HOOK_SWING_SPEED;
+        hookAngle = Math.sin(swingTick) * HOOK_SWING_LIMIT;
       }
 
-      if (keys["arrowright"] || keys["d"]) {
-        playerX += PLAYER_SPEED;
-      }
+      if (hookState === "extend") {
+        hookLength += HOOK_EXTEND_SPEED;
+        checkHookCollision();
 
-      playerX = Math.max(0, Math.min(areaWidth - playerWidth, playerX));
-      player.style.left = playerX + "px";
-    }
-
-    function spawnItem() {
-      if (!isPlaying || isPaused) return;
-
-      const stage = stages[currentStageIndex];
-      const isGood = Math.random() < 0.62;
-      const source = isGood ? stage.goodItems : stage.badItems;
-      const chosen = source[Math.floor(Math.random() * source.length)];
-
-      const element = document.createElement("div");
-      element.className = "falling-item " + (isGood ? "good-item" : "bad-item");
-      element.innerHTML = `
-        <div class="item-emoji">${chosen.emoji}</div>
-        <div class="item-label">${chosen.label}</div>
-      `;
-
-      const areaWidth = gameArea.clientWidth;
-      const x = Math.random() * (areaWidth - ITEM_SIZE);
-      const speed = 3.6 + Math.random() * 2.4 + currentStageIndex * 0.4;
-
-      element.style.left = x + "px";
-      element.style.top = "-90px";
-      gameArea.appendChild(element);
-
-      items.push({
-        element,
-        x,
-        y: -90,
-        speed,
-        isGood,
-        points: chosen.points,
-        label: chosen.label
-      });
-    }
-
-    function moveItems() {
-      const areaHeight = gameArea.clientHeight;
-
-      items.forEach(itemObj => {
-        itemObj.y += itemObj.speed;
-        itemObj.element.style.top = itemObj.y + "px";
-      });
-
-      items = items.filter(itemObj => {
-        if (itemObj.y > areaHeight + 90) {
-          itemObj.element.remove();
-          return false;
+        if (hookLength >= HOOK_MAX_LENGTH) {
+          hookState = "retract";
         }
-        return true;
-      });
+      }
+
+      if (hookState === "retract") {
+        hookLength -= HOOK_RETRACT_SPEED;
+
+        if (caughtItem) {
+          moveCaughtItemWithHook();
+        }
+
+        if (hookLength <= HOOK_BASE_LENGTH) {
+          hookLength = HOOK_BASE_LENGTH;
+          if (caughtItem) {
+            collectCaughtItem();
+          }
+          hookState = "swing";
+        }
+      }
+
+      updateHookDisplay();
     }
 
-    function checkCollisions() {
-      const playerRect = player.getBoundingClientRect();
+    function updateHookDisplay() {
+      const pivot = getPivotPoint();
+      const hookEnd = getHookEndPoint();
 
-      items = items.filter(itemObj => {
-        const itemRect = itemObj.element.getBoundingClientRect();
-        const hit = !(
-          playerRect.right < itemRect.left ||
-          playerRect.left > itemRect.right ||
-          playerRect.bottom < itemRect.top ||
-          playerRect.top > itemRect.bottom
-        );
+      hookArm.style.height = hookLength + "px";
+      hookArm.style.transform = `translateX(-50%) rotate(${hookAngle}deg)`;
+
+      hookHead.style.left = hookEnd.x + "px";
+      hookHead.style.top = hookEnd.y + "px";
+      hookHead.style.transform = "translate(-50%, -50%)";
+    }
+
+    function getPivotPoint() {
+      return {
+        x: mineArea.clientWidth / 2,
+        y: 116
+      };
+    }
+
+    function getHookEndPoint() {
+      const pivot = getPivotPoint();
+      const radians = hookAngle * Math.PI / 180;
+      const x = pivot.x + Math.sin(radians) * hookLength;
+      const y = pivot.y + Math.cos(radians) * hookLength;
+      return { x, y };
+    }
+
+    function checkHookCollision() {
+      if (caughtItem) return;
+
+      const hookEnd = getHookEndPoint();
+
+      for (const itemObj of items) {
+        const hit = hookEnd.x >= itemObj.x &&
+          hookEnd.x <= itemObj.x + itemObj.width &&
+          hookEnd.y >= itemObj.y &&
+          hookEnd.y <= itemObj.y + itemObj.height;
 
         if (hit) {
-          handleItemCaught(itemObj);
-          itemObj.element.remove();
-          return false;
+          caughtItem = itemObj;
+          hookState = "retract";
+          break;
         }
-
-        return true;
-      });
+      }
     }
 
-    function handleItemCaught(itemObj) {
-      score += itemObj.points;
+    function moveCaughtItemWithHook() {
+      const hookEnd = getHookEndPoint();
+      caughtItem.x = hookEnd.x - ITEM_WIDTH / 2;
+      caughtItem.y = hookEnd.y - ITEM_HEIGHT / 2;
+      caughtItem.element.style.left = caughtItem.x + "px";
+      caughtItem.element.style.top = caughtItem.y + "px";
+      caughtItem.element.style.zIndex = 6;
+    }
 
-      if (itemObj.isGood) {
+    function collectCaughtItem() {
+      score += caughtItem.points;
+
+      if (caughtItem.isGood) {
         goodCaught++;
-        showFloatingText("+" + itemObj.points, itemObj.x, itemObj.y, true);
+        showFloatingText("+" + caughtItem.points, mineArea.clientWidth / 2, 120, true);
       } else {
         badCaught++;
         lives--;
-        showFloatingText(itemObj.points, itemObj.x, itemObj.y, false);
-        shakePlayer();
+        showFloatingText(caughtItem.points, mineArea.clientWidth / 2, 120, false);
+      }
 
-        if (lives <= 0) {
-          updateHUD();
-          finishStage();
-          return;
-        }
+      caughtItem.element.remove();
+      items = items.filter(itemObj => itemObj !== caughtItem);
+      caughtItem = null;
+
+      if (items.length <= 2) {
+        createMineItems();
       }
 
       updateHUD();
+
+      if (lives <= 0) {
+        finishStage();
+      }
     }
 
     function showFloatingText(text, x, y, isGood) {
@@ -1097,22 +1148,15 @@
       element.textContent = text;
       element.style.left = x + "px";
       element.style.top = y + "px";
-      gameArea.appendChild(element);
+      mineArea.appendChild(element);
 
       setTimeout(() => {
         element.remove();
       }, 800);
     }
 
-    function shakePlayer() {
-      player.style.transform = "translateX(-50%) scale(1.12) rotate(-8deg)";
-      setTimeout(() => {
-        player.style.transform = "translateX(-50%)";
-      }, 160);
-    }
-
     /* =========================================================
-       六、畫面數值更新與結果
+       七、畫面數值更新與結果
     ========================================================== */
     function updateHUD() {
       document.getElementById("scoreText").textContent = score;
@@ -1129,18 +1173,18 @@
       document.getElementById("stageScoreText").textContent = "本關得分：" + stageScore;
 
       document.getElementById("goodResultText").innerHTML = `
-        <span class="good-text">你接到了 ${goodCaught} 個健康行動。</span><br>
+        <span class="good-text">你抓到了 ${goodCaught} 個健康行動。</span><br>
         這代表你能辨識本關中比較適合大學生的健康選擇。
       `;
 
       if (badCaught === 0) {
         document.getElementById("badResultText").innerHTML = `
-          <span class="good-text">很棒！這一關沒有碰到風險行為。</span><br>
+          <span class="good-text">很棒！這一關沒有抓到風險行為。</span><br>
           你成功避開了本關主要健康風險。
         `;
       } else {
         document.getElementById("badResultText").innerHTML = `
-          <span class="bad-text">你碰到了 ${badCaught} 個風險行為。</span><br>
+          <span class="bad-text">你抓到了 ${badCaught} 個風險行為。</span><br>
           下次可以更注意紅色框框的選項，這些通常是短期方便但長期不利健康的行為。
         `;
       }
@@ -1167,21 +1211,19 @@
         <div class="review-item">
           <strong>${index + 1}. ${record.pill}</strong><br>
           <strong>本關得分：</strong>${record.stageScore}<br>
-          <strong>接到健康行動：</strong>${record.goodCaught} 個<br>
-          <strong>碰到風險行為：</strong>${record.badCaught} 個<br>
+          <strong>抓到健康行動：</strong>${record.goodCaught} 個<br>
+          <strong>抓到風險行為：</strong>${record.badCaught} 個<br>
           <strong>衛教提醒：</strong>${record.tip}
         </div>
       `).join("");
     }
 
     /* =========================================================
-       七、清除遊戲物件與計時器
+       八、清除遊戲物件與計時器
     ========================================================== */
     function clearGameLoops() {
-      if (spawnTimer) clearInterval(spawnTimer);
       if (gameTimer) clearInterval(gameTimer);
       if (animationFrame) cancelAnimationFrame(animationFrame);
-      spawnTimer = null;
       gameTimer = null;
       animationFrame = null;
     }
@@ -1189,6 +1231,7 @@
     function removeAllItems() {
       items.forEach(itemObj => itemObj.element.remove());
       items = [];
+      caughtItem = null;
 
       document.querySelectorAll(".floating-text").forEach(element => {
         element.remove();
