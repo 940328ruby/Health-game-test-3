@@ -1,436 +1,1142 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>大學生外食生存戰：我的餐盤任務</title>
-<style>
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  font-family: "Noto Sans TC", Arial, sans-serif;
-  background: linear-gradient(135deg, #dbeafe, #dcfce7, #fef9c3);
-  color: #1f2937;
-}
-.screen {
-  min-height: 100vh;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-}
-.active { display: flex; }
-.card, .panel {
-  background: rgba(255,255,255,.96);
-  border-radius: 28px;
-  padding: 26px;
-  box-shadow: 0 14px 38px rgba(15,23,42,.14);
-}
-.card { width: min(980px, 100%); text-align: center; }
-h1 { font-size: 42px; margin: 8px 0; }
-h2 { margin: 6px 0 14px; }
-p { font-size: 18px; line-height: 1.75; }
-button {
-  border: 0;
-  border-radius: 16px;
-  padding: 12px 22px;
-  margin: 8px;
-  font-size: 18px;
-  cursor: pointer;
-  background: #38bdf8;
-  color: white;
-  font-weight: 900;
-}
-button:hover { background: #0284c7; }
-button.secondary { background: #94a3b8; }
-button.success { background: #22c55e; }
-button.danger { background: #ef4444; }
-button:disabled { background: #cbd5e1; cursor: not-allowed; }
-#gameScreen { align-items: flex-start; padding: 18px; }
-.status-row {
-  width: min(1380px, 100%);
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  margin: 0 auto 16px;
-}
-.status-box {
-  background: rgba(255,255,255,.96);
-  border-radius: 20px;
-  padding: 12px;
-  text-align: center;
-  font-weight: 900;
-  box-shadow: 0 8px 20px rgba(15,23,42,.1);
-}
-.status-box strong { color: #0369a1; font-size: 24px; }
-.game-frame {
-  width: min(1380px, 100%);
-  margin: auto;
-  display: grid;
-  grid-template-columns: 1.05fr 1.2fr .95fr;
-  gap: 18px;
-}
-.wheel-wrap { display: flex; flex-direction: column; align-items: center; }
-.pointer {
-  width: 0; height: 0;
-  border-left: 18px solid transparent;
-  border-right: 18px solid transparent;
-  border-top: 34px solid #ef4444;
-  margin-bottom: -6px;
-  z-index: 2;
-}
-#wheel {
-  width: 250px;
-  height: 250px;
-  border-radius: 50%;
-  border: 10px solid white;
-  background: conic-gradient(#bae6fd 0 45deg,#bbf7d0 45deg 90deg,#fde68a 90deg 135deg,#fecaca 135deg 180deg,#ddd6fe 180deg 225deg,#fed7aa 225deg 270deg,#ccfbf1 270deg 315deg,#fbcfe8 315deg 360deg);
-  box-shadow: 0 14px 35px rgba(15,23,42,.2);
-  position: relative;
-  transition: transform 2s cubic-bezier(.18,.89,.32,1.28);
-}
-#wheel::after {
-  content: "任務轉盤";
-  position: absolute;
-  inset: 72px;
-  border-radius: 50%;
-  background: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  font-weight: 900;
-  color: #0369a1;
-  font-size: 24px;
-  box-shadow: inset 0 0 0 5px #e0f2fe;
-}
-.case-tag {
-  display: inline-block;
-  background: #e0f2fe;
-  color: #0369a1;
-  border-radius: 999px;
-  padding: 8px 14px;
-  font-weight: 900;
-  margin-top: 12px;
-}
-.mission-box {
-  background: #f8fafc;
-  border: 2px dashed #bae6fd;
-  border-radius: 18px;
-  padding: 14px;
-  line-height: 1.75;
-}
-.mission-box strong { color: #0f766e; }
-.plate {
-  min-height: 430px;
-  border-radius: 34px;
-  background: radial-gradient(circle at center, #fff 0 38%, #e0f2fe 39% 46%, #fff 47% 100%);
-  border: 8px solid #bae6fd;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  padding: 20px;
-  align-content: start;
-}
-.empty-note {
-  grid-column: 1 / -1;
-  align-self: center;
-  justify-self: center;
-  text-align: center;
-  color: #64748b;
-  font-size: 20px;
-  font-weight: 900;
-  line-height: 1.8;
-}
-.food-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  max-height: 650px;
-  overflow: auto;
-  padding-right: 4px;
-}
-.food-card {
-  border: 3px solid #e2e8f0;
-  background: white;
-  border-radius: 20px;
-  padding: 12px;
-  cursor: grab;
-  user-select: none;
-  box-shadow: 0 7px 18px rgba(15,23,42,.08);
-  transition: transform .15s, border-color .15s;
-}
-.food-card:hover { transform: translateY(-3px); border-color: #38bdf8; }
-.food-card.selected { border-color: #22c55e; background: #f0fdf4; cursor: pointer; }
-.food-emoji { font-size: 30px; display: block; }
-.food-name { font-weight: 900; margin-top: 4px; }
-.food-meta { font-size: 13px; color: #64748b; margin-top: 4px; line-height: 1.4; }
-.action-row { display: flex; justify-content: center; flex-wrap: wrap; margin-top: 14px; }
-.info-box {
-  background: #f8fafc;
-  border-radius: 18px;
-  padding: 14px;
-  line-height: 1.75;
-  border: 2px dashed #cbd5e1;
-  margin-bottom: 12px;
-}
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(15,23,42,.55);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  z-index: 100;
-}
-.modal-backdrop.show { display: flex; }
-.modal {
-  width: min(780px, 100%);
-  background: white;
-  border-radius: 28px;
-  padding: 28px;
-  box-shadow: 0 20px 60px rgba(15,23,42,.35);
-}
-.modal h2 { text-align: center; font-size: 34px; }
-.big-score { text-align: center; font-size: 44px; font-weight: 900; color: #0369a1; }
-.result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.result-box { background: #f8fafc; border-radius: 18px; padding: 14px; line-height: 1.7; }
-.good { color: #16a34a; font-weight: 900; }
-.bad { color: #dc2626; font-weight: 900; }
-.review-list { text-align: left; max-height: 48vh; overflow: auto; background: white; padding: 18px; border-radius: 20px; }
-.review-item { padding: 12px; border-bottom: 1px solid #e5e7eb; line-height: 1.7; }
-@media (max-width: 1100px) {
-  .game-frame { grid-template-columns: 1fr; }
-  .status-row { grid-template-columns: 1fr 1fr; }
-}
-@media (max-width: 640px) {
-  h1 { font-size: 32px; }
-  .food-grid, .plate, .result-grid { grid-template-columns: 1fr; }
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>大學生健康生活生存戰</title>
+
+  <style>
+    /* =========================================================
+       一、基本設定與整體視覺
+    ========================================================= */
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --blue: #38bdf8;
+      --deep-blue: #0369a1;
+      --green: #22c55e;
+      --red: #ef4444;
+      --yellow-bg: #fef3c7;
+      --green-bg: #dcfce7;
+      --light-bg: #f8fafc;
+      --border: #e2e8f0;
+      --text: #1f2937;
+      --muted: #64748b;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Noto Sans TC", Arial, sans-serif;
+      color: var(--text);
+      background: linear-gradient(135deg, #dbeafe, #dcfce7, #fef9c3);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "🍙 💤 🌿 🧘 🥗 ☀️ 📚";
+      position: fixed;
+      top: 18px;
+      left: -20%;
+      width: 140%;
+      font-size: 32px;
+      opacity: 0.18;
+      animation: floatText 18s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes floatText {
+      from { transform: translateX(-10%); }
+      to { transform: translateX(10%); }
+    }
+
+    .screen {
+      min-height: 100vh;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .screen.active {
+      display: flex;
+    }
+
+    .card,
+    .panel {
+      background: rgba(255, 255, 255, 0.96);
+      border-radius: 28px;
+      padding: 26px;
+      box-shadow: 0 16px 42px rgba(15, 23, 42, 0.15);
+    }
+
+    .card {
+      width: min(1000px, 100%);
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 42px;
+      margin: 8px 0 10px;
+    }
+
+    h2 {
+      margin: 6px 0 14px;
+    }
+
+    p {
+      font-size: 18px;
+      line-height: 1.75;
+    }
+
+    button {
+      border: none;
+      border-radius: 16px;
+      padding: 12px 22px;
+      margin: 8px;
+      font-size: 18px;
+      cursor: pointer;
+      background: var(--blue);
+      color: white;
+      font-weight: 900;
+      box-shadow: 0 8px 18px rgba(14, 165, 233, 0.25);
+      transition: 0.18s transform, 0.18s background;
+    }
+
+    button:hover {
+      background: #0284c7;
+      transform: translateY(-2px);
+    }
+
+    button:disabled {
+      background: #cbd5e1;
+      transform: none;
+      cursor: not-allowed;
+    }
+
+    button.success {
+      background: var(--green);
+    }
+
+    button.secondary {
+      background: #94a3b8;
+    }
+
+    button.danger {
+      background: var(--red);
+    }
+
+    .home-icons {
+      font-size: 56px;
+      margin: 12px 0;
+      animation: bounce 2.4s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    /* =========================================================
+       二、遊戲畫面版面
+    ========================================================= */
+    #gameScreen {
+      align-items: flex-start;
+      padding: 18px;
+    }
+
+    .game-container {
+      width: 100%;
+    }
+
+    .status-row {
+      width: min(1380px, 100%);
+      margin: 0 auto 16px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+    }
+
+    .status-box {
+      background: rgba(255, 255, 255, 0.96);
+      border-radius: 20px;
+      padding: 12px;
+      text-align: center;
+      font-weight: 900;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.1);
+    }
+
+    .status-box strong {
+      color: var(--deep-blue);
+      font-size: 24px;
+    }
+
+    .game-frame {
+      width: min(1380px, 100%);
+      margin: auto;
+      display: grid;
+      grid-template-columns: 1.05fr 1.2fr 0.95fr;
+      gap: 18px;
+    }
+
+    /* =========================================================
+       三、左側個案轉盤
+    ========================================================= */
+    .wheel-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .pointer {
+      width: 0;
+      height: 0;
+      border-left: 18px solid transparent;
+      border-right: 18px solid transparent;
+      border-top: 34px solid var(--red);
+      margin-bottom: -6px;
+      z-index: 2;
+      filter: drop-shadow(0 5px 4px rgba(0, 0, 0, 0.2));
+    }
+
+    #wheel {
+      width: 255px;
+      height: 255px;
+      border-radius: 50%;
+      border: 10px solid white;
+      background: conic-gradient(#bae6fd 0deg 60deg, #bbf7d0 60deg 120deg, #fde68a 120deg 180deg, #fecaca 180deg 240deg, #ddd6fe 240deg 300deg, #fed7aa 300deg 360deg);
+      box-shadow: 0 14px 35px rgba(15, 23, 42, 0.2);
+      position: relative;
+      transition: transform 2.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    }
+
+    #wheel::after {
+      content: "個案轉盤";
+      position: absolute;
+      inset: 72px;
+      border-radius: 50%;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-weight: 900;
+      color: var(--deep-blue);
+      font-size: 23px;
+      box-shadow: inset 0 0 0 5px #e0f2fe;
+    }
+
+    .case-tag,
+    .stage-tag {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-weight: 900;
+      margin-top: 12px;
+    }
+
+    .case-tag {
+      background: #e0f2fe;
+      color: var(--deep-blue);
+    }
+
+    .stage-tag {
+      background: var(--yellow-bg);
+      color: #92400e;
+    }
+
+    .mascot {
+      font-size: 54px;
+      margin: 6px 0;
+      animation: wobble 2s ease-in-out infinite;
+    }
+
+    @keyframes wobble {
+      0%, 100% { transform: rotate(-4deg); }
+      50% { transform: rotate(5deg); }
+    }
+
+    .mission-box {
+      background: var(--light-bg);
+      border: 2px dashed #bae6fd;
+      border-radius: 18px;
+      padding: 14px;
+      line-height: 1.75;
+      text-align: left;
+    }
+
+    .mission-box strong {
+      color: #0f766e;
+    }
+
+    .progress {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .progress-step {
+      border-radius: 14px;
+      padding: 10px 8px;
+      text-align: center;
+      font-weight: 900;
+      background: #e2e8f0;
+      color: #475569;
+    }
+
+    .progress-step.now {
+      background: var(--yellow-bg);
+      color: #92400e;
+      animation: pulse 1.4s infinite;
+    }
+
+    .progress-step.done {
+      background: var(--green-bg);
+      color: #166534;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+    }
+
+    /* =========================================================
+       四、中間玩家方案區
+    ========================================================= */
+    .plan-board {
+      min-height: 450px;
+      border-radius: 30px;
+      border: 6px solid #bae6fd;
+      background: linear-gradient(180deg, #f8fafc, #eff6ff);
+      padding: 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      align-content: start;
+    }
+
+    .empty-note {
+      grid-column: 1 / -1;
+      align-self: center;
+      justify-self: center;
+      text-align: center;
+      color: var(--muted);
+      font-size: 20px;
+      font-weight: 900;
+      line-height: 1.8;
+    }
+
+    /* =========================================================
+       五、右側健康行動卡
+    ========================================================= */
+    .action-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      max-height: 650px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .action-card {
+      border: 3px solid var(--border);
+      background: white;
+      border-radius: 20px;
+      padding: 12px;
+      cursor: grab;
+      user-select: none;
+      box-shadow: 0 7px 18px rgba(15, 23, 42, 0.08);
+      transition: 0.18s transform, 0.18s border-color, 0.18s background;
+    }
+
+    .action-card:hover {
+      transform: translateY(-4px) rotate(-1deg);
+      border-color: var(--blue);
+    }
+
+    .action-card.selected {
+      border-color: var(--green);
+      background: #f0fdf4;
+      cursor: pointer;
+      animation: pop 0.18s ease-out;
+    }
+
+    @keyframes pop {
+      from { transform: scale(0.92); }
+      to { transform: scale(1); }
+    }
+
+    .action-emoji {
+      font-size: 32px;
+      display: block;
+    }
+
+    .action-name {
+      font-weight: 900;
+      margin-top: 4px;
+    }
+
+    .action-meta {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 4px;
+      line-height: 1.45;
+    }
+
+    .info-box {
+      background: var(--light-bg);
+      border-radius: 18px;
+      padding: 14px;
+      line-height: 1.75;
+      border: 2px dashed #cbd5e1;
+      margin-bottom: 12px;
+    }
+
+    /* =========================================================
+       六、結果視窗與回顧
+    ========================================================= */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 100;
+    }
+
+    .modal-backdrop.show {
+      display: flex;
+    }
+
+    .modal {
+      width: min(820px, 100%);
+      background: white;
+      border-radius: 28px;
+      padding: 28px;
+      box-shadow: 0 20px 60px rgba(15, 23, 42, 0.35);
+      animation: modalIn 0.25s ease-out;
+    }
+
+    @keyframes modalIn {
+      from { transform: translateY(24px) scale(0.95); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    .big-score {
+      text-align: center;
+      font-size: 44px;
+      font-weight: 900;
+      color: var(--deep-blue);
+      margin: 8px 0 16px;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .result-box {
+      background: var(--light-bg);
+      border-radius: 18px;
+      padding: 14px;
+      line-height: 1.7;
+    }
+
+    .good {
+      color: #16a34a;
+      font-weight: 900;
+    }
+
+    .bad {
+      color: #dc2626;
+      font-weight: 900;
+    }
+
+    .review-list {
+      text-align: left;
+      max-height: 52vh;
+      overflow: auto;
+      background: white;
+      padding: 18px;
+      border-radius: 20px;
+    }
+
+    .review-item {
+      padding: 12px;
+      border-bottom: 1px solid #e5e7eb;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 1100px) {
+      .game-frame { grid-template-columns: 1fr; }
+      .status-row { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      h1 { font-size: 32px; }
+      .action-grid, .plan-board, .result-grid { grid-template-columns: 1fr; }
+      .status-row { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
+
 <body>
-<section id="homeScreen" class="screen active">
-  <div class="card">
-    <h1>大學生外食生存戰</h1>
-    <h2>我的餐盤任務</h2>
-    <p>
-      你將扮演校園健康飲食顧問，透過任務轉盤抽出不同大學生個案。<br>
-      可能遇到熬夜趕報告、健身後補充蛋白質、預算只有 100 元、愛喝手搖飲、早上睡過頭等情境。<br>
-      請依照個案需求，拖曳或點選食物卡片放進餐盤，送出後系統會給予分數、營養分析與衛教提醒。
-    </p>
-    <button onclick="startGame()">開始任務</button>
-  </div>
-</section>
-
-<section id="gameScreen" class="screen">
-  <div style="width:100%;">
-    <div class="status-row">
-      <div class="status-box">任務<br><strong id="missionNumber">1</strong> / <strong id="missionTotal">5</strong></div>
-      <div class="status-box">總分<br><strong id="totalScore">0</strong></div>
-      <div class="status-box">本餐預算<br><strong id="budgetText">--</strong></div>
-      <div class="status-box">已選金額<br><strong id="costText">0</strong></div>
+  <!-- =========================================================
+       首頁畫面
+  ========================================================== -->
+  <section id="homeScreen" class="screen active">
+    <div class="card">
+      <div class="home-icons">🍙 💤 🧘</div>
+      <h1>大學生健康生活生存戰</h1>
+      <h2>飲食 × 睡眠作息 × 壓力調適</h2>
+      <p>
+        你將扮演校園健康顧問，先用轉盤抽出一位大學生個案。<br>
+        每位個案都要完成三階段任務：先處理飲食，再調整睡眠作息，最後選擇壓力調適策略。<br>
+        請依照情境拖曳或點選健康行動卡，送出後會顯示分數、對錯分析與衛教提醒。
+      </p>
+      <button onclick="startGame()">開始健康任務</button>
     </div>
-    <div class="game-frame">
-      <aside class="panel">
-        <div class="wheel-wrap">
-          <div class="pointer"></div>
-          <div id="wheel"></div>
-          <button id="spinBtn" onclick="spinWheel()">轉出這次個案</button>
-        </div>
-        <div id="caseInfo" style="display:none;">
-          <div class="case-tag" id="caseTag">任務 1</div>
-          <h2 id="caseTitle"></h2>
-          <div class="mission-box">
-            <p id="caseStory"></p>
-            <p><strong>任務目標：</strong><span id="caseGoal"></span></p>
-            <p><strong>限制條件：</strong><span id="caseLimit"></span></p>
+  </section>
+
+  <!-- =========================================================
+       遊戲主畫面
+  ========================================================== -->
+  <section id="gameScreen" class="screen">
+    <div class="game-container">
+      <div class="status-row">
+        <div class="status-box">個案<br><strong id="caseNumber">1</strong> / <strong id="caseTotal">3</strong></div>
+        <div class="status-box">階段<br><strong id="stageName">--</strong></div>
+        <div class="status-box">總分<br><strong id="totalScore">0</strong></div>
+        <div class="status-box">本階段<br><strong id="stageScore">--</strong></div>
+        <div class="status-box">已選<br><strong id="selectedCount">0</strong> 張</div>
+      </div>
+
+      <div class="game-frame">
+        <aside class="panel">
+          <div class="wheel-wrap">
+            <div class="pointer"></div>
+            <div id="wheel"></div>
+            <button id="spinBtn" onclick="spinWheel()">轉出這次個案</button>
           </div>
+
+          <div id="caseInfo" style="display:none;">
+            <div class="case-tag" id="caseTag">個案</div>
+            <div class="mascot" id="caseEmoji">👩‍🎓</div>
+            <h2 id="caseTitle"></h2>
+            <div class="mission-box"><p id="caseStory"></p></div>
+            <div class="progress">
+              <div id="p0" class="progress-step">🍙 飲食</div>
+              <div id="p1" class="progress-step">💤 睡眠</div>
+              <div id="p2" class="progress-step">🧘 壓力</div>
+            </div>
+          </div>
+        </aside>
+
+        <main class="panel">
+          <div class="stage-tag" id="stageTag">請先轉出個案</div>
+          <h2 id="missionTitle">等待任務開始</h2>
+
+          <div class="mission-box">
+            <p><strong>任務情境：</strong><span id="missionStory">按下左側轉盤，抽出這次要協助的大學生。</span></p>
+            <p><strong>任務目標：</strong><span id="missionGoal">請依照任務選擇 2 到 3 張行動卡。</span></p>
+          </div>
+
+          <h2>我的健康方案</h2>
+          <div id="planBoard" class="plan-board" ondragover="event.preventDefault()" ondrop="dropAction(event)"></div>
+
+          <div style="text-align:center; margin-top:14px;">
+            <button class="success" onclick="submitPlan()">送出方案</button>
+            <button class="secondary" onclick="clearPlan()">清空方案</button>
+            <button class="danger" onclick="endGame()">結束遊戲</button>
+          </div>
+        </main>
+
+        <aside class="panel">
+          <h2>健康行動卡</h2>
+          <div class="info-box">
+            每一階段的卡片都不同。請選擇 2 到 3 張最適合個案的行動卡。<br>
+            可以拖曳到中間，也可以直接點擊卡片加入方案。
+          </div>
+          <div id="actionGrid" class="action-grid"></div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       結束畫面
+  ========================================================== -->
+  <section id="endScreen" class="screen">
+    <div class="card">
+      <div class="home-icons">🎉</div>
+      <h1>任務完成！</h1>
+      <h2 id="finalScore"></h2>
+      <p id="finalComment"></p>
+      <h2>任務回顧</h2>
+      <div id="reviewList" class="review-list"></div>
+      <button onclick="startGame()">再玩一次</button>
+      <button onclick="showScreen('homeScreen')">回首頁</button>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       結果彈出視窗
+  ========================================================== -->
+  <div id="resultModal" class="modal-backdrop">
+    <div class="modal">
+      <h2 id="modalTitle">任務結果</h2>
+      <div class="big-score" id="modalScore">0 分</div>
+
+      <div class="result-grid">
+        <div class="result-box">
+          <h3>對錯分析</h3>
+          <div id="choiceAnalysis"></div>
         </div>
-      </aside>
-      <main class="panel">
-        <h2>我的餐盤</h2>
-        <div id="plate" class="plate" ondragover="event.preventDefault()" ondrop="dropToPlate(event)"></div>
-        <div class="action-row">
-          <button class="success" onclick="submitPlate()">送出餐盤</button>
-          <button class="secondary" onclick="clearPlate()">清空餐盤</button>
-          <button class="danger" onclick="endGame()">結束遊戲</button>
+        <div class="result-box">
+          <h3>怎麼做比較好？</h3>
+          <div id="betterAdvice"></div>
         </div>
-      </main>
-      <aside class="panel">
-        <h2>食物卡片區</h2>
-        <div class="info-box">請依照個案任務，選擇 3 到 5 張食物卡片。可以拖曳，也可以直接點擊卡片加入餐盤。</div>
-        <div id="foodGrid" class="food-grid"></div>
-      </aside>
+      </div>
+
+      <div class="result-box" style="margin-top:12px;">
+        <h3>本次選擇</h3>
+        <div id="selectedSummary"></div>
+      </div>
+
+      <div style="text-align:center; margin-top:18px;">
+        <button onclick="nextStep()" id="nextBtn">下一階段</button>
+      </div>
     </div>
   </div>
-</section>
 
-<section id="endScreen" class="screen">
-  <div class="card">
-    <h1>任務完成！</h1>
-    <h2 id="finalScore"></h2>
-    <p id="finalComment"></p>
-    <h2>任務回顧</h2>
-    <div id="reviewList" class="review-list"></div>
-    <button onclick="startGame()">再玩一次</button>
-    <button onclick="showScreen('homeScreen')">回首頁</button>
-  </div>
-</section>
+  <script>
+    /* =========================================================
+       一、遊戲基本設定
+    ========================================================== */
+    const TOTAL_CASES = 3;
+    const MIN_SELECTED = 2;
+    const MAX_SELECTED = 3;
 
-<div id="resultModal" class="modal-backdrop">
-  <div class="modal">
-    <h2 id="modalTitle">任務結果</h2>
-    <div class="big-score" id="modalScore">0 分</div>
-    <div class="result-grid">
-      <div class="result-box"><h3>營養分析</h3><div id="nutritionAnalysis"></div></div>
-      <div class="result-box"><h3>衛教提醒</h3><div id="educationTip"></div></div>
-    </div>
-    <div class="result-box" style="margin-top:12px;"><h3>本次選擇</h3><div id="selectedSummary"></div></div>
-    <div style="text-align:center; margin-top:18px;"><button onclick="nextMission()">進入下一個任務</button></div>
-  </div>
-</div>
+    const stageKeys = ["diet", "sleep", "stress"];
+    const stageLabels = ["飲食", "睡眠", "壓力"];
 
-<script>
-const TOTAL_MISSIONS = 5;
-const foods = [
-  f("riceball", "🍙", "鮭魚飯糰", 38, ["grain", "protein"], "有主食與部分蛋白質，但蔬菜不足。"),
-  f("sweetpotato", "🍠", "烤地瓜", 35, ["grain", "fiber"], "全穀雜糧類替代選擇，纖維較佳。"),
-  f("egg", "🥚", "茶葉蛋", 15, ["protein"], "便利取得的平價蛋白質來源。"),
-  f("tofu", "⬜", "涼拌豆腐", 45, ["protein"], "豆製品可提供蛋白質，油脂通常較低。"),
-  f("chicken", "🍗", "舒肥雞胸", 65, ["protein"], "蛋白質含量較高，適合健身後補充。"),
-  f("friedchicken", "🍖", "炸雞排", 85, ["protein", "fried"], "有蛋白質，但油脂較高。"),
-  f("salad", "🥗", "生菜沙拉", 55, ["vegetable", "fiber"], "能補充蔬菜與纖維，醬料可減量。"),
-  f("veg", "🥬", "燙青菜", 40, ["vegetable", "fiber"], "增加蔬菜攝取，適合搭配外食。"),
-  f("fruit", "🍎", "當季水果", 35, ["fruit", "fiber"], "原型水果比果汁更有飽足感與纖維。"),
-  f("milk", "🥛", "低脂鮮奶", 35, ["dairy", "protein"], "可補充鈣質與蛋白質。"),
-  f("soy", "🧃", "無糖豆漿", 30, ["protein", "noSugarDrink"], "可補充蛋白質，也比含糖飲更適合。"),
-  f("water", "💧", "白開水", 0, ["noSugarDrink"], "不含糖，是最基本的補水選擇。"),
-  f("tea", "🍵", "無糖茶", 25, ["noSugarDrink"], "比含糖飲料更適合作為日常飲品。"),
-  f("bubbletea", "🧋", "全糖珍奶", 65, ["sugaryDrink"], "糖與熱量較高，建議降低糖度或頻率。"),
-  f("soda", "🥤", "含糖汽水", 30, ["sugaryDrink"], "容易增加添加糖攝取。"),
-  f("noodles", "🍜", "泡麵", 55, ["grain", "highSodium"], "方便但鈉含量通常偏高。"),
-  f("chips", "🍟", "洋芋片", 35, ["snack", "highSodium"], "高油高鈉零食，不適合作為正餐主體。"),
-  f("donut", "🍩", "甜甜圈", 40, ["sugar", "snack"], "糖與油脂較高，營養密度較不足。"),
-  f("nuts", "🥜", "無調味堅果", 30, ["nuts"], "有好油脂與營養，但份量不宜過多。")
-];
-const cases = [
-  c("熬夜趕報告的大學生", "期末報告今晚截止，小安晚餐只能快速解決，但希望不要只靠甜食撐精神。", "組合一份有主食、蛋白質、蔬菜，且飲料不含糖的晚餐。", 140, ["grain", "protein", "vegetable", "noSugarDrink"], ["sugaryDrink", "snack"], "熬夜時容易想靠糖分提神，但含糖飲料可能讓糖攝取過量。建議選擇均衡餐點搭配無糖飲品。"),
-  c("健身後想補充蛋白質", "阿哲剛做完重量訓練，想補充蛋白質，也希望不要只吃肉而忽略蔬菜和主食。", "選出含蛋白質、主食與蔬菜的組合，避免只靠炸物補充蛋白質。", 170, ["protein", "grain", "vegetable"], ["fried", "sugaryDrink"], "運動後可補充蛋白質與適量碳水化合物，但油炸食品不是最理想的主要來源。"),
-  c("預算只有 100 元的大學生", "小宏今天生活費只剩 100 元，但仍想吃得有飽足感，不希望只買零食果腹。", "在 100 元內搭配出有主食與蛋白質的餐點，若能加入蔬菜更好。", 100, ["grain", "protein"], ["snack", "sugaryDrink"], "健康飲食不一定昂貴，可用地瓜、茶葉蛋、無糖豆漿等平價食物組合出較好的選擇。"),
-  c("愛喝手搖飲的大學生", "小杰每天都喝全糖飲料，最近想開始減糖，但覺得完全不喝很難。", "選擇無糖飲品，並搭配一份較均衡的點心或餐點。", 130, ["noSugarDrink", "protein"], ["sugaryDrink", "sugar"], "減糖可以從飲料開始，先改無糖、微糖或降低頻率，比一開始就完全禁止更可持續。"),
-  c("忙到只能買便利商店晚餐", "怡君晚上要補習又要開會，只能去便利商店買晚餐。她想吃得方便，但不要只有泡麵和飲料。", "組合出包含主食、蛋白質、蔬菜與無糖飲品的一餐。", 180, ["grain", "protein", "vegetable", "noSugarDrink"], ["highSodium", "sugaryDrink"], "便利商店也可以搭配出較均衡的一餐，重點是避免泡麵、零食與含糖飲料成為主體。"),
-  c("早上睡過頭的大學生", "小萱早八睡過頭，只剩 10 分鐘買早餐。她想要快速、有飽足感，也希望上午上課有精神。", "選擇快速取得、含主食與蛋白質的早餐，飲品以無糖為主。", 120, ["grain", "protein", "noSugarDrink"], ["sugaryDrink", "sugar"], "早餐可從主食、蛋白質與無糖飲品開始搭配，避免只有含糖飲料或甜點。")
-];
-function f(id, emoji, name, price, tags, note) { return { id, emoji, name, price, tags, note }; }
-function c(title, story, goal, budget, required, avoid, tip) { return { title, story, goal, budget, required, avoid, tip }; }
-let currentMission = 0, totalScore = 0, currentCase = null, selectedFoods = [], usedCases = [], history = [], wheelRotation = 0;
-const plate = document.getElementById("plate");
-const foodGrid = document.getElementById("foodGrid");
-function showScreen(id) { document.querySelectorAll(".screen").forEach(s => s.classList.remove("active")); document.getElementById(id).classList.add("active"); }
-function startGame() {
-  currentMission = 1; totalScore = 0; currentCase = null; selectedFoods = []; usedCases = []; history = []; wheelRotation = 0;
-  document.getElementById("wheel").style.transform = "rotate(0deg)";
-  document.getElementById("missionTotal").textContent = TOTAL_MISSIONS;
-  document.getElementById("caseInfo").style.display = "none";
-  renderFoods(); clearPlate(); updateStatus(); showScreen("gameScreen");
-}
-function updateStatus() {
-  document.getElementById("missionNumber").textContent = currentMission;
-  document.getElementById("totalScore").textContent = totalScore;
-  document.getElementById("budgetText").textContent = currentCase ? currentCase.budget + " 元" : "--";
-  document.getElementById("costText").textContent = selectedFoods.reduce((s, f) => s + f.price, 0) + " 元";
-}
-function spinWheel() {
-  const btn = document.getElementById("spinBtn"); btn.disabled = true;
-  wheelRotation += 1080 + Math.floor(Math.random() * 360);
-  document.getElementById("wheel").style.transform = "rotate(" + wheelRotation + "deg)";
-  setTimeout(() => { chooseCase(); btn.disabled = false; }, 2100);
-}
-function chooseCase() {
-  const pool = cases.filter((_, i) => !usedCases.includes(i));
-  const source = pool.length ? pool : cases;
-  currentCase = source[Math.floor(Math.random() * source.length)];
-  usedCases.push(cases.indexOf(currentCase));
-  selectedFoods = [];
-  document.getElementById("caseInfo").style.display = "block";
-  document.getElementById("caseTag").textContent = "任務 " + currentMission;
-  document.getElementById("caseTitle").textContent = currentCase.title;
-  document.getElementById("caseStory").textContent = currentCase.story;
-  document.getElementById("caseGoal").textContent = currentCase.goal;
-  document.getElementById("caseLimit").textContent = "預算 " + currentCase.budget + " 元，建議選擇 3 到 5 樣食物。";
-  clearPlate(); updateStatus();
-}
-function renderFoods() { foodGrid.innerHTML = foods.map(item => foodCard(item)).join(""); }
-function foodCard(item) {
-  return '<div class="food-card" draggable="true" ondragstart="dragFood(event,\'' + item.id + '\')" onclick="addFoodById(\'' + item.id + '\')"><span class="food-emoji">' + item.emoji + '</span><div class="food-name">' + item.name + '</div><div class="food-meta">' + item.price + ' 元｜' + item.note + '</div></div>';
-}
-function dragFood(event, id) { event.dataTransfer.setData("foodId", id); }
-function dropToPlate(event) { event.preventDefault(); addFoodById(event.dataTransfer.getData("foodId")); }
-function addFoodById(id) {
-  if (!currentCase) { alert("請先轉出這次的個案任務！"); return; }
-  if (selectedFoods.length >= 5) { alert("餐盤最多選擇 5 樣食物喔！"); return; }
-  const item = foods.find(food => food.id === id); if (!item) return;
-  selectedFoods.push(item); renderPlate(); updateStatus();
-}
-function removeFood(index) { selectedFoods.splice(index, 1); renderPlate(); updateStatus(); }
-function renderPlate() {
-  if (selectedFoods.length === 0) {
-    plate.innerHTML = '<div class="empty-note">把食物卡片拖曳到餐盤中<br>或點擊卡片加入餐盤</div>'; return;
-  }
-  plate.innerHTML = selectedFoods.map((item, index) => '<div class="food-card selected" onclick="removeFood(' + index + ')"><span class="food-emoji">' + item.emoji + '</span><div class="food-name">' + item.name + '</div><div class="food-meta">' + item.price + ' 元｜點擊可移除</div></div>').join("");
-}
-function clearPlate() { selectedFoods = []; renderPlate(); updateStatus(); }
-function submitPlate() {
-  if (!currentCase) { alert("請先轉出這次的個案任務！"); return; }
-  if (selectedFoods.length < 3) { alert("請至少選擇 3 樣食物，餐盤才比較完整喔！"); return; }
-  const result = evaluatePlate(); totalScore += result.score;
-  history.push({ mission: currentMission, title: currentCase.title, score: result.score, selected: selectedFoods.map(f => f.name).join("、"), analysis: result.analysis.join("<br>"), tip: currentCase.tip });
-  showResultModal(result); updateStatus();
-}
-function evaluatePlate() {
-  const tags = selectedFoods.flatMap(f => f.tags); const cost = selectedFoods.reduce((s, f) => s + f.price, 0);
-  let score = 40; const analysis = [];
-  currentCase.required.forEach(tag => { if (tags.includes(tag)) { score += 10; analysis.push('<span class="good">✓ 達成：</span>' + tagText(tag)); } else { score -= 8; analysis.push('<span class="bad">✗ 缺少：</span>' + tagText(tag)); } });
-  currentCase.avoid.forEach(tag => { if (tags.includes(tag)) { score -= 8; analysis.push('<span class="bad">△ 需要留意：</span>包含 ' + tagText(tag)); } });
-  if (cost <= currentCase.budget) { score += 10; analysis.push('<span class="good">✓ 符合預算：</span>' + cost + ' 元 / ' + currentCase.budget + ' 元'); } else { score -= 10; analysis.push('<span class="bad">✗ 超出預算：</span>' + cost + ' 元 / ' + currentCase.budget + ' 元'); }
-  if (tags.includes("vegetable") && tags.includes("protein") && tags.includes("grain")) { score += 10; analysis.push('<span class="good">✓ 結構完整：</span>包含主食、蛋白質與蔬菜'); }
-  if (tags.includes("sugaryDrink") && !tags.includes("noSugarDrink")) { score -= 10; analysis.push('<span class="bad">✗ 飲品可改善：</span>可改成白開水、無糖茶或無糖豆漿'); }
-  score = Math.max(0, Math.min(100, score));
-  const level = score >= 85 ? "健康顧問高手" : score >= 70 ? "外食搭配達人" : score >= 55 ? "還可以再調整" : "需要重新檢視餐盤";
-  return { score, level, analysis, cost };
-}
-function tagText(tag) {
-  const map = { grain:"主食 / 全穀雜糧", protein:"蛋白質", vegetable:"蔬菜", fruit:"水果", dairy:"乳品", fiber:"膳食纖維", nuts:"堅果種子", noSugarDrink:"無糖飲品", sugaryDrink:"含糖飲料", snack:"高糖高油零食", highSodium:"高鈉食品", highFat:"高油脂食品", fried:"油炸食品", sugar:"高糖食物" };
-  return map[tag] || tag;
-}
-function showResultModal(result) {
-  document.getElementById("modalTitle").textContent = result.level;
-  document.getElementById("modalScore").textContent = result.score + " 分";
-  document.getElementById("nutritionAnalysis").innerHTML = result.analysis.join("<br>");
-  document.getElementById("educationTip").innerHTML = currentCase.tip;
-  document.getElementById("selectedSummary").innerHTML = "<strong>你選擇了：</strong>" + selectedFoods.map(f => f.name).join("、") + "<br><strong>總金額：</strong>" + result.cost + " 元<br><strong>建議：</strong>思考這份餐盤是否符合個案的預算、時間、營養需求與長期可執行性。";
-  document.getElementById("resultModal").classList.add("show");
-}
-function nextMission() {
-  document.getElementById("resultModal").classList.remove("show");
-  if (currentMission >= TOTAL_MISSIONS) { endGame(); return; }
-  currentMission++; currentCase = null; selectedFoods = []; clearPlate();
-  document.getElementById("caseInfo").style.display = "none"; updateStatus();
-}
-function endGame() {
-  document.getElementById("resultModal").classList.remove("show"); showScreen("endScreen");
-  document.getElementById("finalScore").textContent = "總分：" + totalScore + " / " + (TOTAL_MISSIONS * 100);
-  const avg = totalScore / TOTAL_MISSIONS;
-  document.getElementById("finalComment").textContent = avg >= 85 ? "太棒了！你很能把飲食知識轉化成生活化的衛教建議。" : avg >= 70 ? "表現不錯！多數情境都能做出合理的餐盤搭配。" : avg >= 55 ? "已有基本概念，但可以再加強預算、飲品與蔬菜搭配。" : "建議回顧任務分析，重新練習如何根據個案需求設計餐盤。";
-  renderReview();
-}
-function renderReview() {
-  const list = document.getElementById("reviewList");
-  if (history.length === 0) { list.innerHTML = "<p>尚未完成任務。</p>"; return; }
-  list.innerHTML = history.map(item => '<div class="review-item"><strong>任務 ' + item.mission + '｜' + item.title + '</strong><br><strong>得分：</strong>' + item.score + ' 分<br><strong>你的餐盤：</strong>' + item.selected + '<br><strong>分析：</strong><br>' + item.analysis + '<br><strong>衛教提醒：</strong>' + item.tip + '</div>').join("");
-}
-</script>
+    /* =========================================================
+       二、健康行動卡資料庫
+       tags 是計分用的標籤
+    ========================================================== */
+    const actionBank = {
+      diet: [
+        action("d1", "🍙", "飯糰＋茶葉蛋＋無糖茶", ["balanced", "protein", "noSugar"], "有主食、蛋白質與無糖飲品，適合快速補充能量。"),
+        action("d2", "🥗", "沙拉＋舒肥雞胸＋地瓜", ["balanced", "protein", "veg"], "蔬菜、蛋白質與主食都有，整體較均衡。"),
+        action("d3", "🧋", "全糖珍奶＋甜甜圈", ["sugar", "lowBalance"], "糖分偏高，飽足與營養密度較不足。"),
+        action("d4", "🍜", "泡麵＋含糖汽水", ["highSodium", "sugar", "lowBalance"], "方便但鈉與糖偏高，蔬菜與蛋白質不足。"),
+        action("d5", "🍠", "地瓜＋無糖豆漿＋水果", ["balanced", "fiber", "noSugar"], "纖維、蛋白質與無糖飲品都有，適合早餐或點心。"),
+        action("d6", "🍖", "炸雞排＋全糖飲料", ["fried", "sugar"], "油脂與糖分偏高，不適合作為主要建議。")
+      ],
+
+      sleep: [
+        action("s1", "📵", "睡前 30 分鐘放下手機", ["sleepHygiene"], "降低睡前刺激，有助於建立入睡準備。"),
+        action("s2", "⏰", "固定起床時間", ["routine"], "固定起床有助於穩定生理時鐘。"),
+        action("s3", "☕", "晚上喝大杯咖啡提神", ["badSleep"], "晚間咖啡因可能影響入睡與睡眠品質。"),
+        action("s4", "🛏️", "午睡 20 分鐘內", ["recovery"], "短時間午睡可恢復精神，但不宜太晚或太久。"),
+        action("s5", "🌙", "睡前做簡單伸展與放鬆", ["sleepHygiene", "recovery"], "放鬆身體可幫助從讀書狀態切換到睡眠狀態。"),
+        action("s6", "📱", "躺在床上滑手機到凌晨", ["badSleep"], "容易延後入睡，也會讓床和清醒活動連結在一起。")
+      ],
+
+      stress: [
+        action("p1", "🧘", "腹式呼吸 3 分鐘", ["coping"], "短時間呼吸練習可協助穩定情緒與注意力。"),
+        action("p2", "📝", "列出待辦並排優先順序", ["planning"], "把壓力轉化成可處理的任務，有助於降低混亂感。"),
+        action("p3", "👥", "找同學或師長討論困難", ["support"], "尋求支持是有效的壓力調適策略。"),
+        action("p4", "😵", "拖延到最後一刻再熬夜完成", ["avoidance"], "短期逃避可能讓壓力累積，最後更難處理。"),
+        action("p5", "🚶", "快走或伸展 10 分鐘", ["coping", "activity"], "輕度活動可幫助轉換情緒與恢復專注。"),
+        action("p6", "🍟", "壓力大就暴吃高糖高油零食", ["avoidance"], "情緒性進食可能暫時舒緩，但不一定真正解決壓力來源。")
+      ]
+    };
+
+    /* =========================================================
+       三、大學生個案資料庫
+    ========================================================== */
+    const cases = [
+      makeCase("👩‍💻", "熬夜趕報告的大學生", "小安這週有三份報告，常常熬夜到凌晨。她晚餐常用甜食和飲料解決，隔天早八又很沒精神。", {
+        diet: stage("第一階段：飲食救援", "小安今晚要趕報告，但不能只靠糖分撐精神。", "請選出 2 到 3 張比較能提供穩定能量、減少含糖飲料的飲食行動卡。", ["balanced", "protein", "noSugar", "fiber"], ["sugar", "lowBalance", "fried"], "熬夜時更需要穩定能量來源。建議選擇有主食、蛋白質與無糖飲品的組合，避免只靠甜食或含糖飲料。"),
+        sleep: stage("第二階段：睡眠作息調整", "報告週不能保證每天睡很久，但仍可以減少睡眠被干擾。", "請選出 2 到 3 張有助於睡眠衛生或恢復精神的行動卡。", ["sleepHygiene", "routine", "recovery"], ["badSleep"], "睡眠作息的重點不是一次完美，而是先減少晚間刺激、固定起床時間，並用短午睡補充精神。"),
+        stress: stage("第三階段：壓力調適", "小安覺得任務太多，不知道從哪裡開始。", "請選出 2 到 3 張能幫助她整理壓力與恢復行動感的策略卡。", ["coping", "planning", "support"], ["avoidance"], "壓力調適可以從呼吸、拆解任務、尋求支持開始，比單純拖延或情緒性進食更能處理問題。")
+      }),
+
+      makeCase("🏋️", "健身又課業很滿的大學生", "阿哲開始健身，但最近課業變重。他常訓練後只買炸物補充熱量，晚上又因為讀書喝咖啡睡不好。", {
+        diet: stage("第一階段：運動後飲食", "阿哲想補充蛋白質，但不希望每次都靠炸物。", "請選出 2 到 3 張有蛋白質、主食與較少油炸的飲食行動卡。", ["balanced", "protein", "veg", "fiber"], ["fried", "sugar"], "運動後可補充蛋白質與適量碳水，但油炸食品不是最理想的主要來源。"),
+        sleep: stage("第二階段：咖啡因與睡眠", "阿哲晚上讀書常喝咖啡，結果越來越晚睡。", "請選出 2 到 3 張能降低睡前刺激、幫助穩定作息的行動卡。", ["sleepHygiene", "routine", "recovery"], ["badSleep"], "晚間咖啡因與滑手機都可能影響睡眠。可以改用白天安排讀書、固定起床與睡前放鬆來調整。"),
+        stress: stage("第三階段：訓練與課業壓力", "阿哲擔心健身和課業無法兼顧，開始感到焦慮。", "請選出 2 到 3 張能幫助他規劃時間與調適壓力的策略卡。", ["planning", "coping", "activity", "support"], ["avoidance"], "把壓力拆成可管理的任務，並保留短時間活動或伸展，有助於維持身心狀態。")
+      }),
+
+      makeCase("💸", "預算有限的外宿大學生", "小宏外宿後常覺得健康生活很花錢，所以三餐不穩定，也常用泡麵和零食解決。", {
+        diet: stage("第一階段：平價飲食選擇", "小宏今天預算有限，但仍希望吃得有飽足感。", "請選出 2 到 3 張平價、較均衡、不要只靠零食的飲食行動卡。", ["balanced", "protein", "fiber", "noSugar"], ["highSodium", "sugar", "lowBalance"], "健康飲食不一定昂貴。地瓜、茶葉蛋、無糖豆漿等也能組合成相對可行的選擇。"),
+        sleep: stage("第二階段：外宿作息", "小宏外宿後作息自由，常常越睡越晚。", "請選出 2 到 3 張能幫助他建立基本作息的行動卡。", ["routine", "sleepHygiene", "recovery"], ["badSleep"], "外宿作息可先從固定起床、睡前減少手機刺激開始，不需要一開始就追求完美。"),
+        stress: stage("第三階段：金錢與生活壓力", "小宏覺得預算、課業和生活管理都讓他很煩。", "請選出 2 到 3 張能協助他整理問題與尋求支持的策略卡。", ["planning", "support", "coping"], ["avoidance"], "壓力來自生活條件時，具體規劃和尋求資源比責備自己更有幫助。")
+      }),
+
+      makeCase("🧋", "愛喝手搖飲的大學生", "小杰每天一杯全糖飲料，知道要減糖但覺得完全戒掉太困難。考試週也常用飲料安慰自己。", {
+        diet: stage("第一階段：減糖飲食任務", "小杰想開始減糖，但不想一次完全禁止。", "請選出 2 到 3 張能降低含糖飲料、又能維持可行性的飲食行動卡。", ["noSugar", "balanced", "fiber", "protein"], ["sugar", "lowBalance"], "減糖可先從全糖改半糖、微糖或無糖，並降低頻率。提供替代選擇比單純禁止更可行。"),
+        sleep: stage("第二階段：考試週睡眠", "小杰考試週常熬夜讀書，白天靠飲料提神。", "請選出 2 到 3 張能減少熬夜循環的作息調整卡。", ["routine", "sleepHygiene", "recovery"], ["badSleep"], "考試週更需要保留睡眠。短午睡、固定起床和睡前放下手機，都能降低惡性循環。"),
+        stress: stage("第三階段：考試壓力調適", "小杰壓力大時想靠甜飲和零食安慰自己。", "請選出 2 到 3 張能替代情緒性進食的壓力調適卡。", ["coping", "planning", "support", "activity"], ["avoidance"], "壓力大時可以先用呼吸、散步或列待辦降低焦慮，再決定下一步，而不是只靠高糖食物舒緩。")
+      })
+    ];
+
+    /* =========================================================
+       四、資料建立函式
+    ========================================================== */
+    function action(id, emoji, name, tags, note) {
+      return { id, emoji, name, tags, note };
+    }
+
+    function stage(title, story, goal, goodTags, badTags, tip) {
+      return { title, story, goal, goodTags, badTags, tip };
+    }
+
+    function makeCase(emoji, title, story, stages) {
+      return { emoji, title, story, stages };
+    }
+
+    /* =========================================================
+       五、遊戲狀態變數
+    ========================================================== */
+    let currentCaseNumber = 1;
+    let currentStageIndex = 0;
+    let totalScore = 0;
+    let currentCase = null;
+    let selectedActions = [];
+    let usedCaseIndexes = [];
+    let missionHistory = [];
+    let wheelRotation = 0;
+    let lastResult = null;
+
+    const planBoard = document.getElementById("planBoard");
+    const actionGrid = document.getElementById("actionGrid");
+
+    /* =========================================================
+       六、畫面切換與遊戲初始化
+    ========================================================== */
+    function showScreen(id) {
+      document.querySelectorAll(".screen").forEach(screen => {
+        screen.classList.remove("active");
+      });
+      document.getElementById(id).classList.add("active");
+    }
+
+    function startGame() {
+      currentCaseNumber = 1;
+      currentStageIndex = 0;
+      totalScore = 0;
+      currentCase = null;
+      selectedActions = [];
+      usedCaseIndexes = [];
+      missionHistory = [];
+      wheelRotation = 0;
+      lastResult = null;
+
+      document.getElementById("wheel").style.transform = "rotate(0deg)";
+      document.getElementById("caseTotal").textContent = TOTAL_CASES;
+      document.getElementById("caseInfo").style.display = "none";
+      document.getElementById("spinBtn").disabled = false;
+
+      resetMissionText();
+      clearPlan();
+      updateStatus();
+      showScreen("gameScreen");
+    }
+
+    function updateStatus() {
+      document.getElementById("caseNumber").textContent = currentCaseNumber;
+      document.getElementById("stageName").textContent = currentCase ? stageLabels[currentStageIndex] : "--";
+      document.getElementById("totalScore").textContent = totalScore;
+      document.getElementById("stageScore").textContent = lastResult ? lastResult.score : "--";
+      document.getElementById("selectedCount").textContent = selectedActions.length;
+    }
+
+    /* =========================================================
+       七、轉盤抽個案
+    ========================================================== */
+    function spinWheel() {
+      const spinButton = document.getElementById("spinBtn");
+      spinButton.disabled = true;
+
+      wheelRotation += 1080 + Math.floor(Math.random() * 360);
+      document.getElementById("wheel").style.transform = `rotate(${wheelRotation}deg)`;
+
+      setTimeout(() => {
+        chooseCase();
+        spinButton.disabled = true;
+      }, 2200);
+    }
+
+    function chooseCase() {
+      const availableIndexes = cases
+        .map((item, index) => index)
+        .filter(index => !usedCaseIndexes.includes(index));
+
+      const selectedIndex = availableIndexes.length > 0
+        ? availableIndexes[Math.floor(Math.random() * availableIndexes.length)]
+        : Math.floor(Math.random() * cases.length);
+
+      usedCaseIndexes.push(selectedIndex);
+      currentCase = cases[selectedIndex];
+      currentStageIndex = 0;
+      selectedActions = [];
+      lastResult = null;
+
+      document.getElementById("caseInfo").style.display = "block";
+      document.getElementById("caseTag").textContent = `個案 ${currentCaseNumber}`;
+      document.getElementById("caseEmoji").textContent = currentCase.emoji;
+      document.getElementById("caseTitle").textContent = currentCase.title;
+      document.getElementById("caseStory").textContent = currentCase.story;
+
+      loadStage();
+      updateStatus();
+    }
+
+    /* =========================================================
+       八、載入三階段任務
+    ========================================================== */
+    function resetMissionText() {
+      document.getElementById("stageTag").textContent = "請先轉出個案";
+      document.getElementById("missionTitle").textContent = "等待任務開始";
+      document.getElementById("missionStory").textContent = "按下左側轉盤，抽出這次要協助的大學生。";
+      document.getElementById("missionGoal").textContent = "請依照任務選擇 2 到 3 張行動卡。";
+      actionGrid.innerHTML = "";
+      updateProgress();
+    }
+
+    function loadStage() {
+      selectedActions = [];
+      clearPlan();
+      lastResult = null;
+
+      const stageKey = stageKeys[currentStageIndex];
+      const currentStage = currentCase.stages[stageKey];
+
+      document.getElementById("stageTag").textContent = `第 ${currentStageIndex + 1} 階段｜${stageLabels[currentStageIndex]}`;
+      document.getElementById("missionTitle").textContent = currentStage.title;
+      document.getElementById("missionStory").textContent = currentStage.story;
+      document.getElementById("missionGoal").textContent = currentStage.goal;
+
+      renderActionCards(stageKey);
+      updateProgress();
+      updateStatus();
+    }
+
+    function updateProgress() {
+      for (let i = 0; i < 3; i++) {
+        const step = document.getElementById("p" + i);
+        if (!step) continue;
+
+        step.className = "progress-step";
+        if (!currentCase) continue;
+
+        if (i < currentStageIndex) {
+          step.classList.add("done");
+        } else if (i === currentStageIndex) {
+          step.classList.add("now");
+        }
+      }
+    }
+
+    /* =========================================================
+       九、行動卡片操作
+    ========================================================== */
+    function renderActionCards(stageKey) {
+      actionGrid.innerHTML = actionBank[stageKey]
+        .map(item => createActionCardHtml(item))
+        .join("");
+    }
+
+    function createActionCardHtml(item) {
+      return `
+        <div class="action-card" draggable="true" ondragstart="dragAction(event, '${item.id}')" onclick="addActionById('${item.id}')">
+          <span class="action-emoji">${item.emoji}</span>
+          <div class="action-name">${item.name}</div>
+          <div class="action-meta">${item.note}</div>
+        </div>
+      `;
+    }
+
+    function dragAction(event, id) {
+      event.dataTransfer.setData("actionId", id);
+    }
+
+    function dropAction(event) {
+      event.preventDefault();
+      const id = event.dataTransfer.getData("actionId");
+      addActionById(id);
+    }
+
+    function getCurrentActionList() {
+      return actionBank[stageKeys[currentStageIndex]] || [];
+    }
+
+    function addActionById(id) {
+      if (!currentCase) {
+        alert("請先轉出這次的個案任務！");
+        return;
+      }
+
+      if (selectedActions.length >= MAX_SELECTED) {
+        alert("每階段最多選擇 3 張行動卡喔！");
+        return;
+      }
+
+      if (selectedActions.some(item => item.id === id)) {
+        alert("這張卡已經選過囉！");
+        return;
+      }
+
+      const item = getCurrentActionList().find(action => action.id === id);
+      if (!item) return;
+
+      selectedActions.push(item);
+      renderPlan();
+      updateStatus();
+    }
+
+    function removeAction(index) {
+      selectedActions.splice(index, 1);
+      renderPlan();
+      updateStatus();
+    }
+
+    function renderPlan() {
+      if (selectedActions.length === 0) {
+        planBoard.innerHTML = `<div class="empty-note">把健康行動卡拖曳到這裡<br>或點擊右側卡片加入方案</div>`;
+        return;
+      }
+
+      planBoard.innerHTML = selectedActions
+        .map((item, index) => `
+          <div class="action-card selected" onclick="removeAction(${index})">
+            <span class="action-emoji">${item.emoji}</span>
+            <div class="action-name">${item.name}</div>
+            <div class="action-meta">點擊可移除｜${item.note}</div>
+          </div>
+        `)
+        .join("");
+    }
+
+    function clearPlan() {
+      selectedActions = [];
+      renderPlan();
+      updateStatus();
+    }
+
+    /* =========================================================
+       十、送出、計分與回饋
+    ========================================================== */
+    function submitPlan() {
+      if (!currentCase) {
+        alert("請先轉出這次的個案任務！");
+        return;
+      }
+
+      if (selectedActions.length < MIN_SELECTED) {
+        alert("請至少選擇 2 張行動卡，方案會比較完整喔！");
+        return;
+      }
+
+      const result = evaluatePlan();
+      const currentStage = currentCase.stages[stageKeys[currentStageIndex]];
+
+      lastResult = result;
+      totalScore += result.score;
+
+      missionHistory.push({
+        caseTitle: currentCase.title,
+        stageName: stageLabels[currentStageIndex],
+        score: result.score,
+        selected: selectedActions.map(item => item.name).join("、"),
+        analysis: result.analysis.join("<br>"),
+        tip: currentStage.tip
+      });
+
+      showResult(result);
+      updateStatus();
+    }
+
+    function evaluatePlan() {
+      const currentStage = currentCase.stages[stageKeys[currentStageIndex]];
+      const selectedTags = selectedActions.flatMap(item => item.tags);
+      const analysis = [];
+      let score = 45;
+
+      currentStage.goodTags.forEach(tag => {
+        if (selectedTags.includes(tag)) {
+          score += 10;
+          analysis.push(`<span class="good">✓ 適合：</span>${tagText(tag)}`);
+        }
+      });
+
+      currentStage.badTags.forEach(tag => {
+        if (selectedTags.includes(tag)) {
+          score -= 12;
+          analysis.push(`<span class="bad">✗ 不太適合：</span>${tagText(tag)}`);
+        }
+      });
+
+      if (selectedActions.length === 3) {
+        score += 5;
+        analysis.push(`<span class="good">✓ 方案完整：</span>選擇 3 張行動卡`);
+      }
+
+      const hasGoodChoice = currentStage.goodTags.some(tag => selectedTags.includes(tag));
+      const hasBadChoice = currentStage.badTags.some(tag => selectedTags.includes(tag));
+
+      if (!hasGoodChoice) {
+        score -= 15;
+        analysis.push(`<span class="bad">✗ 方向不足：</span>沒有選到關鍵的健康策略`);
+      }
+
+      if (!hasBadChoice && hasGoodChoice) {
+        score += 10;
+        analysis.push(`<span class="good">✓ 風險較低：</span>沒有選到明顯不適合的行動`);
+      }
+
+      score = Math.max(0, Math.min(100, score));
+
+      let level = "";
+      if (score >= 85) {
+        level = "方案很適合！";
+      } else if (score >= 70) {
+        level = "方向不錯！";
+      } else if (score >= 55) {
+        level = "可以再修正";
+      } else {
+        level = "需要重新思考";
+      }
+
+      return { score, level, analysis };
+    }
+
+    function tagText(tag) {
+      const map = {
+        balanced: "均衡搭配",
+        protein: "蛋白質",
+        noSugar: "減少含糖飲料",
+        fiber: "纖維與飽足感",
+        veg: "蔬菜攝取",
+        sugar: "高糖選擇",
+        lowBalance: "營養不均衡",
+        fried: "油炸食品",
+        highSodium: "高鈉食品",
+        sleepHygiene: "睡眠衛生",
+        routine: "固定作息",
+        recovery: "恢復精神",
+        badSleep: "干擾睡眠",
+        coping: "情緒調適",
+        planning: "任務規劃",
+        support: "尋求支持",
+        activity: "輕度活動",
+        avoidance: "逃避型因應"
+      };
+
+      return map[tag] || tag;
+    }
+
+    function showResult(result) {
+      const currentStage = currentCase.stages[stageKeys[currentStageIndex]];
+
+      document.getElementById("modalTitle").textContent = result.level;
+      document.getElementById("modalScore").textContent = `${result.score} 分`;
+      document.getElementById("choiceAnalysis").innerHTML = result.analysis.join("<br>");
+      document.getElementById("betterAdvice").innerHTML = currentStage.tip;
+
+      document.getElementById("selectedSummary").innerHTML = `
+        <strong>你選擇了：</strong>${selectedActions.map(item => item.name).join("、")}<br><br>
+        <strong>判斷重點：</strong>這一階段主要看你的選擇是否符合個案需求，並且是否避免明顯會增加健康風險的行動。
+      `;
+
+      document.getElementById("nextBtn").textContent = currentStageIndex < 2
+        ? "進入下一階段"
+        : currentCaseNumber < TOTAL_CASES
+          ? "抽下一位個案"
+          : "查看總結";
+
+      document.getElementById("resultModal").classList.add("show");
+    }
+
+    function nextStep() {
+      document.getElementById("resultModal").classList.remove("show");
+
+      if (currentStageIndex < 2) {
+        currentStageIndex++;
+        loadStage();
+        return;
+      }
+
+      if (currentCaseNumber < TOTAL_CASES) {
+        currentCaseNumber++;
+        currentCase = null;
+        selectedActions = [];
+        lastResult = null;
+
+        document.getElementById("caseInfo").style.display = "none";
+        document.getElementById("spinBtn").disabled = false;
+
+        resetMissionText();
+        clearPlan();
+        updateStatus();
+        return;
+      }
+
+      endGame();
+    }
+
+    /* =========================================================
+       十一、結束遊戲與任務回顧
+    ========================================================== */
+    function endGame() {
+      document.getElementById("resultModal").classList.remove("show");
+      showScreen("endScreen");
+
+      const maxScore = TOTAL_CASES * 3 * 100;
+      const averageScore = missionHistory.length ? totalScore / missionHistory.length : 0;
+
+      document.getElementById("finalScore").textContent = `總分：${totalScore} / ${maxScore}`;
+
+      if (averageScore >= 85) {
+        document.getElementById("finalComment").textContent = "太棒了！你能依照個案需求，整合飲食、睡眠與壓力調適策略。";
+      } else if (averageScore >= 70) {
+        document.getElementById("finalComment").textContent = "表現不錯！多數階段都能選出合理的健康行動。";
+      } else if (averageScore >= 55) {
+        document.getElementById("finalComment").textContent = "已有基本概念，但可以再練習如何避開不適合的行動卡。";
+      } else {
+        document.getElementById("finalComment").textContent = "建議回顧任務分析，重新思考每個個案真正需要的支持。";
+      }
+
+      renderReview();
+    }
+
+    function renderReview() {
+      const reviewList = document.getElementById("reviewList");
+
+      if (missionHistory.length === 0) {
+        reviewList.innerHTML = "<p>尚未完成任務。</p>";
+        return;
+      }
+
+      reviewList.innerHTML = missionHistory
+        .map((record, index) => `
+          <div class="review-item">
+            <strong>${index + 1}. ${record.caseTitle}｜${record.stageName}</strong><br>
+            <strong>得分：</strong>${record.score} 分<br>
+            <strong>你的方案：</strong>${record.selected}<br>
+            <strong>分析：</strong><br>${record.analysis}<br>
+            <strong>衛教提醒：</strong>${record.tip}
+          </div>
+        `)
+        .join("");
+    }
+  </script>
 </body>
 </html>
