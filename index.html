@@ -1,44 +1,37 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>大學生健康飲食知識射擊遊戲</title>
-
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>大學生外食生存戰：我的餐盤任務</title>
 <style>
 * { box-sizing: border-box; }
-
 body {
   margin: 0;
   font-family: "Noto Sans TC", Arial, sans-serif;
   background: linear-gradient(135deg, #dbeafe, #dcfce7, #fef9c3);
   color: #1f2937;
-  text-align: center;
 }
-
 .screen {
   min-height: 100vh;
   display: none;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 24px;
 }
-
 .active { display: flex; }
-
-.card {
-  width: min(920px, 100%);
-  background: rgba(255,255,255,0.94);
+.card, .panel {
+  background: rgba(255,255,255,.96);
   border-radius: 28px;
-  padding: 34px;
-  box-shadow: 0 16px 40px rgba(15,23,42,0.16);
+  padding: 26px;
+  box-shadow: 0 14px 38px rgba(15,23,42,.14);
 }
-
-h1 { font-size: 42px; margin-bottom: 12px; }
-
+.card { width: min(980px, 100%); text-align: center; }
+h1 { font-size: 42px; margin: 8px 0; }
+h2 { margin: 6px 0 14px; }
+p { font-size: 18px; line-height: 1.75; }
 button {
-  border: none;
+  border: 0;
   border-radius: 16px;
   padding: 12px 22px;
   margin: 8px;
@@ -46,992 +39,397 @@ button {
   cursor: pointer;
   background: #38bdf8;
   color: white;
-  font-weight: 800;
-}
-
-button:hover { background: #0284c7; }
-
-#gameScreen {
-  justify-content: flex-start;
-  padding: 18px;
-}
-
-.main-frame {
-  width: min(1280px, 100%);
-  min-height: 760px;
-  border-radius: 28px;
-  padding: 18px;
-  background: rgba(255,255,255,0.28);
-  border: 4px solid rgba(255,255,255,0.88);
-  display: grid;
-  grid-template-columns: minmax(620px, 2fr) minmax(330px, 0.95fr);
-  gap: 18px;
-}
-
-.left-zone {
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  gap: 14px;
-}
-
-.status-panel, .knowledge-panel {
-  background: rgba(255,255,255,0.96);
-  border-radius: 22px;
-  padding: 16px 20px;
-  box-shadow: 0 8px 24px rgba(15,23,42,0.12);
-}
-
-.status-row {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 12px;
-  font-size: 18px;
-  font-weight: 800;
-  align-items: center;
-}
-
-.timer-box {
-  color: #dc2626;
-  font-size: 22px;
-}
-
-#gameArea {
-  position: relative;
-  width: 100%;
-  height: 590px;
-  background: linear-gradient(180deg, #bfecff 0%, #e5ffe4 64%, #bbf7d0 100%);
-  border: 6px solid white;
-  border-radius: 28px;
-  overflow: hidden;
-  cursor: crosshair;
-}
-
-#questionCard {
-  position: absolute;
-  top: 18px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 90%;
-  background: white;
-  border-radius: 16px;
-  padding: 12px 16px;
-  font-size: 22px;
   font-weight: 900;
-  z-index: 30;
-  box-shadow: 0 5px 14px rgba(15,23,42,0.12);
 }
-
-#targetsRow {
-  position: absolute;
-  top: 100px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 92%;
+button:hover { background: #0284c7; }
+button.secondary { background: #94a3b8; }
+button.success { background: #22c55e; }
+button.danger { background: #ef4444; }
+button:disabled { background: #cbd5e1; cursor: not-allowed; }
+#gameScreen { align-items: flex-start; padding: 18px; }
+.status-row {
+  width: min(1380px, 100%);
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
-  z-index: 25;
+  margin: 0 auto 16px;
 }
-
-.target {
-  min-height: 78px;
-  padding: 10px;
-  background: #fff7ed;
-  border: 3px solid #fb923c;
+.status-box {
+  background: rgba(255,255,255,.96);
   border-radius: 20px;
-  box-shadow: 0 7px 14px rgba(0,0,0,0.17);
+  padding: 12px;
+  text-align: center;
+  font-weight: 900;
+  box-shadow: 0 8px 20px rgba(15,23,42,.1);
+}
+.status-box strong { color: #0369a1; font-size: 24px; }
+.game-frame {
+  width: min(1380px, 100%);
+  margin: auto;
+  display: grid;
+  grid-template-columns: 1.05fr 1.2fr .95fr;
+  gap: 18px;
+}
+.wheel-wrap { display: flex; flex-direction: column; align-items: center; }
+.pointer {
+  width: 0; height: 0;
+  border-left: 18px solid transparent;
+  border-right: 18px solid transparent;
+  border-top: 34px solid #ef4444;
+  margin-bottom: -6px;
+  z-index: 2;
+}
+#wheel {
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  border: 10px solid white;
+  background: conic-gradient(#bae6fd 0 45deg,#bbf7d0 45deg 90deg,#fde68a 90deg 135deg,#fecaca 135deg 180deg,#ddd6fe 180deg 225deg,#fed7aa 225deg 270deg,#ccfbf1 270deg 315deg,#fbcfe8 315deg 360deg);
+  box-shadow: 0 14px 35px rgba(15,23,42,.2);
+  position: relative;
+  transition: transform 2s cubic-bezier(.18,.89,.32,1.28);
+}
+#wheel::after {
+  content: "任務轉盤";
+  position: absolute;
+  inset: 72px;
+  border-radius: 50%;
+  background: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 900;
-  font-size: 15px;
-  line-height: 1.35;
-}
-
-.sun {
-  position: absolute;
-  top: 205px;
-  right: 40px;
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: #fde047;
-  box-shadow: 0 0 32px #fde047;
-}
-
-.ground {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 48px;
-  background: repeating-linear-gradient(45deg, #86efac 0, #86efac 12px, #bbf7d0 12px, #bbf7d0 24px);
-}
-
-#player {
-  position: absolute;
-  bottom: 38px;
-  left: 50%;
-  transform: translateX(-50%) scale(0.75);
-  transform-origin: bottom center;
-  width: 90px;
-  height: 120px;
-  z-index: 30;
-}
-
-.head {
-  width: 54px;
-  height: 54px;
-  background: #ffd7a8;
-  border-radius: 50%;
-  margin: 0 auto;
-  border: 3px solid #7c4a22;
-}
-
-.body {
-  width: 64px;
-  height: 54px;
-  background: linear-gradient(180deg, #60a5fa, #2563eb);
-  border-radius: 18px;
-  margin: -2px auto 0;
-  border: 3px solid #1d4ed8;
-}
-
-#aimLine {
-  position: absolute;
-  left: 50%;
-  bottom: 120px;
-  width: 5px;
-  height: 170px;
-  background: rgba(14,165,233,0.55);
-  transform-origin: bottom center;
-  z-index: 24;
-  border-radius: 999px;
-  box-shadow: 0 0 10px rgba(14,165,233,0.6);
-}
-
-.bullet {
-  position: absolute;
-  width: 14px;
-  height: 14px;
-  background: #0284c7;
-  border-radius: 50%;
-  box-shadow: 0 0 12px #38bdf8;
-  z-index: 28;
-}
-
-.knowledge-panel {
-  text-align: left;
-  display: flex;
-  flex-direction: column;
-}
-
-.knowledge-title {
-  font-size: 25px;
+  text-align: center;
   font-weight: 900;
   color: #0369a1;
-  margin-bottom: 12px;
+  font-size: 24px;
+  box-shadow: inset 0 0 0 5px #e0f2fe;
 }
-
-#resultBadge {
+.case-tag {
   display: inline-block;
-  padding: 8px 12px;
-  border-radius: 999px;
   background: #e0f2fe;
+  color: #0369a1;
+  border-radius: 999px;
+  padding: 8px 14px;
   font-weight: 900;
-  margin-bottom: 12px;
+  margin-top: 12px;
 }
-
-#knowledgeText {
-  font-size: 18px;
+.mission-box {
+  background: #f8fafc;
+  border: 2px dashed #bae6fd;
+  border-radius: 18px;
+  padding: 14px;
   line-height: 1.75;
+}
+.mission-box strong { color: #0f766e; }
+.plate {
+  min-height: 430px;
+  border-radius: 34px;
+  background: radial-gradient(circle at center, #fff 0 38%, #e0f2fe 39% 46%, #fff 47% 100%);
+  border: 8px solid #bae6fd;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 20px;
+  align-content: start;
+}
+.empty-note {
+  grid-column: 1 / -1;
+  align-self: center;
+  justify-self: center;
+  text-align: center;
+  color: #64748b;
+  font-size: 20px;
+  font-weight: 900;
+  line-height: 1.8;
+}
+.food-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  max-height: 650px;
+  overflow: auto;
+  padding-right: 4px;
+}
+.food-card {
+  border: 3px solid #e2e8f0;
+  background: white;
+  border-radius: 20px;
+  padding: 12px;
+  cursor: grab;
+  user-select: none;
+  box-shadow: 0 7px 18px rgba(15,23,42,.08);
+  transition: transform .15s, border-color .15s;
+}
+.food-card:hover { transform: translateY(-3px); border-color: #38bdf8; }
+.food-card.selected { border-color: #22c55e; background: #f0fdf4; cursor: pointer; }
+.food-emoji { font-size: 30px; display: block; }
+.food-name { font-weight: 900; margin-top: 4px; }
+.food-meta { font-size: 13px; color: #64748b; margin-top: 4px; line-height: 1.4; }
+.action-row { display: flex; justify-content: center; flex-wrap: wrap; margin-top: 14px; }
+.info-box {
   background: #f8fafc;
   border-radius: 18px;
-  padding: 16px;
-  border: 2px dashed #bae6fd;
-  flex: 1;
+  padding: 14px;
+  line-height: 1.75;
+  border: 2px dashed #cbd5e1;
+  margin-bottom: 12px;
 }
-
-.tip-box {
-  margin-top: 12px;
-  background: #ecfccb;
-  border-radius: 16px;
-  padding: 12px;
-  border: 2px solid #bef264;
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,.55);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 100;
 }
-
-.correct { color: #16a34a; font-weight: 900; }
-.wrong { color: #dc2626; font-weight: 900; }
-
-#reviewList {
-  text-align: left;
-  max-height: 48vh;
-  overflow: auto;
+.modal-backdrop.show { display: flex; }
+.modal {
+  width: min(780px, 100%);
   background: white;
-  padding: 18px;
-  border-radius: 20px;
+  border-radius: 28px;
+  padding: 28px;
+  box-shadow: 0 20px 60px rgba(15,23,42,.35);
 }
-
-.review-item {
-  padding: 12px;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.keyboard-hint {
-  font-size: 16px;
-  color: #475569;
-  margin-top: 6px;
-}
-
-@media (max-width: 980px) {
-  .main-frame { grid-template-columns: 1fr; }
+.modal h2 { text-align: center; font-size: 34px; }
+.big-score { text-align: center; font-size: 44px; font-weight: 900; color: #0369a1; }
+.result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.result-box { background: #f8fafc; border-radius: 18px; padding: 14px; line-height: 1.7; }
+.good { color: #16a34a; font-weight: 900; }
+.bad { color: #dc2626; font-weight: 900; }
+.review-list { text-align: left; max-height: 48vh; overflow: auto; background: white; padding: 18px; border-radius: 20px; }
+.review-item { padding: 12px; border-bottom: 1px solid #e5e7eb; line-height: 1.7; }
+@media (max-width: 1100px) {
+  .game-frame { grid-template-columns: 1fr; }
   .status-row { grid-template-columns: 1fr 1fr; }
-  #targetsRow { grid-template-columns: 1fr 1fr; top: 105px; }
-  .target { min-height: 64px; }
+}
+@media (max-width: 640px) {
+  h1 { font-size: 32px; }
+  .food-grid, .plate, .result-grid { grid-template-columns: 1fr; }
 }
 </style>
 </head>
-
 <body>
-
 <section id="homeScreen" class="screen active">
   <div class="card">
-    <h1>健康飲食知識射擊遊戲</h1>
+    <h1>大學生外食生存戰</h1>
+    <h2>我的餐盤任務</h2>
     <p>
-      每次遊戲會從進階題庫隨機抽出 10 題，題型包含我的餐盤、營養標示、減糖、外食、健康烹調與衛教情境判斷。<br>
-      使用滑鼠瞄準答案並點擊射擊，也可以用鍵盤左右鍵調整方向，按空白鍵或上箭頭發射。<br>
-      每題限時 8 秒，射中正確答案加分，射錯或超時會扣生命。<br>
-      答題結束後，記得看右邊的健康知識補給站，了解答案背後的原因與知識補充。
+      你將扮演校園健康飲食顧問，透過任務轉盤抽出不同大學生個案。<br>
+      可能遇到熬夜趕報告、健身後補充蛋白質、預算只有 100 元、愛喝手搖飲、早上睡過頭等情境。<br>
+      請依照個案需求，拖曳或點選食物卡片放進餐盤，送出後系統會給予分數、營養分析與衛教提醒。
     </p>
-    <button onclick="startGame()">開始遊戲</button>
+    <button onclick="startGame()">開始任務</button>
   </div>
 </section>
 
 <section id="gameScreen" class="screen">
-  <div class="main-frame">
-    <div class="left-zone">
-      <div class="status-panel">
-        <div class="status-row">
-          <span>主題：<strong>飲食</strong></span>
-          <span>題數：<strong id="questionNumber">1</strong> / <strong id="totalQuestions">10</strong></span>
-          <span>分數：<strong id="score">0</strong></span>
-          <span>生命：<strong id="lives">❤️❤️❤️</strong></span>
-          <span class="timer-box">倒數：<strong id="timer">8</strong> 秒</span>
-        </div>
-        <div class="keyboard-hint">鍵盤操作：← → 調整瞄準線，空白鍵 / ↑ 發射</div>
-      </div>
-
-      <div id="gameArea">
-        <div id="questionCard">題目載入中...</div>
-        <div id="targetsRow"></div>
-        <div class="sun"></div>
-        <div class="ground"></div>
-        <div id="aimLine"></div>
-
-        <div id="player">
-          <div class="head"></div>
-          <div class="body"></div>
-        </div>
-      </div>
-
-      <div>
-        <button onclick="backHome()">回首頁</button>
-      </div>
+  <div style="width:100%;">
+    <div class="status-row">
+      <div class="status-box">任務<br><strong id="missionNumber">1</strong> / <strong id="missionTotal">5</strong></div>
+      <div class="status-box">總分<br><strong id="totalScore">0</strong></div>
+      <div class="status-box">本餐預算<br><strong id="budgetText">--</strong></div>
+      <div class="status-box">已選金額<br><strong id="costText">0</strong></div>
     </div>
-
-    <aside class="knowledge-panel">
-      <div class="knowledge-title">健康知識補給站</div>
-      <div id="resultBadge">等待作答中</div>
-      <div id="knowledgeText">移動滑鼠瞄準答案，點擊左鍵射擊；也可以用鍵盤操作。</div>
-      <div class="tip-box">小提醒：不要只記答案，也要看「為什麼」。</div>
-    </aside>
+    <div class="game-frame">
+      <aside class="panel">
+        <div class="wheel-wrap">
+          <div class="pointer"></div>
+          <div id="wheel"></div>
+          <button id="spinBtn" onclick="spinWheel()">轉出這次個案</button>
+        </div>
+        <div id="caseInfo" style="display:none;">
+          <div class="case-tag" id="caseTag">任務 1</div>
+          <h2 id="caseTitle"></h2>
+          <div class="mission-box">
+            <p id="caseStory"></p>
+            <p><strong>任務目標：</strong><span id="caseGoal"></span></p>
+            <p><strong>限制條件：</strong><span id="caseLimit"></span></p>
+          </div>
+        </div>
+      </aside>
+      <main class="panel">
+        <h2>我的餐盤</h2>
+        <div id="plate" class="plate" ondragover="event.preventDefault()" ondrop="dropToPlate(event)"></div>
+        <div class="action-row">
+          <button class="success" onclick="submitPlate()">送出餐盤</button>
+          <button class="secondary" onclick="clearPlate()">清空餐盤</button>
+          <button class="danger" onclick="endGame()">結束遊戲</button>
+        </div>
+      </main>
+      <aside class="panel">
+        <h2>食物卡片區</h2>
+        <div class="info-box">請依照個案任務，選擇 3 到 5 張食物卡片。可以拖曳，也可以直接點擊卡片加入餐盤。</div>
+        <div id="foodGrid" class="food-grid"></div>
+      </aside>
+    </div>
   </div>
 </section>
 
 <section id="endScreen" class="screen">
   <div class="card">
-    <h1>遊戲結束！</h1>
+    <h1>任務完成！</h1>
     <h2 id="finalScore"></h2>
     <p id="finalComment"></p>
-    <h2>錯題複習</h2>
-    <div id="reviewList"></div>
+    <h2>任務回顧</h2>
+    <div id="reviewList" class="review-list"></div>
     <button onclick="startGame()">再玩一次</button>
     <button onclick="showScreen('homeScreen')">回首頁</button>
   </div>
 </section>
 
+<div id="resultModal" class="modal-backdrop">
+  <div class="modal">
+    <h2 id="modalTitle">任務結果</h2>
+    <div class="big-score" id="modalScore">0 分</div>
+    <div class="result-grid">
+      <div class="result-box"><h3>營養分析</h3><div id="nutritionAnalysis"></div></div>
+      <div class="result-box"><h3>衛教提醒</h3><div id="educationTip"></div></div>
+    </div>
+    <div class="result-box" style="margin-top:12px;"><h3>本次選擇</h3><div id="selectedSummary"></div></div>
+    <div style="text-align:center; margin-top:18px;"><button onclick="nextMission()">進入下一個任務</button></div>
+  </div>
+</div>
+
 <script>
-const QUESTION_COUNT = 10;
-const MAX_LIVES = 3;
-const TIME_LIMIT = 8;
-
-const questionBank = [
-  q("以『我的餐盤』進行衛教時，下列哪一組最符合六大類食物概念？",
-    ["全穀雜糧、豆魚蛋肉、蔬菜、水果、乳品、堅果種子", "炸物、甜點、飲料、零食、醬料、冰品", "只要蛋白質、水果和水", "只要白飯、肉類和含糖飲料"],
-    "全穀雜糧、豆魚蛋肉、蔬菜、水果、乳品、堅果種子",
-    "我的餐盤強調六大類食物均衡搭配，不是只強調單一營養素。",
-    "大學生做飲食衛教時，可用六大類食物協助民眾檢視餐點是否完整。"),
-
-  q("『菜比水果多一點』最適合用來提醒哪一件事？",
-    ["蔬菜攝取量應略高於水果，不能只靠水果取代蔬菜", "水果越甜越能代表營養價值高", "只喝果汁就能完全取代蔬菜水果", "水果和蔬菜都不用考慮份量"],
-    "蔬菜攝取量應略高於水果，不能只靠水果取代蔬菜",
-    "蔬菜和水果都重要，但蔬菜在纖維、植化素與熱量控制上有不同角色。",
-    "衛教時可提醒：原型蔬果比果汁更能保留纖維與飽足感。"),
-
-  q("若要向大學生解釋『飯跟蔬菜一樣多』，下列哪個說法最恰當？",
-    ["主食與蔬菜都要有，並避免餐盤被精緻澱粉完全占滿", "只要吃很多飯就一定均衡", "蔬菜可以完全取代所有主食", "不吃澱粉一定比較健康"],
-    "主食與蔬菜都要有，並避免餐盤被精緻澱粉完全占滿",
-    "均衡飲食不是極端限制澱粉，而是調整比例與來源。",
-    "主食可優先選擇全穀雜糧，搭配足量蔬菜。"),
-
-  q("我的餐盤中的『豆魚蛋肉一掌心』主要強調什麼？",
-    ["蛋白質類食物要適量且來源多元", "肉類越多越能補充營養", "只吃加工肉品也能取代所有蛋白質", "完全不能攝取豆魚蛋肉類"],
-    "蛋白質類食物要適量且來源多元",
-    "豆魚蛋肉類提供蛋白質，但仍需注意份量、種類與烹調方式。",
-    "衛教時可鼓勵多選豆類、魚類、蛋類與較少加工的肉類。"),
-
-  q("在營養標示中，判斷包裝食品糖分時最應注意哪一項？",
-    ["每份與每 100 公克或毫升的糖含量", "包裝顏色是否清爽", "商品名稱是否有水果字樣", "代言人是否看起來健康"],
-    "每份與每 100 公克或毫升的糖含量",
-    "營養標示可協助判斷實際攝取的糖量，尤其要注意一包是否含多份。",
-    "讀標示時要同時看『每份』與『本包裝含幾份』。"),
-
-  q("某飲料標示每份糖 12 公克，本包裝含 2 份。若整瓶喝完，糖攝取量是多少？",
-    ["24 公克", "12 公克", "6 公克", "無法判斷，因為只看熱量"],
-    "24 公克",
-    "每份 12 公克乘以 2 份，整瓶就是 24 公克糖。",
-    "衛教時常見錯誤是只看每份，忽略整包裝實際喝完的份數。"),
-
-  q("在包裝食品營養標示中，鈉通常以什麼單位標示？",
-    ["毫克 mg", "公升 L", "公斤 kg", "百分比一定固定為 100%"],
-    "毫克 mg",
-    "鈉含量通常以毫克標示，是判斷鹽分攝取的重要資訊。",
-    "外食與加工食品常是鈉攝取的重要來源，可引導學生練習看鈉含量。"),
-
-  q("想降低外食鈉攝取，下列哪個策略較適合？",
-    ["湯汁、醬料少喝少沾，選擇少鹽烹調", "每餐都把湯喝完", "醬料越多越能補充營養", "只要不吃甜食就不用管鹽分"],
-    "湯汁、醬料少喝少沾，選擇少鹽烹調",
-    "許多外食的鈉來自湯汁、醬料與加工食材。",
-    "衛教時可提供可執行的外食技巧，而不是只說『不要吃太鹹』。"),
-
-  q("下列哪一項最符合健康烹調的核心方向？",
-    ["高纖、低油、低糖、低鹽，善用天然食材風味", "大量油炸讓食物更有營養", "所有食物都應加入大量調味料", "只要熱量低就可以不管食材品質"],
-    "高纖、低油、低糖、低鹽，善用天然食材風味",
-    "健康烹調強調減少過度烹調與調味，保留食物原味。",
-    "營養衛教可把『少油少鹽少糖』轉化成具體烹調方法。"),
-
-  q("下列哪一種烹調方式通常比油炸更適合作為健康飲食建議？",
-    ["蒸、煮、烤、微波", "反覆高溫油炸", "每道菜都先裹粉再炸", "加入大量奶油與糖漿"],
-    "蒸、煮、烤、微波",
-    "蒸、煮、烤、微波通常可降低額外油脂攝取。",
-    "做衛教時可提供替代做法，例如炸雞改烤雞、炸物改滷味或水煮。"),
-
-  q("全穀雜糧類相較於精緻穀物，主要優勢之一是什麼？",
-    ["通常保留較多膳食纖維與部分營養素", "一定完全沒有熱量", "吃越多越不需要運動", "可以完全取代所有蔬菜"],
-    "通常保留較多膳食纖維與部分營養素",
-    "全穀雜糧比精緻穀物保留更多纖維與營養成分。",
-    "可建議從白飯混糙米、燕麥、地瓜開始，而不是一次完全改變。"),
-
-  q("大學生常喝手搖飲，若要進行減糖衛教，最可行的第一步是什麼？",
-    ["從全糖改少糖、微糖或無糖，並降低飲用頻率", "要求所有人立刻永遠不喝飲料", "改喝加糖果汁就一定健康", "只要加鮮奶就不用管糖量"],
-    "從全糖改少糖、微糖或無糖，並降低飲用頻率",
-    "減糖重點是建立可持續的選擇，而不是只靠短期禁止。",
-    "健康促進方案可設定階段性目標，例如每週少喝 1 到 2 杯含糖飲。"),
-
-  q("下列哪個最能代表『原型食物』的選擇？",
-    ["香蕉、地瓜、無調味堅果", "糖果、洋芋片、奶油夾心餅乾", "只看熱量低的代餐餅乾", "含糖果汁和果凍"],
-    "香蕉、地瓜、無調味堅果",
-    "原型食物通常加工較少，較能保留食物本身的營養特性。",
-    "點心衛教可引導學生用原型食物取代高糖高油零食。"),
-
-  q("下列哪個關於堅果種子的說法最正確？",
-    ["富含營養但熱量不低，應注意份量", "可以無限量吃，完全不會有熱量", "一定要選裹糖堅果才健康", "堅果沒有任何營養價值"],
-    "富含營養但熱量不低，應注意份量",
-    "堅果種子含油脂與多種營養，但過量仍可能增加熱量攝取。",
-    "我的餐盤用『一茶匙』提醒份量概念。"),
-
-  q("某學生說：『我每天喝果汁，所以不用吃水果。』最適合的衛教回應是什麼？",
-    ["果汁可能纖維較少且糖分容易過量，建議優先吃原型水果", "完全正確，果汁一定比水果健康", "只要是水果口味都能取代水果", "水果沒有營養，喝飲料就好"],
-    "果汁可能纖維較少且糖分容易過量，建議優先吃原型水果",
-    "原型水果通常比果汁更有飽足感，也能保留較多纖維。",
-    "衛教回應應避免責備，改用替代建議幫助對方調整。"),
-
-  q("某便當包含白飯、炸排骨、滷蛋，幾乎沒有蔬菜。最優先可建議改善哪一點？",
-    ["增加蔬菜並將炸排骨改成滷、烤或水煮蛋白質", "只把白飯全部拿掉", "再加一杯全糖飲料", "只吃炸排骨就好"],
-    "增加蔬菜並將炸排骨改成滷、烤或水煮蛋白質",
-    "外食改善可先從增加蔬菜、減少油炸和含糖飲料開始。",
-    "衛教建議要具體且可執行，才能提高改變可能性。"),
-
-  q("如果要設計大學生飲食衛教前測，下列哪一題最能測『應用能力』？",
-    ["看到營養標示後，判斷整包食品實際糖量", "請背出所有口訣文字", "請說出自己喜歡的飲料店", "請選一個最漂亮的餐盤圖片"],
-    "看到營養標示後，判斷整包食品實際糖量",
-    "應用能力重點是能把知識用在真實情境。",
-    "健康教育評量不只測記憶，也應測選擇、判讀與行動規劃。"),
-
-  q("下列哪個選項最能說明『健康飲食不是極端節食』？",
-    ["重點是均衡、適量、多樣化與可持續", "完全不吃澱粉才是健康", "只吃水煮雞胸肉才是標準", "一天只吃一餐最有效"],
-    "重點是均衡、適量、多樣化與可持續",
-    "極端限制常難以長期維持，也可能造成營養不均。",
-    "對大學生衛教時可強調生活化、可執行的飲食調整。"),
-
-  q("若學生常熬夜後用含糖飲料提神，較好的衛教切入點是什麼？",
-    ["討論睡眠、壓力與飲料選擇，逐步改成無糖或白開水", "只說你不可以喝，其他不管", "建議每天喝更多全糖飲料", "完全忽略作息因素"],
-    "討論睡眠、壓力與飲料選擇，逐步改成無糖或白開水",
-    "飲食行為常受作息、壓力與環境影響。",
-    "健康促進應看見行為背後的情境，而不是只給單一命令。"),
-
-  q("食品原料標示中，若糖或油排在前幾項，通常代表什麼？",
-    ["該成分在產品中比例可能較高，需留意", "這項食品一定完全無糖", "排序和含量完全無關", "一定是最健康的產品"],
-    "該成分在產品中比例可能較高，需留意",
-    "原料通常依含量多寡排列，糖與油排前面時要特別注意。",
-    "選購零食時可同時看原料順序與營養標示。"),
-
-  q("下列哪個最適合作為『減糖』衛教訊息？",
-    ["先辨識含糖飲料來源，再用無糖或低糖選項替代", "只要完全不吃所有食物就能減糖", "甜食可以無限量吃，只要有運動", "水果口味飲料一定不含糖"],
-    "先辨識含糖飲料來源，再用無糖或低糖選項替代",
-    "含糖飲料常是添加糖的重要來源，替換飲品是可行策略。",
-    "減糖衛教要提供替代選擇，讓行為改變更容易。"),
-
-  q("若包裝標示『低脂』，下列哪個判斷最謹慎？",
-    ["仍需查看糖、鈉、總熱量與份量", "低脂就一定可以無限量吃", "低脂一定代表低糖", "低脂一定代表低鈉"],
-    "仍需查看糖、鈉、總熱量與份量",
-    "單一營養宣稱不代表整體一定健康。",
-    "營養相關科系學生應練習整體判讀，而不是只看一個宣稱。"),
-
-  q("下列哪個較符合『外食健康選擇』的實務建議？",
-    ["主菜少油炸、飯量適中、加青菜、飲料選無糖", "主餐、點心、飲料都選最高糖最高油", "只吃肉不吃菜", "只看價格不看內容"],
-    "主菜少油炸、飯量適中、加青菜、飲料選無糖",
-    "外食可透過主菜、配菜、主食與飲料四個面向調整。",
-    "對大學生而言，外食衛教越具體越容易執行。"),
-
-  q("下列哪個選擇較能增加膳食纖維攝取？",
-    ["糙米飯、燕麥、蔬菜與原型水果", "白吐司配含糖飲料", "只吃糖果", "只喝清湯不吃食物"],
-    "糙米飯、燕麥、蔬菜與原型水果",
-    "全穀雜糧、蔬菜和原型水果都是膳食纖維來源。",
-    "高纖飲食可從主食替換與增加蔬果開始。"),
-
-  q("衛教中若只說『你這樣吃很不健康』，可能造成什麼問題？",
-    ["容易讓對方防衛，較難促進行為改變", "一定能讓所有人立刻改變", "完全不會影響溝通", "比提供具體策略更有效"],
-    "容易讓對方防衛，較難促進行為改變",
-    "衛教溝通需要尊重、同理與具體建議。",
-    "大學生進行衛教時，訊息設計和溝通方式也很重要。"),
-
-  q("若要提升健康飲食行為改變，哪個目標較符合 SMART 概念？",
-    ["未來兩週每週至少 3 天把全糖飲改成無糖茶", "我要變健康", "我永遠不吃任何甜食", "我今天開始完美飲食"],
-    "未來兩週每週至少 3 天把全糖飲改成無糖茶",
-    "SMART 目標需要具體、可衡量、可達成、相關且有時間限制。",
-    "衛教方案可用小目標提高可執行性與追蹤性。"),
-
-  q("下列哪一種早餐較符合大學生健康飲食建議？",
-    ["全麥吐司、蛋、無糖豆漿與水果", "只喝全糖奶茶", "只吃糖果餅乾", "完全不吃早餐也不喝水"],
-    "全麥吐司、蛋、無糖豆漿與水果",
-    "早餐若包含主食、蛋白質、飲品與水果，較能支持上午活動。",
-    "早餐衛教可從便利商店也買得到的組合開始設計。"),
-
-  q("關於豆漿與牛奶，下列哪個衛教說法較精確？",
-    ["豆漿可提供蛋白質，但鈣質通常不能直接等同於乳品", "豆漿和牛奶所有營養完全一樣", "牛奶完全沒有蛋白質", "只喝含糖調味乳最能補鈣"],
-    "豆漿可提供蛋白質，但鈣質通常不能直接等同於乳品",
-    "豆漿和乳品的營養組成不同，選擇時應看需求與標示。",
-    "若不能喝牛奶，可討論發酵乳製品或其他鈣來源。"),
-
-  q("下列哪個說法最能避免飲食衛教中的污名化？",
-    ["聚焦行為與環境調整，不批評身材或人格", "用嘲笑方式提醒對方", "把健康完全歸因於意志力", "只用恐嚇語氣要求改變"],
-    "聚焦行為與環境調整，不批評身材或人格",
-    "健康飲食衛教應避免身材羞辱，改以支持行為改變為核心。",
-    "尤其面對同儕衛教時，尊重與安全感會影響學習成效。"),
-
-  q("選擇便利商店餐點時，下列哪個組合相對較均衡？",
-    ["飯糰或地瓜、茶葉蛋、沙拉、無糖飲", "洋芋片、糖果、全糖汽水", "只買甜點當正餐", "泡麵加含糖飲料"],
-    "飯糰或地瓜、茶葉蛋、沙拉、無糖飲",
-    "便利商店也能透過主食、蛋白質、蔬菜與無糖飲品搭配得更均衡。",
-    "衛教可以提供真實可買到的替代方案。"),
-
-  q("若同學說『我有運動，所以每天喝全糖飲沒關係』，較好的回應是什麼？",
-    ["運動很好，但仍需留意添加糖與總攝取量", "有運動就完全不用管飲食", "全糖飲可以取代白開水", "只要流汗就能抵消所有糖分"],
-    "運動很好，但仍需留意添加糖與總攝取量",
-    "運動和飲食都是健康生活的一部分，不能互相完全抵消。",
-    "衛教時可肯定既有好行為，再討論可改善之處。"),
-
-  q("下列哪個最適合用於大學生飲食教育的遊戲化回饋？",
-    ["答題後提供原因、知識點與生活應用建議", "只顯示對或錯，不提供說明", "答錯就嘲笑玩家", "只給分數，不做任何學習回饋"],
-    "答題後提供原因、知識點與生活應用建議",
-    "遊戲化學習若有即時回饋，較能幫助知識轉化成理解。",
-    "健康知識遊戲可結合錯題複習，提高學習效果。"),
-
-  q("下列哪個最能測出學生是否理解『少油』而非只會背口訣？",
-    ["讓學生在炸雞、烤雞、水煮雞中選擇較佳替代方案並說明原因", "請學生重複背少油兩個字", "問學生喜不喜歡炸物", "只要求學生寫出自己的身高"],
-    "讓學生在炸雞、烤雞、水煮雞中選擇較佳替代方案並說明原因",
-    "理解應包含情境判斷與理由說明。",
-    "題庫設計可加入應用題，較適合營養與衛教相關科系學生。"),
-
-  q("下列哪個最能代表『飲食環境』對行為的影響？",
-    ["宿舍附近只有宵夜店，會影響學生晚餐與消夜選擇", "所有飲食選擇都只和個人意志力有關", "菜單設計不會影響點餐", "價格和取得便利性完全不重要"],
-    "宿舍附近只有宵夜店，會影響學生晚餐與消夜選擇",
-    "飲食行為受到可近性、價格、同儕、時間與環境影響。",
-    "健康促進不只教育個人，也要思考環境支持。"),
-
-  q("下列哪個較符合『健康促進』而不只是『健康知識宣導』？",
-    ["除了教知識，也改善選擇環境並提供行動支持", "只貼一張海報就結束", "只責怪沒有改變的人", "只要求大家背營養素名稱"],
-    "除了教知識，也改善選擇環境並提供行動支持",
-    "健康促進重視個人知能、支持環境與可持續行動。",
-    "若設計校園飲食介入，可結合餐廳標示、無糖選項與同儕活動。"),
-
-  q("若要設計校園減糖活動，哪個指標較能作為結果評估？",
-    ["參與者每週含糖飲料飲用次數是否下降", "活動海報顏色是否漂亮", "主持人聲音是否很大", "抽獎獎品是否昂貴"],
-    "參與者每週含糖飲料飲用次數是否下降",
-    "結果評估應對應行為或健康相關目標。",
-    "衛教活動可以同時設計過程指標與結果指標。"),
-
-  q("若某食品標示『0 反式脂肪』，下列哪個判斷較完整？",
-    ["仍要看總脂肪、飽和脂肪、糖、鈉與份量", "一定可以無限制吃", "一定沒有熱量", "一定比所有原型食物健康"],
-    "仍要看總脂肪、飽和脂肪、糖、鈉與份量",
-    "單一項目為 0 不代表整體營養品質一定好。",
-    "營養標示判讀要避免被單一宣稱誤導。"),
-
-  q("下列哪個關於『低熱量』食品的提醒較適合？",
-    ["仍需考量營養密度、份量與是否能取代正餐", "低熱量就一定最健康", "低熱量可以完全不用看成分", "低熱量代表一定高纖"],
-    "仍需考量營養密度、份量與是否能取代正餐",
-    "熱量只是判斷飲食品質的一個面向。",
-    "營養教育應避免把健康飲食簡化成只看熱量。"),
-
-  q("下列哪個最適合用來說明『多樣化飲食』？",
-    ["每天變化蔬菜顏色、蛋白質來源與主食種類", "每天只吃同一種食物", "只吃自己喜歡的炸物", "只喝同一種飲料"],
-    "每天變化蔬菜顏色、蛋白質來源與主食種類",
-    "不同食物提供不同營養素，多樣化可降低營養偏差。",
-    "衛教可用顏色、餐盤與食物分類幫助理解。"),
-
-  q("在餐廳點餐時，哪個做法最能降低額外糖攝取？",
-    ["飲料選無糖，甜點與含糖醬料減量", "主餐已經鹹，所以飲料一定要全糖", "所有醬料都加好加滿", "飯後一定再加一杯全糖飲"],
-    "飲料選無糖，甜點與含糖醬料減量",
-    "添加糖可能來自飲料、甜點與醬料，不只來自糖果。",
-    "大學生外食衛教可提醒隱藏糖來源。"),
-
-  q("若要把這款遊戲用於衛教課程，哪個設計最能促進課後討論？",
-    ["遊戲後讓學生分析錯題原因與可行行為改變", "玩完直接下課，不討論", "只公布最高分", "答錯的人要被公開批評"],
-    "遊戲後讓學生分析錯題原因與可行行為改變",
-    "反思與討論能讓遊戲從娛樂轉為學習。",
-    "可加入小組討論：哪一題最容易錯？為什麼？生活中如何改變？"),
-
-  q("下列哪個情境最需要提醒『看整包裝份數』？",
-    ["一包餅乾標示每份熱量不高，但整包共有 4 份", "一顆蘋果沒有包裝", "一杯白開水", "一份現切青菜"],
-    "一包餅乾標示每份熱量不高，但整包共有 4 份",
-    "包裝食品常以每份標示，但實際可能一次吃完整包。",
-    "營養標示教學可設計換算題，訓練實際判讀能力。"),
-
-  q("下列哪個最適合作為大學生飲食介入的環境策略？",
-    ["校園餐廳標示無糖飲、蔬菜加量與全穀選項", "只叫學生自己克制，不改變任何選擇環境", "取消所有午餐時間", "只提供高油高糖食物"],
-    "校園餐廳標示無糖飲、蔬菜加量與全穀選項",
-    "環境提示和可近性會影響選擇。",
-    "健康促進方案可結合標示、供應與價格策略。"),
-
-  q("下列哪一題最適合營養相關科系學生進行進階討論？",
-    ["如何把我的餐盤原則轉化成便利商店可購買的餐點組合？", "你最喜歡什麼顏色？", "哪個圖案最可愛？", "你今天幾點起床？"],
-    "如何把我的餐盤原則轉化成便利商店可購買的餐點組合？",
-    "進階學習重點在於把理論轉化為真實生活建議。",
-    "衛教與營養科系學生可練習從知識、行為到環境的轉譯。"),
-
-  q("若同學認為『健康飲食一定很貴』，下列哪個回應較合適？",
-    ["可討論當季蔬果、豆製品、蛋、地瓜等相對可負擔選擇", "健康飲食一定只能買昂貴食材", "沒錢就完全不能吃健康", "只要買最貴就是最健康"],
-    "可討論當季蔬果、豆製品、蛋、地瓜等相對可負擔選擇",
-    "價格會影響飲食選擇，因此衛教需提供符合情境的替代方案。",
-    "健康飲食建議應考慮可近性、價格與文化習慣。"),
-
-  q("下列哪個最能體現營養衛教中的『同理』？",
-    ["先了解對方作息、預算與外食限制，再共同找可行做法", "直接批評對方都不努力", "要求對方照自己的飲食方式做", "完全不聽對方的困難"],
-    "先了解對方作息、預算與外食限制，再共同找可行做法",
-    "同理能增加信任，也讓建議更貼近生活。",
-    "大學生衛教實作可加入訪談與需求評估概念。"),
-
-  q("下列哪個最適合作為本遊戲的學習目標？",
-    ["能判讀常見飲食情境，選出較健康且可執行的選擇", "只追求射擊速度，不理解題目", "背下所有答案但不會應用", "只看分數不看錯題"],
-    "能判讀常見飲食情境，選出較健康且可執行的選擇",
-    "健康知識遊戲的重點是把知識轉化為判斷與行動。",
-    "對衛教與營養科系學生，可把遊戲當作情境判斷與衛教溝通練習。")
+const TOTAL_MISSIONS = 5;
+const foods = [
+  f("riceball", "🍙", "鮭魚飯糰", 38, ["grain", "protein"], "有主食與部分蛋白質，但蔬菜不足。"),
+  f("sweetpotato", "🍠", "烤地瓜", 35, ["grain", "fiber"], "全穀雜糧類替代選擇，纖維較佳。"),
+  f("egg", "🥚", "茶葉蛋", 15, ["protein"], "便利取得的平價蛋白質來源。"),
+  f("tofu", "⬜", "涼拌豆腐", 45, ["protein"], "豆製品可提供蛋白質，油脂通常較低。"),
+  f("chicken", "🍗", "舒肥雞胸", 65, ["protein"], "蛋白質含量較高，適合健身後補充。"),
+  f("friedchicken", "🍖", "炸雞排", 85, ["protein", "fried"], "有蛋白質，但油脂較高。"),
+  f("salad", "🥗", "生菜沙拉", 55, ["vegetable", "fiber"], "能補充蔬菜與纖維，醬料可減量。"),
+  f("veg", "🥬", "燙青菜", 40, ["vegetable", "fiber"], "增加蔬菜攝取，適合搭配外食。"),
+  f("fruit", "🍎", "當季水果", 35, ["fruit", "fiber"], "原型水果比果汁更有飽足感與纖維。"),
+  f("milk", "🥛", "低脂鮮奶", 35, ["dairy", "protein"], "可補充鈣質與蛋白質。"),
+  f("soy", "🧃", "無糖豆漿", 30, ["protein", "noSugarDrink"], "可補充蛋白質，也比含糖飲更適合。"),
+  f("water", "💧", "白開水", 0, ["noSugarDrink"], "不含糖，是最基本的補水選擇。"),
+  f("tea", "🍵", "無糖茶", 25, ["noSugarDrink"], "比含糖飲料更適合作為日常飲品。"),
+  f("bubbletea", "🧋", "全糖珍奶", 65, ["sugaryDrink"], "糖與熱量較高，建議降低糖度或頻率。"),
+  f("soda", "🥤", "含糖汽水", 30, ["sugaryDrink"], "容易增加添加糖攝取。"),
+  f("noodles", "🍜", "泡麵", 55, ["grain", "highSodium"], "方便但鈉含量通常偏高。"),
+  f("chips", "🍟", "洋芋片", 35, ["snack", "highSodium"], "高油高鈉零食，不適合作為正餐主體。"),
+  f("donut", "🍩", "甜甜圈", 40, ["sugar", "snack"], "糖與油脂較高，營養密度較不足。"),
+  f("nuts", "🥜", "無調味堅果", 30, ["nuts"], "有好油脂與營養，但份量不宜過多。")
 ];
-
-function q(question, options, answer, reason, point) {
-  return { question, options, answer, reason, point };
-}
-
-const gameArea = document.getElementById("gameArea");
-const targetsRow = document.getElementById("targetsRow");
-const aimLine = document.getElementById("aimLine");
-const resultBadge = document.getElementById("resultBadge");
-const knowledgeText = document.getElementById("knowledgeText");
-
-let currentQuestions = [];
-let questionIndex = 0;
-let score = 0;
-let lives = MAX_LIVES;
-let targets = [];
-let bullets = [];
-let wrongRecords = [];
-let locked = false;
-let angle = 0;
-let loopId = null;
-let timerId = null;
-let timeLeft = TIME_LIMIT;
-
-function showScreen(id) {
-  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-}
-
+const cases = [
+  c("熬夜趕報告的大學生", "期末報告今晚截止，小安晚餐只能快速解決，但希望不要只靠甜食撐精神。", "組合一份有主食、蛋白質、蔬菜，且飲料不含糖的晚餐。", 140, ["grain", "protein", "vegetable", "noSugarDrink"], ["sugaryDrink", "snack"], "熬夜時容易想靠糖分提神，但含糖飲料可能讓糖攝取過量。建議選擇均衡餐點搭配無糖飲品。"),
+  c("健身後想補充蛋白質", "阿哲剛做完重量訓練，想補充蛋白質，也希望不要只吃肉而忽略蔬菜和主食。", "選出含蛋白質、主食與蔬菜的組合，避免只靠炸物補充蛋白質。", 170, ["protein", "grain", "vegetable"], ["fried", "sugaryDrink"], "運動後可補充蛋白質與適量碳水化合物，但油炸食品不是最理想的主要來源。"),
+  c("預算只有 100 元的大學生", "小宏今天生活費只剩 100 元，但仍想吃得有飽足感，不希望只買零食果腹。", "在 100 元內搭配出有主食與蛋白質的餐點，若能加入蔬菜更好。", 100, ["grain", "protein"], ["snack", "sugaryDrink"], "健康飲食不一定昂貴，可用地瓜、茶葉蛋、無糖豆漿等平價食物組合出較好的選擇。"),
+  c("愛喝手搖飲的大學生", "小杰每天都喝全糖飲料，最近想開始減糖，但覺得完全不喝很難。", "選擇無糖飲品，並搭配一份較均衡的點心或餐點。", 130, ["noSugarDrink", "protein"], ["sugaryDrink", "sugar"], "減糖可以從飲料開始，先改無糖、微糖或降低頻率，比一開始就完全禁止更可持續。"),
+  c("忙到只能買便利商店晚餐", "怡君晚上要補習又要開會，只能去便利商店買晚餐。她想吃得方便，但不要只有泡麵和飲料。", "組合出包含主食、蛋白質、蔬菜與無糖飲品的一餐。", 180, ["grain", "protein", "vegetable", "noSugarDrink"], ["highSodium", "sugaryDrink"], "便利商店也可以搭配出較均衡的一餐，重點是避免泡麵、零食與含糖飲料成為主體。"),
+  c("早上睡過頭的大學生", "小萱早八睡過頭，只剩 10 分鐘買早餐。她想要快速、有飽足感，也希望上午上課有精神。", "選擇快速取得、含主食與蛋白質的早餐，飲品以無糖為主。", 120, ["grain", "protein", "noSugarDrink"], ["sugaryDrink", "sugar"], "早餐可從主食、蛋白質與無糖飲品開始搭配，避免只有含糖飲料或甜點。")
+];
+function f(id, emoji, name, price, tags, note) { return { id, emoji, name, price, tags, note }; }
+function c(title, story, goal, budget, required, avoid, tip) { return { title, story, goal, budget, required, avoid, tip }; }
+let currentMission = 0, totalScore = 0, currentCase = null, selectedFoods = [], usedCases = [], history = [], wheelRotation = 0;
+const plate = document.getElementById("plate");
+const foodGrid = document.getElementById("foodGrid");
+function showScreen(id) { document.querySelectorAll(".screen").forEach(s => s.classList.remove("active")); document.getElementById(id).classList.add("active"); }
 function startGame() {
-  currentQuestions = pickRandomQuestions(questionBank, QUESTION_COUNT);
-  questionIndex = 0;
-  score = 0;
-  lives = MAX_LIVES;
-  wrongRecords = [];
-  locked = false;
-  angle = 0;
-  setAimAngle(angle);
-  document.getElementById("totalQuestions").textContent = QUESTION_COUNT;
-  showScreen("gameScreen");
-  updateStatus();
-  loadQuestion();
-  startLoop();
+  currentMission = 1; totalScore = 0; currentCase = null; selectedFoods = []; usedCases = []; history = []; wheelRotation = 0;
+  document.getElementById("wheel").style.transform = "rotate(0deg)";
+  document.getElementById("missionTotal").textContent = TOTAL_MISSIONS;
+  document.getElementById("caseInfo").style.display = "none";
+  renderFoods(); clearPlate(); updateStatus(); showScreen("gameScreen");
 }
-
-function pickRandomQuestions(bank, count) {
-  return [...bank].sort(() => Math.random() - 0.5).slice(0, count);
-}
-
 function updateStatus() {
-  document.getElementById("questionNumber").textContent = Math.min(questionIndex + 1, currentQuestions.length || QUESTION_COUNT);
-  document.getElementById("score").textContent = score;
-  document.getElementById("lives").textContent = "❤️".repeat(lives) + "🤍".repeat(MAX_LIVES - lives);
-  document.getElementById("timer").textContent = timeLeft;
+  document.getElementById("missionNumber").textContent = currentMission;
+  document.getElementById("totalScore").textContent = totalScore;
+  document.getElementById("budgetText").textContent = currentCase ? currentCase.budget + " 元" : "--";
+  document.getElementById("costText").textContent = selectedFoods.reduce((s, f) => s + f.price, 0) + " 元";
 }
-
-function loadQuestion() {
-  clearTargets();
-  clearBullets();
-  stopTimer();
-  locked = false;
-  timeLeft = TIME_LIMIT;
-  updateStatus();
-
-  const item = currentQuestions[questionIndex];
-  document.getElementById("questionCard").textContent = item.question;
-  resultBadge.textContent = `第 ${questionIndex + 1} 題`;
-  resultBadge.style.background = "#e0f2fe";
-  knowledgeText.innerHTML = "移動滑鼠瞄準答案，點擊左鍵射擊；也可以用 ← → 調整方向，空白鍵或 ↑ 發射。";
-
-  createTargets(item.options, item.answer);
-  startTimer();
+function spinWheel() {
+  const btn = document.getElementById("spinBtn"); btn.disabled = true;
+  wheelRotation += 1080 + Math.floor(Math.random() * 360);
+  document.getElementById("wheel").style.transform = "rotate(" + wheelRotation + "deg)";
+  setTimeout(() => { chooseCase(); btn.disabled = false; }, 2100);
 }
-
-function createTargets(options, answer) {
-  const shuffled = [...options].sort(() => Math.random() - 0.5);
-
-  shuffled.forEach(text => {
-    const div = document.createElement("div");
-    div.className = "target";
-    div.textContent = text;
-    div.dataset.correct = text === answer ? "true" : "false";
-    targetsRow.appendChild(div);
-    targets.push(div);
-  });
+function chooseCase() {
+  const pool = cases.filter((_, i) => !usedCases.includes(i));
+  const source = pool.length ? pool : cases;
+  currentCase = source[Math.floor(Math.random() * source.length)];
+  usedCases.push(cases.indexOf(currentCase));
+  selectedFoods = [];
+  document.getElementById("caseInfo").style.display = "block";
+  document.getElementById("caseTag").textContent = "任務 " + currentMission;
+  document.getElementById("caseTitle").textContent = currentCase.title;
+  document.getElementById("caseStory").textContent = currentCase.story;
+  document.getElementById("caseGoal").textContent = currentCase.goal;
+  document.getElementById("caseLimit").textContent = "預算 " + currentCase.budget + " 元，建議選擇 3 到 5 樣食物。";
+  clearPlate(); updateStatus();
 }
-
-function startTimer() {
-  stopTimer();
-  timerId = setInterval(() => {
-    if (locked) return;
-    timeLeft--;
-    updateStatus();
-
-    if (timeLeft <= 0) {
-      handleTimeout();
-    }
-  }, 1000);
+function renderFoods() { foodGrid.innerHTML = foods.map(item => foodCard(item)).join(""); }
+function foodCard(item) {
+  return '<div class="food-card" draggable="true" ondragstart="dragFood(event,\'' + item.id + '\')" onclick="addFoodById(\'' + item.id + '\')"><span class="food-emoji">' + item.emoji + '</span><div class="food-name">' + item.name + '</div><div class="food-meta">' + item.price + ' 元｜' + item.note + '</div></div>';
 }
-
-function stopTimer() {
-  if (timerId) {
-    clearInterval(timerId);
-    timerId = null;
+function dragFood(event, id) { event.dataTransfer.setData("foodId", id); }
+function dropToPlate(event) { event.preventDefault(); addFoodById(event.dataTransfer.getData("foodId")); }
+function addFoodById(id) {
+  if (!currentCase) { alert("請先轉出這次的個案任務！"); return; }
+  if (selectedFoods.length >= 5) { alert("餐盤最多選擇 5 樣食物喔！"); return; }
+  const item = foods.find(food => food.id === id); if (!item) return;
+  selectedFoods.push(item); renderPlate(); updateStatus();
+}
+function removeFood(index) { selectedFoods.splice(index, 1); renderPlate(); updateStatus(); }
+function renderPlate() {
+  if (selectedFoods.length === 0) {
+    plate.innerHTML = '<div class="empty-note">把食物卡片拖曳到餐盤中<br>或點擊卡片加入餐盤</div>'; return;
   }
+  plate.innerHTML = selectedFoods.map((item, index) => '<div class="food-card selected" onclick="removeFood(' + index + ')"><span class="food-emoji">' + item.emoji + '</span><div class="food-name">' + item.name + '</div><div class="food-meta">' + item.price + ' 元｜點擊可移除</div></div>').join("");
 }
-
-function handleTimeout() {
-  if (locked) return;
-  locked = true;
-  stopTimer();
-
-  const current = currentQuestions[questionIndex];
-  lives--;
-  wrongRecords.push({
-    question: current.question,
-    chosen: "未作答（時間到）",
-    answer: current.answer,
-    reason: current.reason,
-    point: current.point
-  });
-
-  showResult(false, "未作答（時間到）", current, true);
+function clearPlate() { selectedFoods = []; renderPlate(); updateStatus(); }
+function submitPlate() {
+  if (!currentCase) { alert("請先轉出這次的個案任務！"); return; }
+  if (selectedFoods.length < 3) { alert("請至少選擇 3 樣食物，餐盤才比較完整喔！"); return; }
+  const result = evaluatePlate(); totalScore += result.score;
+  history.push({ mission: currentMission, title: currentCase.title, score: result.score, selected: selectedFoods.map(f => f.name).join("、"), analysis: result.analysis.join("<br>"), tip: currentCase.tip });
+  showResultModal(result); updateStatus();
 }
-
-gameArea.addEventListener("mousemove", e => {
-  if (!document.getElementById("gameScreen").classList.contains("active")) return;
-
-  const rect = gameArea.getBoundingClientRect();
-  const mouseX = e.clientX - rect.left;
-  const mouseY = e.clientY - rect.top;
-
-  const originX = rect.width / 2;
-  const originY = rect.height - 150;
-
-  const dx = mouseX - originX;
-  const dy = mouseY - originY;
-
-  const rawAngle = Math.atan2(dy, dx) * 180 / Math.PI + 90;
-  setAimAngle(rawAngle);
-});
-
-gameArea.addEventListener("click", () => {
-  if (locked) return;
-  shootBullet();
-});
-
-document.addEventListener("keydown", e => {
-  if (!document.getElementById("gameScreen").classList.contains("active")) return;
-
-  if (e.key === "ArrowLeft") {
-    e.preventDefault();
-    setAimAngle(angle - 6);
-  }
-
-  if (e.key === "ArrowRight") {
-    e.preventDefault();
-    setAimAngle(angle + 6);
-  }
-
-  if (e.key === " " || e.key === "ArrowUp") {
-    e.preventDefault();
-    if (!locked) shootBullet();
-  }
-});
-
-function setAimAngle(newAngle) {
-  angle = Math.max(-80, Math.min(80, newAngle));
-  aimLine.style.transform = `rotate(${angle}deg)`;
+function evaluatePlate() {
+  const tags = selectedFoods.flatMap(f => f.tags); const cost = selectedFoods.reduce((s, f) => s + f.price, 0);
+  let score = 40; const analysis = [];
+  currentCase.required.forEach(tag => { if (tags.includes(tag)) { score += 10; analysis.push('<span class="good">✓ 達成：</span>' + tagText(tag)); } else { score -= 8; analysis.push('<span class="bad">✗ 缺少：</span>' + tagText(tag)); } });
+  currentCase.avoid.forEach(tag => { if (tags.includes(tag)) { score -= 8; analysis.push('<span class="bad">△ 需要留意：</span>包含 ' + tagText(tag)); } });
+  if (cost <= currentCase.budget) { score += 10; analysis.push('<span class="good">✓ 符合預算：</span>' + cost + ' 元 / ' + currentCase.budget + ' 元'); } else { score -= 10; analysis.push('<span class="bad">✗ 超出預算：</span>' + cost + ' 元 / ' + currentCase.budget + ' 元'); }
+  if (tags.includes("vegetable") && tags.includes("protein") && tags.includes("grain")) { score += 10; analysis.push('<span class="good">✓ 結構完整：</span>包含主食、蛋白質與蔬菜'); }
+  if (tags.includes("sugaryDrink") && !tags.includes("noSugarDrink")) { score -= 10; analysis.push('<span class="bad">✗ 飲品可改善：</span>可改成白開水、無糖茶或無糖豆漿'); }
+  score = Math.max(0, Math.min(100, score));
+  const level = score >= 85 ? "健康顧問高手" : score >= 70 ? "外食搭配達人" : score >= 55 ? "還可以再調整" : "需要重新檢視餐盤";
+  return { score, level, analysis, cost };
 }
-
-function shootBullet() {
-  const rect = gameArea.getBoundingClientRect();
-  const originX = rect.width / 2;
-  const originY = rect.height - 150;
-
-  const bullet = document.createElement("div");
-  bullet.className = "bullet";
-  bullet.style.left = originX + "px";
-  bullet.style.top = originY + "px";
-
-  const rad = (angle - 90) * Math.PI / 180;
-  bullet.vx = Math.cos(rad) * 10;
-  bullet.vy = Math.sin(rad) * 10;
-
-  gameArea.appendChild(bullet);
-  bullets.push(bullet);
+function tagText(tag) {
+  const map = { grain:"主食 / 全穀雜糧", protein:"蛋白質", vegetable:"蔬菜", fruit:"水果", dairy:"乳品", fiber:"膳食纖維", nuts:"堅果種子", noSugarDrink:"無糖飲品", sugaryDrink:"含糖飲料", snack:"高糖高油零食", highSodium:"高鈉食品", highFat:"高油脂食品", fried:"油炸食品", sugar:"高糖食物" };
+  return map[tag] || tag;
 }
-
-function startLoop() {
-  cancelAnimationFrame(loopId);
-  loop();
+function showResultModal(result) {
+  document.getElementById("modalTitle").textContent = result.level;
+  document.getElementById("modalScore").textContent = result.score + " 分";
+  document.getElementById("nutritionAnalysis").innerHTML = result.analysis.join("<br>");
+  document.getElementById("educationTip").innerHTML = currentCase.tip;
+  document.getElementById("selectedSummary").innerHTML = "<strong>你選擇了：</strong>" + selectedFoods.map(f => f.name).join("、") + "<br><strong>總金額：</strong>" + result.cost + " 元<br><strong>建議：</strong>思考這份餐盤是否符合個案的預算、時間、營養需求與長期可執行性。";
+  document.getElementById("resultModal").classList.add("show");
 }
-
-function loop() {
-  moveBullets();
-  checkBulletHit();
-  loopId = requestAnimationFrame(loop);
+function nextMission() {
+  document.getElementById("resultModal").classList.remove("show");
+  if (currentMission >= TOTAL_MISSIONS) { endGame(); return; }
+  currentMission++; currentCase = null; selectedFoods = []; clearPlate();
+  document.getElementById("caseInfo").style.display = "none"; updateStatus();
 }
-
-function moveBullets() {
-  const areaWidth = gameArea.clientWidth;
-  const areaHeight = gameArea.clientHeight;
-
-  bullets.forEach(b => {
-    const x = parseFloat(b.style.left);
-    const y = parseFloat(b.style.top);
-    b.style.left = (x + b.vx) + "px";
-    b.style.top = (y + b.vy) + "px";
-  });
-
-  bullets = bullets.filter(b => {
-    const x = parseFloat(b.style.left);
-    const y = parseFloat(b.style.top);
-    const inside = x > -20 && x < areaWidth + 20 && y > -20 && y < areaHeight + 20;
-    if (!inside) b.remove();
-    return inside;
-  });
-}
-
-function checkBulletHit() {
-  if (locked) return;
-
-  for (const bullet of bullets) {
-    const bRect = bullet.getBoundingClientRect();
-
-    for (const target of targets) {
-      const tRect = target.getBoundingClientRect();
-
-      const hit = !(bRect.right < tRect.left ||
-                    bRect.left > tRect.right ||
-                    bRect.bottom < tRect.top ||
-                    bRect.top > tRect.bottom);
-
-      if (hit) {
-        locked = true;
-        stopTimer();
-        const current = currentQuestions[questionIndex];
-        const correct = target.dataset.correct === "true";
-
-        if (correct) {
-          score += 10;
-        } else {
-          lives--;
-          wrongRecords.push({
-            question: current.question,
-            chosen: target.textContent,
-            answer: current.answer,
-            reason: current.reason,
-            point: current.point
-          });
-        }
-
-        bullet.remove();
-        showResult(correct, target.textContent, current, false);
-        return;
-      }
-    }
-  }
-}
-
-function showResult(correct, chosenText, q, timeout = false) {
-  updateStatus();
-  clearTargets();
-  clearBullets();
-
-  resultBadge.innerHTML = correct
-    ? `<span class="correct">射中了正確答案！</span>`
-    : timeout
-      ? `<span class="wrong">時間到！</span>`
-      : `<span class="wrong">射錯了！</span>`;
-
-  resultBadge.style.background = correct ? "#dcfce7" : "#fee2e2";
-
-  knowledgeText.innerHTML = `
-    <strong>你的答案：</strong>${chosenText}<br>
-    <strong>正確答案：</strong>${q.answer}<br><br>
-    <strong>原因說明：</strong>${q.reason}<br><br>
-    <strong>知識點補充：</strong>${q.point}<br><br>
-    <span style="color:#0369a1; font-weight:900;">請先閱讀右邊的知識補充，稍後會出現下一題準備倒數。</span>
-  `;
-
-  setTimeout(() => {
-    if (!document.getElementById("gameScreen").classList.contains("active")) return;
-
-    if (lives <= 0 || questionIndex + 1 >= currentQuestions.length) {
-      endGame(lives <= 0);
-    } else {
-      startNextQuestionCountdown();
-    }
-  }, 9000);
-}
-
-function startNextQuestionCountdown() {
-  clearTargets();
-  clearBullets();
-  locked = true;
-
-  let readyCount = 3;
-  resultBadge.textContent = "準備下一題";
-  resultBadge.style.background = "#fef3c7";
-
-  document.getElementById("questionCard").textContent = `下一題將在 ${readyCount} 秒後開始`;
-  knowledgeText.innerHTML = `
-    <strong>下一題準備中...</strong><br><br>
-    剛才的知識補充閱讀完後，請準備瞄準下一題的答案。<br><br>
-    <span style="color:#0369a1; font-weight:900;">${readyCount} 秒後開始下一題。</span>
-  `;
-
-  const readyTimer = setInterval(() => {
-    if (!document.getElementById("gameScreen").classList.contains("active")) {
-      clearInterval(readyTimer);
-      return;
-    }
-
-    readyCount--;
-
-    if (readyCount > 0) {
-      document.getElementById("questionCard").textContent = `下一題將在 ${readyCount} 秒後開始`;
-      knowledgeText.innerHTML = `
-        <strong>下一題準備中...</strong><br><br>
-        剛才的知識補充閱讀完後，請準備瞄準下一題的答案。<br><br>
-        <span style="color:#0369a1; font-weight:900;">${readyCount} 秒後開始下一題。</span>
-      `;
-    } else {
-      clearInterval(readyTimer);
-      questionIndex++;
-      loadQuestion();
-    }
-  }, 1000);
-}
-
-function endGame(lifeOver) {
-  cancelAnimationFrame(loopId);
-  stopTimer();
-  clearTargets();
-  clearBullets();
-  showScreen("endScreen");
-
-  document.getElementById("finalScore").textContent =
-    `你的分數：${score} / ${currentQuestions.length * 10}`;
-
-  document.getElementById("finalComment").textContent =
-    lifeOver ? "生命用完了，先看看錯題複習，再挑戰一次！"
-             : "太棒了！你完成了健康飲食挑戰。";
-
+function endGame() {
+  document.getElementById("resultModal").classList.remove("show"); showScreen("endScreen");
+  document.getElementById("finalScore").textContent = "總分：" + totalScore + " / " + (TOTAL_MISSIONS * 100);
+  const avg = totalScore / TOTAL_MISSIONS;
+  document.getElementById("finalComment").textContent = avg >= 85 ? "太棒了！你很能把飲食知識轉化成生活化的衛教建議。" : avg >= 70 ? "表現不錯！多數情境都能做出合理的餐盤搭配。" : avg >= 55 ? "已有基本概念，但可以再加強預算、飲品與蔬菜搭配。" : "建議回顧任務分析，重新練習如何根據個案需求設計餐盤。";
   renderReview();
 }
-
 function renderReview() {
   const list = document.getElementById("reviewList");
-
-  if (wrongRecords.length === 0) {
-    list.innerHTML = "<p>恭喜你沒有錯題！</p>";
-    return;
-  }
-
-  list.innerHTML = wrongRecords.map((r, i) => `
-    <div class="review-item">
-      <strong>錯題 ${i + 1}：</strong>${r.question}<br>
-      <strong>你的答案：</strong>${r.chosen}<br>
-      <strong>正確答案：</strong>${r.answer}<br>
-      <strong>原因：</strong>${r.reason}<br>
-      <strong>知識點：</strong>${r.point}
-    </div>
-  `).join("");
-}
-
-function clearTargets() {
-  targets.forEach(t => t.remove());
-  targets = [];
-  targetsRow.innerHTML = "";
-}
-
-function clearBullets() {
-  bullets.forEach(b => b.remove());
-  bullets = [];
-}
-
-function backHome() {
-  cancelAnimationFrame(loopId);
-  stopTimer();
-  clearTargets();
-  clearBullets();
-  showScreen("homeScreen");
+  if (history.length === 0) { list.innerHTML = "<p>尚未完成任務。</p>"; return; }
+  list.innerHTML = history.map(item => '<div class="review-item"><strong>任務 ' + item.mission + '｜' + item.title + '</strong><br><strong>得分：</strong>' + item.score + ' 分<br><strong>你的餐盤：</strong>' + item.selected + '<br><strong>分析：</strong><br>' + item.analysis + '<br><strong>衛教提醒：</strong>' + item.tip + '</div>').join("");
 }
 </script>
 </body>
