@@ -185,28 +185,37 @@
       z-index: 8;
     }
 
+    .rod-arm {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 0;
+      height: 180px;
+      transform-origin: top center;
+      transform: rotate(0deg);
+      z-index: 8;
+    }
+
     .line {
       position: absolute;
       left: -2px;
       top: 0;
       width: 4px;
-      height: 180px;
+      height: 100%;
       background: #203949;
       border-radius: 999px;
-      transform-origin: top center;
       box-shadow: 0 2px 4px rgba(0,0,0,.25);
     }
 
     .hook {
       position: absolute;
       left: -18px;
-      top: 176px;
+      bottom: -28px;
       width: 36px;
       height: 36px;
       display: grid;
       place-items: center;
       font-size: 30px;
-      transform-origin: center;
       filter: drop-shadow(0 5px 3px rgba(0,0,0,.28));
     }
 
@@ -422,8 +431,10 @@
     <div class="surface-wave"></div>
     <div class="dock"></div>
     <div class="rod-origin" id="rodOrigin">
-      <div class="line" id="line"></div>
-      <div class="hook" id="hook">⚓</div>
+      <div class="rod-arm" id="rodArm">
+        <div class="line" id="line"></div>
+        <div class="hook" id="hook">⚓</div>
+      </div>
     </div>
     <div class="coral c1">🪸</div>
     <div class="coral c2">🌿</div>
@@ -569,6 +580,7 @@
 
     const gameScreen = document.getElementById("gameScreen");
     const rodOrigin = document.getElementById("rodOrigin");
+    const rodArm = document.getElementById("rodArm");
     const line = document.getElementById("line");
     const hook = document.getElementById("hook");
     const playerLabel = document.getElementById("playerLabel");
@@ -740,14 +752,11 @@
         castAngle = swingAngle;
         castDistance = 180;
       }
-      line.style.height = `${castDistance}px`;
-      line.style.transform = `rotate(${castAngle}deg)`;
-      const rad = (castAngle - 90) * Math.PI / 180;
-      const hookX = Math.cos(rad) * castDistance;
-      const hookY = Math.sin(rad) * castDistance;
-      hook.style.left = `${hookX - 18}px`;
-      hook.style.top = `${hookY - 18}px`;
-      hook.style.transform = `rotate(${castAngle}deg)`;
+
+      // 魚線與魚鉤放在同一個 rodArm 容器內，一起旋轉、一起伸縮。
+      // 這樣看起來會連在一起，碰撞判定也會跟畫面同步。
+      rodArm.style.height = `${castDistance}px`;
+      rodArm.style.transform = `rotate(${castAngle}deg)`;
     }
 
     function animateItems(dt, now) {
@@ -817,11 +826,11 @@
     function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
 
     function getHookCenter() {
-      const originRect = rodOrigin.getBoundingClientRect();
-      const rad = (castAngle - 90) * Math.PI / 180;
+      // 直接讀取畫面上魚鉤的實際中心位置，避免數學座標與視覺位置不一致。
+      const rect = hook.getBoundingClientRect();
       return {
-        x: originRect.left + Math.cos(rad) * castDistance,
-        y: originRect.top + Math.sin(rad) * castDistance
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2
       };
     }
 
