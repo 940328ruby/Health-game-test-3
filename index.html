@@ -3,944 +3,1032 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>大學生健康一日任務</title>
+  <title>健康知識大捕撈：大學生健康素養挑戰</title>
   <style>
-    * { box-sizing: border-box; }
-
-    :root {
-      --blue: #38bdf8;
-      --deep-blue: #0369a1;
-      --green: #22c55e;
-      --red: #ef4444;
-      --yellow: #facc15;
-      --orange: #fb923c;
-      --purple: #a78bfa;
-      --bg: #f8fafc;
-      --text: #1f2937;
-      --muted: #64748b;
-      --border: #e2e8f0;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
     }
 
     body {
-      margin: 0;
-      font-family: "Noto Sans TC", Arial, sans-serif;
-      color: var(--text);
-      background: linear-gradient(135deg, #dbeafe, #dcfce7, #fef9c3);
-      overflow-x: hidden;
+      min-height: 100vh;
+      background: linear-gradient(180deg, #d9f5ff 0%, #8ed8f8 35%, #1f8fc4 100%);
+      color: #123;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
     }
 
-    body::before {
-      content: "🏪 🛏️ 📚 🍙 💤 🧘";
-      position: fixed;
-      top: 20px;
-      left: -20%;
-      width: 140%;
+    .app {
+      width: min(1100px, 100%);
+      background: rgba(255, 255, 255, 0.92);
+      border-radius: 28px;
+      box-shadow: 0 20px 50px rgba(0, 50, 90, 0.25);
+      overflow: hidden;
+      border: 3px solid rgba(255, 255, 255, 0.75);
+    }
+
+    header {
+      padding: 22px 28px;
+      background: linear-gradient(90deg, #006da8, #00a6c8);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    header h1 {
+      font-size: clamp(1.4rem, 3vw, 2.1rem);
+      letter-spacing: 1px;
+    }
+
+    header p {
+      opacity: 0.92;
+      margin-top: 4px;
+      font-size: 0.95rem;
+    }
+
+    .stats {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      padding: 10px 14px;
+      border-radius: 16px;
+      min-width: 92px;
+      text-align: center;
+    }
+
+    .stat-card span {
+      display: block;
+      font-size: 0.8rem;
+      opacity: 0.85;
+    }
+
+    .stat-card strong {
+      font-size: 1.35rem;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 18px;
+      padding: 22px;
+    }
+
+    @media (max-width: 900px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .game-card, .side-card {
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 10px 28px rgba(0, 70, 110, 0.12);
+      overflow: hidden;
+      border: 1px solid #e4f5fb;
+    }
+
+    .game-area {
+      position: relative;
+      height: 560px;
+      background: linear-gradient(180deg, #c7f4ff 0%, #69c7e9 38%, #0674aa 100%);
+      overflow: hidden;
+      border-bottom: 8px solid #075f8a;
+    }
+
+    .sun {
+      position: absolute;
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: #ffe178;
+      top: 28px;
+      right: 48px;
+      box-shadow: 0 0 30px rgba(255, 225, 120, 0.8);
+    }
+
+    .cloud {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 999px;
+      height: 34px;
+    }
+
+    .cloud::before, .cloud::after {
+      content: "";
+      position: absolute;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 50%;
+    }
+
+    .cloud.one {
+      width: 120px;
+      top: 55px;
+      left: 52px;
+    }
+
+    .cloud.one::before {
+      width: 48px;
+      height: 48px;
+      left: 20px;
+      top: -22px;
+    }
+
+    .cloud.one::after {
+      width: 58px;
+      height: 58px;
+      right: 18px;
+      top: -28px;
+    }
+
+    .water-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 128px;
+      height: 18px;
+      background: repeating-linear-gradient(90deg, rgba(255,255,255,0.7) 0 28px, rgba(255,255,255,0.15) 28px 56px);
+      opacity: 0.85;
+    }
+
+    .boat {
+      position: absolute;
+      top: 78px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 160px;
+      height: 55px;
+      background: #9b5429;
+      border-radius: 0 0 80px 80px;
+      z-index: 5;
+      box-shadow: inset 0 -10px rgba(0,0,0,0.16);
+    }
+
+    .boat::before {
+      content: "🎣";
+      position: absolute;
+      left: 55px;
+      top: -35px;
+      font-size: 48px;
+    }
+
+    .hook-wrapper {
+      position: absolute;
+      top: 120px;
+      left: 50%;
+      width: 4px;
+      height: 260px;
+      transform-origin: top center;
+      z-index: 4;
+      transition: height 0.7s linear;
+    }
+
+    .hook-wrapper.swinging {
+      animation: swing 2.1s ease-in-out infinite alternate;
+    }
+
+    @keyframes swing {
+      from { transform: rotate(-42deg); }
+      to { transform: rotate(42deg); }
+    }
+
+    .line {
+      width: 4px;
+      height: 100%;
+      background: #1f4155;
+      margin: 0 auto;
+      border-radius: 999px;
+    }
+
+    .hook {
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
       font-size: 34px;
-      opacity: 0.16;
-      animation: floatIcons 20s linear infinite;
-      pointer-events: none;
+      filter: drop-shadow(0 3px 2px rgba(0,0,0,0.25));
     }
 
-    @keyframes floatIcons {
-      from { transform: translateX(-10%); }
-      to { transform: translateX(10%); }
+    .sea-item {
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 999px;
+      user-select: none;
+      z-index: 3;
+      filter: drop-shadow(0 6px 4px rgba(0,0,0,0.2));
+      animation-name: swim;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+
+    @keyframes swim {
+      from { transform: translateX(-140px); }
+      to { transform: translateX(calc(100vw + 260px)); }
+    }
+
+    .small-fish { font-size: 34px; }
+    .medium-fish { font-size: 46px; }
+    .big-fish { font-size: 58px; }
+    .pearl { font-size: 48px; }
+    .bomb { font-size: 46px; }
+
+    .bubble {
+      position: absolute;
+      bottom: -30px;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.7);
+      border-radius: 50%;
+      animation: rise 6s linear infinite;
+      opacity: 0.8;
+    }
+
+    @keyframes rise {
+      from { transform: translateY(0); opacity: 0.8; }
+      to { transform: translateY(-430px); opacity: 0; }
+    }
+
+    .control-panel {
+      padding: 18px;
+      display: grid;
+      gap: 12px;
+      background: #f6fcff;
+    }
+
+    .message {
+      min-height: 48px;
+      background: #e9f8fd;
+      border: 1px solid #c8edf8;
+      border-radius: 16px;
+      padding: 12px 14px;
+      line-height: 1.5;
+    }
+
+    button, input {
+      border: none;
+      border-radius: 16px;
+      padding: 12px 16px;
+      font-size: 1rem;
+    }
+
+    input {
+      width: 100%;
+      border: 2px solid #d8edf5;
+      outline: none;
+      background: white;
+    }
+
+    input:focus {
+      border-color: #00a6c8;
     }
 
     button {
-      border: none;
-      border-radius: 16px;
-      padding: 12px 22px;
-      margin: 8px;
-      font-size: 18px;
+      background: linear-gradient(90deg, #ffb703, #fb8500);
+      color: #2d1900;
+      font-weight: 800;
       cursor: pointer;
-      background: var(--blue);
-      color: white;
-      font-weight: 900;
-      box-shadow: 0 8px 18px rgba(14, 165, 233, 0.25);
-      transition: 0.18s transform, 0.18s background;
+      box-shadow: 0 8px 14px rgba(251, 133, 0, 0.28);
+      transition: transform 0.15s ease, filter 0.15s ease;
     }
 
-    button:hover { background: #0284c7; transform: translateY(-2px); }
-    button.success { background: var(--green); }
-    button.secondary { background: #94a3b8; }
-    button.danger { background: var(--red); }
-    button:disabled { background: #cbd5e1; cursor: not-allowed; transform: none; }
+    button:hover { transform: translateY(-1px); filter: brightness(1.03); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-    .screen {
-      min-height: 100vh;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
+    .secondary {
+      background: #e6f7ff;
+      color: #006da8;
+      box-shadow: none;
+      border: 1px solid #bceafe;
     }
 
-    .screen.active { display: flex; }
-
-    .card, .panel {
-      background: rgba(255, 255, 255, 0.96);
-      border-radius: 30px;
-      padding: 28px;
-      box-shadow: 0 18px 48px rgba(15, 23, 42, 0.16);
-    }
-
-    .card { width: min(1040px, 100%); text-align: center; }
-
-    h1 { font-size: 44px; margin: 10px 0; }
-    h2 { margin: 8px 0 14px; }
-    p { font-size: 18px; line-height: 1.75; }
-
-    .home-icons {
-      font-size: 62px;
-      animation: bounce 2.2s ease-in-out infinite;
-    }
-
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-12px); }
-    }
-
-    .intro-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-      margin: 22px 0;
-    }
-
-    .intro-box {
-      background: var(--bg);
-      border: 2px dashed #bae6fd;
-      border-radius: 22px;
+    .side-card {
       padding: 18px;
+      display: grid;
+      gap: 16px;
+      align-content: start;
+    }
+
+    .side-card h2 {
+      color: #006da8;
+      font-size: 1.25rem;
+    }
+
+    .rule-list {
+      display: grid;
+      gap: 8px;
+      font-size: 0.95rem;
+      line-height: 1.55;
+    }
+
+    .rule-item {
+      background: #f5fbff;
+      border: 1px solid #d9f1fb;
+      padding: 10px;
+      border-radius: 14px;
+    }
+
+    .leaderboard {
+      display: grid;
+      gap: 8px;
+    }
+
+    .leader-row {
+      display: grid;
+      grid-template-columns: 32px 1fr auto;
+      gap: 8px;
+      align-items: center;
+      background: #fff7df;
+      border: 1px solid #ffe5a1;
+      padding: 9px 10px;
+      border-radius: 14px;
+      font-size: 0.95rem;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 20, 40, 0.65);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 18px;
+      z-index: 20;
+    }
+
+    .modal.show { display: flex; }
+
+    .modal-card {
+      width: min(680px, 100%);
+      background: white;
+      border-radius: 28px;
+      padding: 24px;
+      box-shadow: 0 18px 50px rgba(0,0,0,0.3);
+    }
+
+    .modal-card h2 {
+      color: #006da8;
+      margin-bottom: 10px;
+    }
+
+    .question-meta {
+      display: inline-block;
+      background: #e9f8fd;
+      color: #006a92;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      font-size: 0.9rem;
+    }
+
+    .question-text {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin-bottom: 16px;
+      font-weight: 700;
+    }
+
+    .options {
+      display: grid;
+      gap: 10px;
+    }
+
+    .option-btn {
+      text-align: left;
+      background: #f4fbff;
+      color: #123;
+      box-shadow: none;
+      border: 2px solid #d6eef8;
+      font-weight: 700;
+    }
+
+    .option-btn.correct {
+      background: #daf7e5;
+      border-color: #58c982;
+    }
+
+    .option-btn.wrong {
+      background: #ffe3df;
+      border-color: #ff8b7d;
+    }
+
+    .feedback {
+      display: none;
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 16px;
+      background: #fff9e8;
+      border: 1px solid #ffe2a1;
       line-height: 1.65;
     }
 
-    .intro-box .emoji { font-size: 40px; display: block; margin-bottom: 8px; }
+    .feedback.show { display: block; }
 
-    /* =========================
-       遊戲畫面
-    ========================== */
-    #gameScreen { align-items: flex-start; padding: 16px; }
-
-    .game-container { width: min(1420px, 100%); }
-
-    .status-row {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 10px;
-      margin-bottom: 14px;
-    }
-
-    .status-box {
-      background: rgba(255, 255, 255, 0.96);
-      border-radius: 18px;
-      padding: 10px;
-      text-align: center;
-      font-weight: 900;
-      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.1);
-    }
-
-    .status-box strong { color: var(--deep-blue); font-size: 24px; }
-    .heart { color: var(--red); font-size: 22px; letter-spacing: 2px; }
-
-    .game-layout {
-      display: grid;
-      grid-template-columns: 340px 1fr 340px;
-      gap: 16px;
-      align-items: stretch;
-    }
-
-    .panel { min-height: 660px; }
-
-    .scene-panel {
-      position: relative;
-      overflow: hidden;
-      background: rgba(255,255,255,0.96);
-      border-radius: 30px;
-      box-shadow: 0 18px 48px rgba(15, 23, 42, 0.16);
-      min-height: 660px;
-      padding: 20px;
-    }
-
-    .scene-bg {
-      min-height: 620px;
-      border-radius: 26px;
-      padding: 20px;
-      border: 6px solid white;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .scene-convenience { background: linear-gradient(180deg, #dbeafe 0%, #fef3c7 100%); }
-    .scene-dorm { background: linear-gradient(180deg, #c4b5fd 0%, #e0e7ff 55%, #f8fafc 100%); }
-    .scene-library { background: linear-gradient(180deg, #bbf7d0 0%, #dcfce7 50%, #fef9c3 100%); }
-
-    .scene-title-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-
-    .scene-title {
-      background: white;
-      border-radius: 999px;
-      padding: 10px 16px;
-      font-weight: 900;
-      color: var(--deep-blue);
-      box-shadow: 0 8px 18px rgba(15,23,42,0.1);
-    }
-
-    .mission-card {
-      background: rgba(255,255,255,0.92);
-      border-radius: 22px;
-      padding: 16px;
-      border: 2px dashed #bae6fd;
-      line-height: 1.7;
-      margin-bottom: 16px;
-    }
-
-    .shelf, .room-zone, .study-zone {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-      margin-top: 18px;
-    }
-
-    .item-card {
-      background: white;
-      border: 4px solid var(--border);
-      border-radius: 22px;
-      padding: 14px;
-      min-height: 128px;
-      text-align: center;
-      cursor: pointer;
-      user-select: none;
-      box-shadow: 0 10px 22px rgba(15,23,42,0.12);
-      transition: 0.18s transform, 0.18s border-color, 0.18s background;
-      animation: itemFloat 2.6s ease-in-out infinite;
-    }
-
-    .item-card:nth-child(2n) { animation-delay: 0.35s; }
-    .item-card:nth-child(3n) { animation-delay: 0.7s; }
-
-    @keyframes itemFloat {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-6px); }
-    }
-
-    .item-card:hover {
-      transform: translateY(-8px) scale(1.02);
-      border-color: var(--blue);
-    }
-
-    .item-card.selected {
-      border-color: var(--green);
-      background: #f0fdf4;
-      animation: pop 0.22s ease-out;
-    }
-
-    @keyframes pop {
-      from { transform: scale(0.88); }
-      to { transform: scale(1); }
-    }
-
-    .item-card.disabled {
-      opacity: 0.45;
-      pointer-events: none;
-    }
-
-    .item-emoji { font-size: 38px; display: block; margin-bottom: 6px; }
-    .item-name { font-weight: 900; margin-bottom: 4px; }
-    .item-desc { color: var(--muted); font-size: 13px; line-height: 1.45; }
-    .item-price { color: #92400e; font-weight: 900; margin-top: 4px; }
-
-    .selected-area {
-      background: #f8fafc;
-      border: 2px dashed #cbd5e1;
-      border-radius: 20px;
-      padding: 14px;
-      margin-top: 14px;
-      min-height: 150px;
-    }
-
-    .selected-chip {
-      display: inline-block;
-      background: #e0f2fe;
-      color: #075985;
-      border-radius: 999px;
-      padding: 8px 12px;
-      margin: 5px;
-      font-weight: 900;
-      cursor: pointer;
-    }
-
-    .selected-chip:hover { background: #bae6fd; }
-
-    .character {
-      font-size: 58px;
-      display: inline-block;
-      animation: wobble 2s ease-in-out infinite;
-    }
-
-    @keyframes wobble {
-      0%, 100% { transform: rotate(-4deg); }
-      50% { transform: rotate(5deg); }
-    }
-
-    .progress-list {
+    .end-summary {
       display: grid;
       gap: 10px;
-      margin-top: 14px;
+      margin: 16px 0;
+      line-height: 1.6;
     }
 
-    .progress-step {
-      border-radius: 18px;
-      background: #e2e8f0;
-      color: #475569;
-      padding: 12px;
-      font-weight: 900;
-    }
-
-    .progress-step.now { background: #fef3c7; color: #92400e; animation: pulse 1.3s infinite; }
-    .progress-step.done { background: #dcfce7; color: #166534; }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.04); }
-    }
-
-    .tip-box {
-      background: #f8fafc;
-      border-radius: 20px;
-      border: 2px dashed #cbd5e1;
-      padding: 14px;
-      line-height: 1.7;
-      margin-bottom: 14px;
-    }
-
-    .timer-warning {
-      color: var(--red) !important;
-      animation: flash 0.7s infinite;
-    }
-
-    @keyframes flash {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.35; }
-    }
-
-    /* =========================
-       結果視窗
-    ========================== */
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.55);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      z-index: 100;
-    }
-
-    .modal-backdrop.show { display: flex; }
-
-    .modal {
-      width: min(880px, 100%);
-      background: white;
-      border-radius: 30px;
-      padding: 28px;
-      box-shadow: 0 20px 60px rgba(15, 23, 42, 0.35);
-      animation: modalIn 0.25s ease-out;
-    }
-
-    @keyframes modalIn {
-      from { transform: translateY(24px) scale(0.95); opacity: 0; }
-      to { transform: translateY(0) scale(1); opacity: 1; }
-    }
-
-    .big-score {
-      text-align: center;
-      font-size: 42px;
-      font-weight: 900;
-      color: var(--deep-blue);
-      margin: 10px 0;
-    }
-
-    .result-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-
-    .result-box {
-      background: #f8fafc;
-      border-radius: 18px;
-      padding: 16px;
-      line-height: 1.7;
-    }
-
-    .good-text { color: #16a34a; font-weight: 900; }
-    .bad-text { color: #dc2626; font-weight: 900; }
-
-    .review-list {
-      max-height: 50vh;
-      overflow: auto;
-      text-align: left;
-      background: white;
-      border-radius: 18px;
-      padding: 14px;
-    }
-
-    .review-item {
-      border-bottom: 1px solid #e5e7eb;
-      padding: 12px;
-      line-height: 1.7;
-    }
-
-    @media (max-width: 1180px) {
-      .game-layout { grid-template-columns: 1fr; }
-      .panel, .scene-panel { min-height: auto; }
-      .status-row { grid-template-columns: repeat(2, 1fr); }
-      .intro-grid, .result-grid { grid-template-columns: 1fr; }
-    }
-
-    @media (max-width: 720px) {
-      h1 { font-size: 34px; }
-      .shelf, .room-zone, .study-zone { grid-template-columns: 1fr; }
-      .status-row { grid-template-columns: 1fr; }
+    .tag {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #edf9ff;
+      color: #006da8;
+      font-size: 0.82rem;
+      font-weight: 700;
+      margin-left: 6px;
     }
   </style>
 </head>
 <body>
-  <section id="homeScreen" class="screen active">
-    <div class="card">
-      <div class="home-icons">🏪 🛏️ 📚</div>
-      <h1>大學生健康一日任務</h1>
-      <h2>便利商店採買 × 宿舍作息整理 × 圖書館壓力調適</h2>
-      <p>
-        你將扮演一位忙碌的大學生，在一天之內完成三個健康任務。<br>
-        每一關都有不同場景和任務目標，請在限定時間內做出比較合適的選擇。
-      </p>
-
-      <div class="intro-grid">
-        <div class="intro-box">
-          <span class="emoji">🏪</span>
-          <strong>第一關：便利商店</strong><br>
-          在預算內選出比較均衡的晚餐與飲品。
-        </div>
-        <div class="intro-box">
-          <span class="emoji">🛏️</span>
-          <strong>第二關：宿舍房間</strong><br>
-          選出幫助入睡、穩定作息的睡前行動。
-        </div>
-        <div class="intro-box">
-          <span class="emoji">📚</span>
-          <strong>第三關：圖書館</strong><br>
-          面對壓力時，選出有效的調適策略。
-        </div>
+  <div class="app">
+    <header>
+      <div>
+        <h1>健康知識大捕撈</h1>
+        <p>大學生健康素養挑戰｜捕魚、答題、學健康知識</p>
       </div>
+      <div class="stats">
+        <div class="stat-card"><span>分數</span><strong id="score">0</strong></div>
+        <div class="stat-card"><span>剩餘拋竿</span><strong id="castsLeft">5</strong></div>
+        <div class="stat-card"><span>捕捉倒數</span><strong id="timer">8</strong></div>
+      </div>
+    </header>
 
-      <button onclick="startGame()">開始一日任務</button>
+    <main>
+      <section class="game-card">
+        <div class="game-area" id="gameArea">
+          <div class="sun"></div>
+          <div class="cloud one"></div>
+          <div class="water-line"></div>
+          <div class="boat"></div>
+          <div class="hook-wrapper swinging" id="hookWrapper">
+            <div class="line"></div>
+            <div class="hook">⚓</div>
+          </div>
+        </div>
+        <div class="control-panel">
+          <input id="playerName" type="text" maxlength="12" placeholder="請輸入玩家暱稱，例如：小明" />
+          <button id="startBtn">開始遊戲</button>
+          <button id="castBtn" disabled>按空白鍵或點我拋出魚竿</button>
+          <div class="message" id="message">請先輸入暱稱，按下「開始遊戲」。魚鉤會左右擺動，瞄準後按空白鍵捕捉。</div>
+        </div>
+      </section>
+
+      <aside class="side-card">
+        <h2>遊戲規則</h2>
+        <div class="rule-list">
+          <div class="rule-item">🐟 小魚：簡單題，答對 +10 分</div>
+          <div class="rule-item">🐠 中魚：中等題，答對 +20 分</div>
+          <div class="rule-item">🐡 大魚：困難題，答對 +30 分</div>
+          <div class="rule-item">🦪 珍珠貝殼：挑戰題，答對 +50 分</div>
+          <div class="rule-item">💣 健康迷思炸彈：扣 20 分，但會顯示健康提醒</div>
+          <div class="rule-item">每位玩家共有 5 次拋竿機會，每次捕捉限時 8 秒。</div>
+        </div>
+
+        <h2>本機排行榜</h2>
+        <div class="leaderboard" id="leaderboard"></div>
+        <button class="secondary" id="clearBoardBtn">清除排行榜</button>
+      </aside>
+    </main>
+  </div>
+
+  <div class="modal" id="questionModal">
+    <div class="modal-card">
+      <span class="question-meta" id="questionMeta"></span>
+      <h2>健康知識題</h2>
+      <div class="question-text" id="questionText"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <button id="nextBtn" style="display:none; margin-top:16px;">繼續捕魚</button>
     </div>
-  </section>
+  </div>
 
-  <section id="gameScreen" class="screen">
-    <div class="game-container">
-      <div class="status-row">
-        <div class="status-box">關卡<br><strong id="stageNumber">1</strong> / <strong>3</strong></div>
-        <div class="status-box">主題<br><strong id="stageTheme">飲食</strong></div>
-        <div class="status-box">總分<br><strong id="scoreText">0</strong></div>
-        <div class="status-box">時間<br><strong id="timeText">30</strong></div>
-        <div class="status-box">生命<br><span class="heart" id="heartText">❤❤❤</span></div>
-        <div class="status-box">已選<br><strong id="selectedCountText">0</strong></div>
-      </div>
-
-      <div class="game-layout">
-        <aside class="panel">
-          <div class="character" id="characterEmoji">🧑‍🎓</div>
-          <h2 id="caseTitle">忙碌大學生的一天</h2>
-          <p id="caseStory">
-            今天行程很滿：晚上要趕報告、明天有早八、期中考也快到了。你需要在飲食、睡眠與壓力調適中做出比較健康的選擇。
-          </p>
-          <div class="progress-list">
-            <div class="progress-step" id="step0">🏪 便利商店</div>
-            <div class="progress-step" id="step1">🛏️ 宿舍房間</div>
-            <div class="progress-step" id="step2">📚 圖書館</div>
-          </div>
-        </aside>
-
-        <main class="scene-panel">
-          <div id="sceneBg" class="scene-bg scene-convenience">
-            <div class="scene-title-row">
-              <div class="scene-title" id="sceneTitle">第一關｜便利商店限時採買</div>
-              <button class="secondary" onclick="pauseOrResume()" id="pauseBtn">暫停</button>
-            </div>
-
-            <div class="mission-card">
-              <p><strong>任務情境：</strong><span id="missionStory"></span></p>
-              <p><strong>任務目標：</strong><span id="missionGoal"></span></p>
-            </div>
-
-            <div id="choiceArea" class="shelf"></div>
-          </div>
-        </main>
-
-        <aside class="panel">
-          <h2>我的選擇</h2>
-          <div class="tip-box">
-            點擊場景中的卡片即可加入選擇，再點一次或點右側標籤可取消。<br>
-            時間結束會自動送出，也可以提早送出。
-          </div>
-
-          <div class="selected-area" id="selectedArea">
-            尚未選擇。
-          </div>
-
-          <div class="tip-box" style="margin-top:14px;">
-            <strong>本關限制：</strong><br>
-            <span id="stageLimitText"></span>
-          </div>
-
-          <div style="text-align:center;">
-            <button class="success" onclick="submitStage()">送出選擇</button>
-            <button class="danger" onclick="endGame()">結束遊戲</button>
-          </div>
-        </aside>
-      </div>
-    </div>
-  </section>
-
-  <section id="endScreen" class="screen">
-    <div class="card">
-      <div class="home-icons">🎉</div>
-      <h1>一日任務完成！</h1>
-      <h2 id="finalScore">總分：0</h2>
-      <p id="finalComment"></p>
-      <h2>任務回顧</h2>
-      <div id="reviewList" class="review-list"></div>
-      <button onclick="startGame()">再玩一次</button>
-      <button onclick="showScreen('homeScreen')">回首頁</button>
-    </div>
-  </section>
-
-  <div id="resultModal" class="modal-backdrop">
-    <div class="modal">
-      <h2 id="resultTitle">任務結果</h2>
-      <div class="big-score" id="stageScoreText">本關得分：0</div>
-      <div class="result-grid">
-        <div class="result-box">
-          <h3>選擇分析</h3>
-          <div id="analysisText"></div>
-        </div>
-        <div class="result-box">
-          <h3>怎麼做比較好？</h3>
-          <div id="adviceText"></div>
-        </div>
-      </div>
-      <div class="result-box" style="margin-top:14px;">
-        <h3>本次選擇</h3>
-        <div id="selectedSummary"></div>
-      </div>
-      <div style="text-align:center; margin-top:18px;">
-        <button onclick="goNextStage()" id="nextBtn">下一關</button>
-      </div>
+  <div class="modal" id="endModal">
+    <div class="modal-card">
+      <h2>遊戲結束！</h2>
+      <div class="end-summary" id="endSummary"></div>
+      <button id="playAgainBtn">再玩一次</button>
     </div>
   </div>
 
   <script>
-    const TOTAL_STAGES = 3;
-    const TOTAL_LIVES = 3;
+    const questionBank = {
+      easy: [
+        {
+          topic: "運動與身體活動",
+          question: "下列哪一種狀態比較符合「中等強度身體活動」？",
+          options: ["完全不喘，可以唱歌", "可以順暢說話，但不太能唱歌", "完全無法說話，只能停下來", "只要坐著滑手機也算"],
+          answer: 1,
+          explanation: "中等強度活動通常會讓人有點累、呼吸和心跳變快；持續活動時可以說話，但不容易唱歌。"
+        },
+        {
+          topic: "飲食與營養",
+          question: "臺灣版「我的餐盤」把食物分成幾大類？",
+          options: ["3 大類", "4 大類", "5 大類", "6 大類"],
+          answer: 3,
+          explanation: "我的餐盤包含全穀雜糧、豆魚蛋肉、乳品、蔬菜、水果、油脂與堅果種子等 6 大類。"
+        },
+        {
+          topic: "飲食與營養",
+          question: "炎熱或口渴時，較健康的飲品選擇是什麼？",
+          options: ["含糖手搖飲", "能量飲料", "白開水", "每天喝大量奶茶"],
+          answer: 2,
+          explanation: "白開水是最基本也最健康的補水方式；含糖飲料容易增加糖分與熱量攝取。"
+        },
+        {
+          topic: "食品安全",
+          question: "看包裝食品營養標示時，哪一項可以幫助判斷吃進多少熱量與糖？",
+          options: ["包裝顏色", "代言人", "每份量與營養成分", "廣告標語"],
+          answer: 2,
+          explanation: "營養標示會列出每份量、熱量、糖、脂肪、鈉等資訊，有助於做出較健康的選擇。"
+        },
+        {
+          topic: "眼睛與數位健康",
+          question: "長時間使用電腦或手機時，哪一種行為較有助於眼睛保健？",
+          options: ["一直盯著螢幕直到做完", "在黑暗中把螢幕調最亮", "適時休息並讓眼睛離開螢幕", "越靠近螢幕越清楚"],
+          answer: 2,
+          explanation: "長時間近距離用眼容易造成疲勞，適時休息、調整距離與光線有助於眼睛健康。"
+        }
+      ],
+      medium: [
+        {
+          topic: "運動與身體活動",
+          question: "對一般成人而言，下列哪一項較符合常見身體活動建議？",
+          options: ["每週累積 150 分鐘中等強度活動", "每週只要運動 5 分鐘", "完全不用運動，只要少吃", "只有激烈運動才有健康效果"],
+          answer: 0,
+          explanation: "每週累積約 150 分鐘中等強度身體活動，是常見的健康促進建議；可分次累積，不一定一次完成。"
+        },
+        {
+          topic: "菸害防制",
+          question: "關於電子煙，下列敘述何者較正確？",
+          options: ["電子煙一定沒有尼古丁", "電子煙可能含尼古丁與有害物質", "電子煙一定可以幫助戒菸", "電子煙完全不會影響旁人"],
+          answer: 1,
+          explanation: "電子煙可能含有尼古丁及有害物質，並非安全無害，也不應被視為無風險的替代品。"
+        },
+        {
+          topic: "口腔健康",
+          question: "下列哪一種行為會增加口腔癌風險？",
+          options: ["規律刷牙", "定期口腔檢查", "嚼檳榔", "多喝白開水"],
+          answer: 2,
+          explanation: "檳榔本身被列為致癌物，嚼檳榔與口腔癌風險有關；拒菸、拒檳榔是重要預防方式。"
+        },
+        {
+          topic: "性健康與自我保護",
+          question: "關於保險套使用，下列哪一項較正確？",
+          options: ["戴兩層會更安全", "可重複使用", "應全程正確使用並一次一個", "油性潤滑液一定最安全"],
+          answer: 2,
+          explanation: "保險套應全程且正確使用；戴兩層可能因摩擦增加破損機會，也不可重複使用。"
+        },
+        {
+          topic: "心理健康",
+          question: "當同學長期感到壓力很大、失眠、情緒低落時，較適合的做法是什麼？",
+          options: ["完全不要跟任何人說", "只靠熬夜滑手機轉移注意", "尋求可信任的人或專業資源協助", "假裝沒事就會消失"],
+          answer: 2,
+          explanation: "心理健康和身體健康一樣重要。若壓力或情緒困擾持續影響生活，可以尋求朋友、師長、諮商中心或醫療資源協助。"
+        }
+      ],
+      hard: [
+        {
+          topic: "飲食與慢性病預防",
+          question: "大學生經常外食時，下列哪一種選擇較符合健康飲食原則？",
+          options: ["每餐只喝含糖飲料不吃飯", "完全不吃蔬菜水果", "注意主食、蛋白質、蔬菜與水果的搭配", "只看價格，不看營養"],
+          answer: 2,
+          explanation: "外食也可以盡量符合均衡飲食原則，例如注意全穀雜糧、蛋白質、蔬菜、水果與乳品攝取。"
+        },
+        {
+          topic: "健康迷思判斷",
+          question: "下列哪一項最能說明「健康促進」的概念？",
+          options: ["只在生病後治療", "幫助人們提升控制自身健康的能力", "只靠醫師決定所有健康行為", "完全不需要環境支持"],
+          answer: 1,
+          explanation: "健康促進不只是治療疾病，也重視讓人具備知識、能力與支持環境，進而改善健康行為。"
+        },
+        {
+          topic: "成癮與健康風險",
+          question: "為什麼電子煙不適合被視為大學生的安全休閒選擇？",
+          options: ["因為它可能含成癮物質與有害物質", "因為它完全沒有味道", "因為它一定沒有任何健康風險", "因為所有人使用後都能立刻戒菸"],
+          answer: 0,
+          explanation: "電子煙可能含尼古丁及其他有害物質，可能造成成癮與健康風險，因此不應被當成安全休閒。"
+        },
+        {
+          topic: "生活型態",
+          question: "下列哪一種做法最能降低久坐對健康的影響？",
+          options: ["坐越久越好，避免消耗體力", "每隔一段時間起身活動或伸展", "只要週末睡很久就可以", "邊坐邊喝含糖飲料"],
+          answer: 1,
+          explanation: "久坐是常見的大學生生活型態問題。讀書或使用電腦時，適時起身活動、伸展，有助於減少身體負擔。"
+        },
+        {
+          topic: "疾病預防",
+          question: "關於健康檢查與疾病預防，下列哪一項較正確？",
+          options: ["年輕人完全不需要關心健康數值", "只有嚴重不舒服才需要注意健康", "了解血壓、體重、生活習慣有助於早期預防", "健康只和遺傳有關"],
+          answer: 2,
+          explanation: "疾病預防重視早期覺察與生活型態管理。即使是大學生，也可以從運動、飲食、睡眠與健康數值開始關心。"
+        }
+      ],
+      challenge: [
+        {
+          topic: "整合應用題",
+          question: "小安每天熬夜、常喝含糖飲料、久坐讀書，最近覺得精神差。下列哪一組改善策略最合適？",
+          options: ["只喝更多含糖飲料提神", "調整睡眠、減少含糖飲料、增加身體活動", "完全不吃早餐", "只在考完試後再處理健康"],
+          answer: 1,
+          explanation: "健康行為常常互相影響。睡眠、飲食與身體活動一起調整，通常比只改一件事更有幫助。"
+        },
+        {
+          topic: "健康素養挑戰",
+          question: "看到網路影片宣稱「某產品能快速排毒、治百病」，較好的健康素養行動是什麼？",
+          options: ["立刻大量購買", "只看留言決定真假", "查證來源、看是否有可信健康機構資訊", "朋友轉傳就一定正確"],
+          answer: 2,
+          explanation: "健康資訊需要查證來源。面對誇大療效或快速見效的說法，應提高警覺並參考可信機構資訊。"
+        },
+        {
+          topic: "安全性行為與人際界線",
+          question: "關於親密關係中的健康與安全，下列哪一項最重要？",
+          options: ["尊重彼此意願、溝通界線並採取保護措施", "只要對方沒有拒絕就一定可以", "不用討論保護措施", "為了避免尷尬什麼都不說"],
+          answer: 0,
+          explanation: "親密關係中的健康包含尊重、溝通與保護。清楚表達界線並採取安全措施，是保護自己與對方的重要方式。"
+        },
+        {
+          topic: "健康促進應用",
+          question: "如果要在宿舍推動健康生活，下列哪一項最符合健康促進精神？",
+          options: ["只要求大家自己變健康", "設計支持環境，例如飲水提醒、樓梯活動、健康資訊分享", "只處罰不健康的人", "完全不考慮同學需求"],
+          answer: 1,
+          explanation: "健康促進重視個人能力，也重視支持性環境。宿舍可以透過提醒、活動與友善環境讓健康選擇更容易。"
+        }
+      ]
+    };
 
-    const stages = [
-      {
-        key: "food",
-        theme: "飲食",
-        sceneClass: "scene-convenience",
-        sceneTitle: "第一關｜便利商店限時採買",
-        choiceClass: "shelf",
-        time: 35,
-        minSelect: 2,
-        maxSelect: 4,
-        budget: 100,
-        limitText: "預算 100 元，請選擇 2 到 4 個品項。",
-        story: "晚上要趕報告，預算只有 100 元，只能去便利商店買晚餐。",
-        goal: "請選出比較有飽足感、不要只靠糖分或高油高鈉食物的組合。",
-        advice: "便利商店也能做出較好的選擇。可優先考慮主食、蛋白質與無糖飲品，例如飯糰、茶葉蛋、地瓜、無糖豆漿或無糖茶。泡麵、炸物、全糖飲料不是完全不能碰，但不適合成為趕報告時的主要補給。",
-        items: [
-          choice("f1", "🍙", "飯糰", "主食來源，方便快速。", 35, ["carb", "balanced"], []),
-          choice("f2", "🥚", "茶葉蛋", "補充蛋白質，價格相對低。", 18, ["protein", "balanced"], []),
-          choice("f3", "🍠", "地瓜", "提供纖維與飽足感。", 35, ["fiber", "balanced"], []),
-          choice("f4", "🥛", "無糖豆漿", "補充蛋白質，避免額外糖分。", 30, ["protein", "noSugar"], []),
-          choice("f5", "🍵", "無糖茶", "避免含糖飲料。", 25, ["noSugar"], []),
-          choice("f6", "🥗", "雞胸沙拉", "蛋白質與蔬菜較充足，但價格較高。", 89, ["protein", "veg", "balanced"], []),
-          choice("f7", "🧋", "全糖奶茶", "糖分偏高，容易喝進過多熱量。", 45, [], ["sugar"]),
-          choice("f8", "🍜", "泡麵", "方便但鈉含量通常偏高。", 55, [], ["highSodium"]),
-          choice("f9", "🍗", "炸雞排", "油脂較高，較不適合作為主要補給。", 75, [], ["fried"])
-        ]
-      },
-      {
-        key: "sleep",
-        theme: "睡眠",
-        sceneClass: "scene-dorm",
-        sceneTitle: "第二關｜宿舍作息整理",
-        choiceClass: "room-zone",
-        time: 30,
-        minSelect: 2,
-        maxSelect: 3,
-        budget: null,
-        limitText: "請選擇 2 到 3 個睡前行動。",
-        story: "已經晚上 12 點，明天早八。桌上還有手機、咖啡、報告和待辦事項。",
-        goal: "請選出可以幫助入睡、穩定作息、降低睡前刺激的行動。",
-        advice: "睡眠作息不一定要一次調到完美，可以先從降低睡前刺激開始，例如放下手機、設定明天鬧鐘、簡單伸展或整理明天待辦。晚上喝咖啡、躺床滑手機、追劇到凌晨，會讓入睡更困難。",
-        items: [
-          choice("s1", "📵", "睡前放下手機", "降低睡前刺激。", null, ["sleepHygiene"], []),
-          choice("s2", "⏰", "設定明天鬧鐘", "協助固定起床時間。", null, ["routine"], []),
-          choice("s3", "🧘", "簡單伸展放鬆", "幫助身體進入休息狀態。", null, ["relax"], []),
-          choice("s4", "📝", "整理明天待辦", "減少睡前腦中混亂感。", null, ["routine", "planning"], []),
-          choice("s5", "☕", "再喝一杯咖啡", "可能影響入睡。", null, [], ["caffeine"]),
-          choice("s6", "📱", "躺床滑手機", "容易延後入睡。", null, [], ["phone"]),
-          choice("s7", "🎬", "追劇一集再睡", "可能不小心拖到更晚。", null, [], ["lateNight"]),
-          choice("s8", "😵", "直接放棄早八", "短期逃避，長期更混亂。", null, [], ["avoidance"])
-        ]
-      },
-      {
-        key: "stress",
-        theme: "壓力",
-        sceneClass: "scene-library",
-        sceneTitle: "第三關｜圖書館壓力調適",
-        choiceClass: "study-zone",
-        time: 30,
-        minSelect: 2,
-        maxSelect: 3,
-        budget: null,
-        limitText: "請選擇 2 到 3 個壓力調適策略。",
-        story: "期中考快到了，待辦事項很多，心裡很焦慮，覺得自己快讀不完。",
-        goal: "請選出能幫助穩定情緒、整理任務、尋求支持的策略。",
-        advice: "壓力調適不是把壓力完全消除，而是把壓力轉成可以處理的行動。腹式呼吸、列待辦並排序、找同學討論、短暫走動，都能幫助你恢復行動感。拖延、暴吃、完全逃避或過度自責，通常會讓壓力越累積越大。",
-        items: [
-          choice("p1", "🧘", "腹式呼吸 3 分鐘", "先穩定情緒與注意力。", null, ["coping"], []),
-          choice("p2", "📝", "列待辦並排序", "把壓力變成可處理的任務。", null, ["planning"], []),
-          choice("p3", "👥", "找同學討論", "尋求支持與交換讀書策略。", null, ["support"], []),
-          choice("p4", "🚶", "快走或伸展 10 分鐘", "短暫活動幫助轉換狀態。", null, ["activity"], []),
-          choice("p5", "😵", "拖到最後再說", "壓力通常會繼續累積。", null, [], ["delay"]),
-          choice("p6", "🍟", "暴吃零食紓壓", "可能暫時舒服，但沒有處理壓力來源。", null, [], ["emotionalEating"]),
-          choice("p7", "🙈", "完全逃避讀書", "短期逃避，長期更焦慮。", null, [], ["avoidance"]),
-          choice("p8", "💥", "一直責備自己", "可能增加焦慮與無力感。", null, [], ["selfBlame"])
-        ]
-      }
+    const myths = [
+      "健康迷思炸彈：電子煙不是安全無害的替代品，仍可能含尼古丁與有害物質。",
+      "健康迷思炸彈：嚼檳榔不是普通提神方式，會增加口腔健康風險。",
+      "健康迷思炸彈：含糖飲料不能取代白開水，長期過量容易增加糖分攝取。",
+      "健康迷思炸彈：熬夜後補眠不一定能完全抵銷睡眠不足對身體的影響。"
     ];
 
-    function choice(id, emoji, name, desc, price, goodTags, badTags) {
-      return { id, emoji, name, desc, price, goodTags, badTags };
+    const itemTypes = [
+      { type: "small", emoji: "🐟", className: "small-fish", points: 10, difficulty: "easy", label: "小魚｜簡單題" },
+      { type: "medium", emoji: "🐠", className: "medium-fish", points: 20, difficulty: "medium", label: "中魚｜中等題" },
+      { type: "big", emoji: "🐡", className: "big-fish", points: 30, difficulty: "hard", label: "大魚｜困難題" },
+      { type: "pearl", emoji: "🦪", className: "pearl", points: 50, difficulty: "challenge", label: "珍珠貝殼｜挑戰題" },
+      { type: "bomb", emoji: "💣", className: "bomb", points: -20, difficulty: null, label: "健康迷思炸彈" }
+    ];
+
+    const gameArea = document.getElementById("gameArea");
+    const hookWrapper = document.getElementById("hookWrapper");
+    const scoreEl = document.getElementById("score");
+    const castsLeftEl = document.getElementById("castsLeft");
+    const timerEl = document.getElementById("timer");
+    const startBtn = document.getElementById("startBtn");
+    const castBtn = document.getElementById("castBtn");
+    const messageEl = document.getElementById("message");
+    const playerNameInput = document.getElementById("playerName");
+    const leaderboardEl = document.getElementById("leaderboard");
+    const clearBoardBtn = document.getElementById("clearBoardBtn");
+
+    const questionModal = document.getElementById("questionModal");
+    const questionMeta = document.getElementById("questionMeta");
+    const questionText = document.getElementById("questionText");
+    const optionsEl = document.getElementById("options");
+    const feedbackEl = document.getElementById("feedback");
+    const nextBtn = document.getElementById("nextBtn");
+
+    const endModal = document.getElementById("endModal");
+    const endSummary = document.getElementById("endSummary");
+    const playAgainBtn = document.getElementById("playAgainBtn");
+
+    let score = 0;
+    let castsLeft = 5;
+    let timer = 8;
+    let timerInterval = null;
+    let seaItems = [];
+    let currentCaughtItem = null;
+    let currentQuestion = null;
+    let isGameRunning = false;
+    let isCasting = false;
+    let stats = { answered: 0, correct: 0, wrong: 0, bombs: 0 };
+
+    function randomItem(array) {
+      return array[Math.floor(Math.random() * array.length)];
     }
 
-    let currentStageIndex = 0;
-    let score = 0;
-    let lives = TOTAL_LIVES;
-    let timeLeft = 0;
-    let timer = null;
-    let isPaused = false;
-    let selected = [];
-    let history = [];
-    let submitted = false;
+    function updateStats() {
+      scoreEl.textContent = score;
+      castsLeftEl.textContent = castsLeft;
+      timerEl.textContent = timer;
+    }
 
-    const choiceArea = document.getElementById("choiceArea");
-    const selectedArea = document.getElementById("selectedArea");
+    function createBubbles() {
+      for (let i = 0; i < 18; i++) {
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
+        bubble.style.left = Math.random() * 96 + "%";
+        bubble.style.animationDelay = Math.random() * 6 + "s";
+        bubble.style.animationDuration = 4 + Math.random() * 5 + "s";
+        bubble.style.width = bubble.style.height = 8 + Math.random() * 18 + "px";
+        gameArea.appendChild(bubble);
+      }
+    }
 
-    function showScreen(id) {
-      document.querySelectorAll(".screen").forEach(screen => screen.classList.remove("active"));
-      document.getElementById(id).classList.add("active");
+    function createSeaItems() {
+      removeSeaItems();
+      const lanes = [210, 270, 335, 400, 465];
+      const count = 11;
+
+      for (let i = 0; i < count; i++) {
+        const weighted = [itemTypes[0], itemTypes[0], itemTypes[1], itemTypes[1], itemTypes[2], itemTypes[3], itemTypes[4]];
+        const item = randomItem(weighted);
+        const el = document.createElement("div");
+        el.className = `sea-item ${item.className}`;
+        el.textContent = item.emoji;
+        el.dataset.type = item.type;
+        el.dataset.points = item.points;
+        el.dataset.difficulty = item.difficulty || "";
+        el.dataset.label = item.label;
+        el.style.top = randomItem(lanes) + "px";
+        el.style.left = -200 - Math.random() * 700 + "px";
+        el.style.animationDuration = 9 + Math.random() * 10 + "s";
+        el.style.animationDelay = Math.random() * 4 + "s";
+        gameArea.appendChild(el);
+        seaItems.push(el);
+      }
+    }
+
+    function removeSeaItems() {
+      seaItems.forEach(item => item.remove());
+      seaItems = [];
     }
 
     function startGame() {
-      currentStageIndex = 0;
+      const name = playerNameInput.value.trim();
+      if (!name) {
+        messageEl.textContent = "請先輸入玩家暱稱，再開始遊戲。";
+        playerNameInput.focus();
+        return;
+      }
+
       score = 0;
-      lives = TOTAL_LIVES;
-      history = [];
-      showScreen("gameScreen");
-      loadStage();
+      castsLeft = 5;
+      timer = 8;
+      stats = { answered: 0, correct: 0, wrong: 0, bombs: 0 };
+      isGameRunning = true;
+      isCasting = false;
+      currentCaughtItem = null;
+      updateStats();
+      createSeaItems();
+      startRoundTimer();
+      startBtn.disabled = true;
+      castBtn.disabled = false;
+      playerNameInput.disabled = true;
+      messageEl.textContent = "遊戲開始！魚鉤左右擺動時，按空白鍵或按鈕拋出魚竿。";
     }
 
-    function loadStage() {
-      clearInterval(timer);
-      isPaused = false;
-      selected = [];
-      submitted = false;
-
-      const stage = stages[currentStageIndex];
-      timeLeft = stage.time;
-
-      document.getElementById("pauseBtn").textContent = "暫停";
-      document.getElementById("stageNumber").textContent = currentStageIndex + 1;
-      document.getElementById("stageTheme").textContent = stage.theme;
-      document.getElementById("sceneTitle").textContent = stage.sceneTitle;
-      document.getElementById("missionStory").textContent = stage.story;
-      document.getElementById("missionGoal").textContent = stage.goal;
-      document.getElementById("stageLimitText").textContent = stage.limitText;
-
-      const sceneBg = document.getElementById("sceneBg");
-      sceneBg.className = "scene-bg " + stage.sceneClass;
-      choiceArea.className = stage.choiceClass;
-
-      renderChoices();
-      renderSelected();
-      updateProgress();
-      updateHUD();
-      startTimer();
-    }
-
-    function startTimer() {
-      timer = setInterval(() => {
-        if (isPaused || submitted) return;
-        timeLeft--;
-        updateHUD();
-        if (timeLeft <= 0) submitStage();
+    function startRoundTimer() {
+      clearInterval(timerInterval);
+      timer = 8;
+      updateStats();
+      timerInterval = setInterval(() => {
+        if (!isGameRunning || isCasting || questionModal.classList.contains("show")) return;
+        timer -= 1;
+        updateStats();
+        if (timer <= 0) {
+          castsLeft -= 1;
+          messageEl.textContent = "這回合沒有拋出魚竿，失去一次機會。準備下一回合！";
+          updateStats();
+          if (castsLeft <= 0) endGame();
+          else startRoundTimer();
+        }
       }, 1000);
     }
 
-    function pauseOrResume() {
-      if (submitted) return;
-      isPaused = !isPaused;
-      document.getElementById("pauseBtn").textContent = isPaused ? "繼續" : "暫停";
-    }
+    function castHook() {
+      if (!isGameRunning || isCasting || castsLeft <= 0) return;
+      isCasting = true;
+      castBtn.disabled = true;
+      clearInterval(timerInterval);
+      hookWrapper.classList.remove("swinging");
+      hookWrapper.style.height = "390px";
+      messageEl.textContent = "魚竿拋出中……看看捕到什麼！";
 
-    function updateHUD() {
-      document.getElementById("scoreText").textContent = score;
-      const timeText = document.getElementById("timeText");
-      timeText.textContent = timeLeft;
-      timeText.classList.toggle("timer-warning", timeLeft <= 8);
-      document.getElementById("heartText").textContent = "❤".repeat(Math.max(0, lives));
-      document.getElementById("selectedCountText").textContent = selected.length;
-    }
+      setTimeout(() => {
+        const caught = detectCollision();
+        castsLeft -= 1;
+        updateStats();
 
-    function updateProgress() {
-      for (let i = 0; i < TOTAL_STAGES; i++) {
-        const step = document.getElementById("step" + i);
-        step.className = "progress-step";
-        if (i < currentStageIndex) step.classList.add("done");
-        if (i === currentStageIndex) step.classList.add("now");
-      }
-    }
-
-    function renderChoices() {
-      const stage = stages[currentStageIndex];
-      choiceArea.innerHTML = stage.items.map(item => {
-        const isSelected = selected.some(sel => sel.id === item.id);
-        const priceText = item.price !== null ? `<div class="item-price">$${item.price}</div>` : "";
-        return `
-          <div class="item-card ${isSelected ? "selected" : ""}" onclick="toggleChoice('${item.id}')">
-            <span class="item-emoji">${item.emoji}</span>
-            <div class="item-name">${item.name}</div>
-            <div class="item-desc">${item.desc}</div>
-            ${priceText}
-          </div>
-        `;
-      }).join("");
-    }
-
-    function toggleChoice(id) {
-      if (submitted || isPaused) return;
-      const stage = stages[currentStageIndex];
-      const item = stage.items.find(choice => choice.id === id);
-      const exists = selected.some(sel => sel.id === id);
-
-      if (exists) {
-        selected = selected.filter(sel => sel.id !== id);
-      } else {
-        if (selected.length >= stage.maxSelect) {
-          alert(`本關最多只能選 ${stage.maxSelect} 個喔！`);
-          return;
+        if (caught) {
+          handleCaught(caught);
+        } else {
+          messageEl.textContent = "這次沒有捕到東西。別灰心，下一次再試試！";
+          resetHookAfterDelay();
         }
-        selected.push(item);
-      }
-
-      renderChoices();
-      renderSelected();
-      updateHUD();
+      }, 760);
     }
 
-    function renderSelected() {
-      if (selected.length === 0) {
-        selectedArea.innerHTML = "尚未選擇。";
+    function detectCollision() {
+      const hookRect = hookWrapper.getBoundingClientRect();
+      const hookX = hookRect.left + hookRect.width / 2;
+      const hookY = hookRect.bottom - 10;
+
+      let closest = null;
+      let closestDistance = Infinity;
+
+      seaItems.forEach(item => {
+        const rect = item.getBoundingClientRect();
+        const itemX = rect.left + rect.width / 2;
+        const itemY = rect.top + rect.height / 2;
+        const distance = Math.hypot(hookX - itemX, hookY - itemY);
+        if (distance < closestDistance && distance < 58) {
+          closest = item;
+          closestDistance = distance;
+        }
+      });
+
+      return closest;
+    }
+
+    function handleCaught(itemEl) {
+      const item = {
+        type: itemEl.dataset.type,
+        points: Number(itemEl.dataset.points),
+        difficulty: itemEl.dataset.difficulty,
+        label: itemEl.dataset.label
+      };
+
+      currentCaughtItem = item;
+      itemEl.remove();
+      seaItems = seaItems.filter(el => el !== itemEl);
+
+      if (item.type === "bomb") {
+        score = Math.max(0, score + item.points);
+        stats.bombs += 1;
+        updateStats();
+        messageEl.textContent = randomItem(myths) + " 扣 20 分。";
+        resetHookAfterDelay();
         return;
       }
 
-      const stage = stages[currentStageIndex];
-      const totalPrice = getTotalPrice();
-      const priceInfo = stage.budget !== null ? `<p><strong>目前金額：</strong>$${totalPrice} / $${stage.budget}</p>` : "";
-      selectedArea.innerHTML = priceInfo + selected.map(item => `
-        <span class="selected-chip" onclick="toggleChoice('${item.id}')">${item.emoji} ${item.name} ✕</span>
-      `).join("");
+      currentQuestion = randomItem(questionBank[item.difficulty]);
+      showQuestion(item, currentQuestion);
     }
 
-    function getTotalPrice() {
-      return selected.reduce((sum, item) => sum + (item.price || 0), 0);
-    }
+    function showQuestion(item, question) {
+      questionMeta.textContent = `${item.label}｜答對 +${item.points} 分｜${question.topic}`;
+      questionText.textContent = question.question;
+      optionsEl.innerHTML = "";
+      feedbackEl.classList.remove("show");
+      feedbackEl.innerHTML = "";
+      nextBtn.style.display = "none";
 
-    function submitStage() {
-      if (submitted) return;
-      submitted = true;
-      clearInterval(timer);
-
-      const result = evaluateStage();
-      score += result.stageScore;
-      if (result.lifePenalty > 0) lives -= result.lifePenalty;
-      lives = Math.max(0, lives);
-
-      history.push({
-        title: stages[currentStageIndex].sceneTitle,
-        score: result.stageScore,
-        selectedNames: selected.map(item => item.name).join("、") || "未選擇",
-        analysis: result.analysis.join("<br>"),
-        advice: stages[currentStageIndex].advice
+      question.options.forEach((option, index) => {
+        const btn = document.createElement("button");
+        btn.className = "option-btn";
+        btn.textContent = `${String.fromCharCode(65 + index)}. ${option}`;
+        btn.addEventListener("click", () => answerQuestion(index, btn));
+        optionsEl.appendChild(btn);
       });
 
-      showResult(result);
-      updateHUD();
+      questionModal.classList.add("show");
     }
 
-    function evaluateStage() {
-      const stage = stages[currentStageIndex];
-      const tags = selected.flatMap(item => item.goodTags);
-      const badTags = selected.flatMap(item => item.badTags);
-      const analysis = [];
-      let stageScore = 50;
-      let lifePenalty = 0;
+    function answerQuestion(selectedIndex) {
+      const buttons = [...optionsEl.querySelectorAll("button")];
+      buttons.forEach(btn => btn.disabled = true);
 
-      if (selected.length < stage.minSelect) {
-        stageScore -= 20;
-        analysis.push(`<span class="bad-text">✗ 選擇不足：</span>本關至少需要選 ${stage.minSelect} 個。`);
-      }
+      const isCorrect = selectedIndex === currentQuestion.answer;
+      stats.answered += 1;
 
-      if (stage.budget !== null) {
-        const totalPrice = getTotalPrice();
-        if (totalPrice > stage.budget) {
-          stageScore -= 25;
-          lifePenalty++;
-          analysis.push(`<span class="bad-text">✗ 超出預算：</span>目前 $${totalPrice}，超過 $${stage.budget}。`);
-        } else {
-          stageScore += 10;
-          analysis.push(`<span class="good-text">✓ 符合預算：</span>目前 $${totalPrice}，沒有超過預算。`);
-        }
-      }
-
-      const goodRules = getGoodRules(stage.key);
-      goodRules.forEach(rule => {
-        if (rule.check(tags, selected)) {
-          stageScore += rule.points;
-          analysis.push(`<span class="good-text">✓ ${rule.label}</span>`);
-        }
-      });
-
-      badTags.forEach(tag => {
-        stageScore -= 12;
-        analysis.push(`<span class="bad-text">✗ 需要注意：</span>${badTagText(tag)}`);
-      });
-
-      if (badTags.length >= 2) lifePenalty++;
-      if (selected.length >= stage.minSelect && badTags.length === 0) {
-        stageScore += 10;
-        analysis.push(`<span class="good-text">✓ 風險較低：</span>沒有選到明顯增加健康負擔的行動。`);
-      }
-
-      stageScore = Math.max(0, Math.min(100, stageScore));
-      return { stageScore, lifePenalty, analysis };
-    }
-
-    function getGoodRules(stageKey) {
-      if (stageKey === "food") {
-        return [
-          { label: "有主食或纖維來源", points: 10, check: tags => tags.includes("carb") || tags.includes("fiber") },
-          { label: "有蛋白質來源", points: 10, check: tags => tags.includes("protein") },
-          { label: "有減少含糖飲料的選擇", points: 10, check: tags => tags.includes("noSugar") },
-          { label: "整體搭配較均衡", points: 10, check: tags => tags.includes("balanced") }
-        ];
-      }
-      if (stageKey === "sleep") {
-        return [
-          { label: "有降低睡前刺激", points: 12, check: tags => tags.includes("sleepHygiene") },
-          { label: "有協助固定作息", points: 10, check: tags => tags.includes("routine") },
-          { label: "有放鬆或整理待辦", points: 10, check: tags => tags.includes("relax") || tags.includes("planning") }
-        ];
-      }
-      return [
-        { label: "有情緒穩定策略", points: 12, check: tags => tags.includes("coping") },
-        { label: "有任務規劃策略", points: 10, check: tags => tags.includes("planning") },
-        { label: "有尋求支持或身體活動", points: 10, check: tags => tags.includes("support") || tags.includes("activity") }
-      ];
-    }
-
-    function badTagText(tag) {
-      const map = {
-        sugar: "含糖飲料或高糖選擇偏多。",
-        highSodium: "高鈉食物不適合作為主要補給。",
-        fried: "油炸食物較容易增加身體負擔。",
-        caffeine: "晚上咖啡因可能干擾入睡。",
-        phone: "躺床滑手機容易延後入睡。",
-        lateNight: "追劇到太晚會壓縮睡眠時間。",
-        avoidance: "完全逃避通常會讓問題延後累積。",
-        delay: "拖延會讓壓力在最後集中爆發。",
-        emotionalEating: "情緒性進食可能暫時舒緩，但沒有處理壓力來源。",
-        selfBlame: "過度自責可能加重焦慮與無力感。"
-      };
-      return map[tag] || tag;
-    }
-
-    function showResult(result) {
-      const stage = stages[currentStageIndex];
-      document.getElementById("resultTitle").textContent = stage.sceneTitle + "完成";
-      document.getElementById("stageScoreText").textContent = "本關得分：" + result.stageScore;
-      document.getElementById("analysisText").innerHTML = result.analysis.join("<br>");
-      document.getElementById("adviceText").textContent = stage.advice;
-      document.getElementById("selectedSummary").innerHTML = selected.length
-        ? selected.map(item => `${item.emoji} ${item.name}`).join("、")
-        : "未選擇任何項目。";
-      document.getElementById("nextBtn").textContent = currentStageIndex < TOTAL_STAGES - 1 && lives > 0 ? "進入下一關" : "查看總結";
-      document.getElementById("resultModal").classList.add("show");
-    }
-
-    function goNextStage() {
-      document.getElementById("resultModal").classList.remove("show");
-      if (lives <= 0 || currentStageIndex >= TOTAL_STAGES - 1) {
-        endGame();
+      if (isCorrect) {
+        score += currentCaughtItem.points;
+        stats.correct += 1;
+        buttons[selectedIndex].classList.add("correct");
       } else {
-        currentStageIndex++;
-        loadStage();
+        stats.wrong += 1;
+        buttons[selectedIndex].classList.add("wrong");
+        buttons[currentQuestion.answer].classList.add("correct");
       }
+
+      updateStats();
+      const correctOption = currentQuestion.options[currentQuestion.answer];
+      feedbackEl.innerHTML = `
+        <strong>${isCorrect ? "答對了！" : "答錯了，沒關係！"}</strong><br>
+        正確答案：${correctOption}<br>
+        <strong>健康知識補充：</strong>${currentQuestion.explanation}
+      `;
+      feedbackEl.classList.add("show");
+      nextBtn.style.display = "block";
+    }
+
+    function continueGame() {
+      questionModal.classList.remove("show");
+      resetHookAfterDelay(120);
+    }
+
+    function resetHookAfterDelay(delay = 900) {
+      setTimeout(() => {
+        hookWrapper.style.height = "260px";
+        hookWrapper.classList.add("swinging");
+        isCasting = false;
+
+        if (castsLeft <= 0) {
+          endGame();
+        } else {
+          castBtn.disabled = false;
+          createSeaItems();
+          startRoundTimer();
+        }
+      }, delay);
     }
 
     function endGame() {
-      clearInterval(timer);
-      showScreen("endScreen");
-      document.getElementById("finalScore").textContent = `總分：${score} / ${TOTAL_STAGES * 100}`;
+      clearInterval(timerInterval);
+      isGameRunning = false;
+      isCasting = false;
+      castBtn.disabled = true;
+      startBtn.disabled = false;
+      playerNameInput.disabled = false;
+      hookWrapper.style.height = "260px";
+      hookWrapper.classList.add("swinging");
+      removeSeaItems();
+      saveScore();
+      renderLeaderboard();
 
-      let comment = "";
-      if (score >= 250) comment = "太棒了！你能在飲食、睡眠與壓力調適中做出完整又實用的健康選擇。";
-      else if (score >= 190) comment = "表現不錯！你大多能辨識較好的健康策略，也能避免部分常見風險。";
-      else if (score >= 120) comment = "已有基本概念，但可以再練習把健康知識放進真實生活情境中。";
-      else comment = "建議重新挑戰一次，特別注意含糖飲料、熬夜滑手機、拖延逃避等常見風險。";
-
-      document.getElementById("finalComment").textContent = comment;
-      renderReview();
+      const playerName = playerNameInput.value.trim() || "玩家";
+      endSummary.innerHTML = `
+        <div><strong>${playerName}</strong> 的總分：<strong>${score}</strong> 分</div>
+        <div>答題數：${stats.answered} 題｜答對：${stats.correct} 題｜答錯：${stats.wrong} 題｜捕到炸彈：${stats.bombs} 次</div>
+        <div>學習提醒：分數不是唯一目標，答題後的健康知識補充才是最重要的學習收穫。</div>
+      `;
+      endModal.classList.add("show");
+      messageEl.textContent = "遊戲結束！可以查看排行榜，或重新開始。";
     }
 
-    function renderReview() {
-      const reviewList = document.getElementById("reviewList");
-      if (history.length === 0) {
-        reviewList.innerHTML = "<p>尚未完成任何任務。</p>";
+    function saveScore() {
+      const playerName = playerNameInput.value.trim() || "匿名玩家";
+      const records = JSON.parse(localStorage.getItem("healthFishingLeaderboard") || "[]");
+      records.push({ name: playerName, score, date: new Date().toLocaleDateString("zh-TW") });
+      records.sort((a, b) => b.score - a.score);
+      localStorage.setItem("healthFishingLeaderboard", JSON.stringify(records.slice(0, 8)));
+    }
+
+    function renderLeaderboard() {
+      const records = JSON.parse(localStorage.getItem("healthFishingLeaderboard") || "[]");
+      leaderboardEl.innerHTML = "";
+
+      if (records.length === 0) {
+        leaderboardEl.innerHTML = "<div class='rule-item'>目前尚無紀錄，開始遊戲後會出現排名。</div>";
         return;
       }
-      reviewList.innerHTML = history.map((record, index) => `
-        <div class="review-item">
-          <strong>${index + 1}. ${record.title}</strong><br>
-          <strong>本關得分：</strong>${record.score}<br>
-          <strong>你的選擇：</strong>${record.selectedNames}<br>
-          <strong>分析：</strong><br>${record.analysis}<br>
-          <strong>衛教提醒：</strong>${record.advice}
-        </div>
-      `).join("");
+
+      records.forEach((record, index) => {
+        const row = document.createElement("div");
+        row.className = "leader-row";
+        row.innerHTML = `
+          <strong>#${index + 1}</strong>
+          <span>${record.name}<span class="tag">${record.date}</span></span>
+          <strong>${record.score}</strong>
+        `;
+        leaderboardEl.appendChild(row);
+      });
     }
+
+    function clearLeaderboard() {
+      localStorage.removeItem("healthFishingLeaderboard");
+      renderLeaderboard();
+      messageEl.textContent = "排行榜已清除。";
+    }
+
+    startBtn.addEventListener("click", startGame);
+    castBtn.addEventListener("click", castHook);
+    nextBtn.addEventListener("click", continueGame);
+    playAgainBtn.addEventListener("click", () => {
+      endModal.classList.remove("show");
+      startGame();
+    });
+    clearBoardBtn.addEventListener("click", clearLeaderboard);
+
+    document.addEventListener("keydown", (event) => {
+      if (event.code === "Space") {
+        event.preventDefault();
+        castHook();
+      }
+    });
+
+    createBubbles();
+    renderLeaderboard();
+    updateStats();
   </script>
 </body>
 </html>
