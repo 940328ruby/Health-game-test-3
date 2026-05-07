@@ -13,392 +13,349 @@
     }
 
     body {
-      min-height: 100vh;
-      background: linear-gradient(180deg, #d9f5ff 0%, #8ed8f8 35%, #1f8fc4 100%);
-      color: #123;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
-
-    .app {
-      width: min(1100px, 100%);
-      background: rgba(255, 255, 255, 0.92);
-      border-radius: 28px;
-      box-shadow: 0 20px 50px rgba(0, 50, 90, 0.25);
+      width: 100vw;
+      height: 100vh;
       overflow: hidden;
-      border: 3px solid rgba(255, 255, 255, 0.75);
+      background: #034b78;
+      color: #102331;
     }
 
-    header {
-      padding: 22px 28px;
-      background: linear-gradient(90deg, #006da8, #00a6c8);
-      color: white;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 18px;
-      flex-wrap: wrap;
-    }
-
-    header h1 {
-      font-size: clamp(1.4rem, 3vw, 2.1rem);
-      letter-spacing: 1px;
-    }
-
-    header p {
-      opacity: 0.92;
-      margin-top: 4px;
-      font-size: 0.95rem;
-    }
-
-    .stats {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .stat-card {
-      background: rgba(255, 255, 255, 0.18);
-      border: 1px solid rgba(255, 255, 255, 0.35);
-      padding: 10px 14px;
-      border-radius: 16px;
-      min-width: 92px;
-      text-align: center;
-    }
-
-    .stat-card span {
-      display: block;
-      font-size: 0.8rem;
-      opacity: 0.85;
-    }
-
-    .stat-card strong {
-      font-size: 1.35rem;
-    }
-
-    main {
-      display: grid;
-      grid-template-columns: 1fr 300px;
-      gap: 18px;
-      padding: 22px;
-    }
-
-    @media (max-width: 900px) {
-      main {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .game-card, .side-card {
-      background: white;
-      border-radius: 24px;
-      box-shadow: 0 10px 28px rgba(0, 70, 110, 0.12);
-      overflow: hidden;
-      border: 1px solid #e4f5fb;
-    }
-
-    .game-area {
+    .game-screen {
       position: relative;
-      height: 560px;
-      background: linear-gradient(180deg, #c7f4ff 0%, #69c7e9 38%, #0674aa 100%);
+      width: 100vw;
+      height: 100vh;
       overflow: hidden;
-      border-bottom: 8px solid #075f8a;
+      background:
+        radial-gradient(circle at 18% 15%, rgba(255,255,255,.55), transparent 10%),
+        radial-gradient(circle at 82% 18%, rgba(255,255,255,.35), transparent 12%),
+        linear-gradient(180deg, #6bd8ff 0%, #2aa7df 28%, #0b6fa7 56%, #013a62 100%);
     }
 
-    .sun {
-      position: absolute;
-      width: 72px;
-      height: 72px;
-      border-radius: 50%;
-      background: #ffe178;
-      top: 28px;
-      right: 48px;
-      box-shadow: 0 0 30px rgba(255, 225, 120, 0.8);
-    }
-
-    .cloud {
-      position: absolute;
-      background: rgba(255, 255, 255, 0.85);
-      border-radius: 999px;
-      height: 34px;
-    }
-
-    .cloud::before, .cloud::after {
-      content: "";
-      position: absolute;
-      background: rgba(255, 255, 255, 0.9);
-      border-radius: 50%;
-    }
-
-    .cloud.one {
-      width: 120px;
-      top: 55px;
-      left: 52px;
-    }
-
-    .cloud.one::before {
-      width: 48px;
-      height: 48px;
-      left: 20px;
-      top: -22px;
-    }
-
-    .cloud.one::after {
-      width: 58px;
-      height: 58px;
-      right: 18px;
-      top: -28px;
-    }
-
-    .water-line {
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 128px;
-      height: 18px;
-      background: repeating-linear-gradient(90deg, rgba(255,255,255,0.7) 0 28px, rgba(255,255,255,0.15) 28px 56px);
-      opacity: 0.85;
-    }
-
-    .boat {
+    .surface-wave {
       position: absolute;
       top: 78px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 160px;
-      height: 55px;
-      background: #9b5429;
-      border-radius: 0 0 80px 80px;
-      z-index: 5;
-      box-shadow: inset 0 -10px rgba(0,0,0,0.16);
+      left: 0;
+      width: 100%;
+      height: 34px;
+      background: repeating-linear-gradient(90deg, rgba(255,255,255,.76) 0 42px, rgba(255,255,255,.14) 42px 84px);
+      opacity: .75;
+      animation: waveMove 5s linear infinite;
+      z-index: 2;
     }
 
-    .boat::before {
-      content: "🎣";
+    @keyframes waveMove {
+      from { background-position-x: 0; }
+      to { background-position-x: 168px; }
+    }
+
+    .sand {
       position: absolute;
-      left: 55px;
-      top: -35px;
-      font-size: 48px;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 92px;
+      background: linear-gradient(180deg, #e3bd71, #c7903d);
+      border-radius: 48% 52% 0 0 / 40% 50% 0 0;
+      z-index: 2;
     }
 
-    .hook-wrapper {
+    .coral {
       position: absolute;
-      top: 120px;
-      left: 50%;
-      width: 4px;
-      height: 260px;
-      transform-origin: top center;
-      z-index: 4;
-      transition: height 0.7s linear;
-    }
-
-    .hook-wrapper.swinging {
-      animation: swing 2.1s ease-in-out infinite alternate;
-    }
-
-    @keyframes swing {
-      from { transform: rotate(-42deg); }
-      to { transform: rotate(42deg); }
-    }
-
-    .line {
-      width: 4px;
-      height: 100%;
-      background: #1f4155;
-      margin: 0 auto;
-      border-radius: 999px;
-    }
-
-    .hook {
-      position: absolute;
-      bottom: -20px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 34px;
-      filter: drop-shadow(0 3px 2px rgba(0,0,0,0.25));
-    }
-
-    .sea-item {
-      position: absolute;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-radius: 999px;
-      user-select: none;
+      bottom: 50px;
+      font-size: 52px;
       z-index: 3;
-      filter: drop-shadow(0 6px 4px rgba(0,0,0,0.2));
-      animation-name: swim;
-      animation-timing-function: linear;
-      animation-iteration-count: infinite;
+      filter: drop-shadow(0 5px 4px rgba(0,0,0,.2));
+      opacity: .95;
     }
 
-    @keyframes swim {
-      from { transform: translateX(-140px); }
-      to { transform: translateX(calc(100vw + 260px)); }
-    }
-
-    .small-fish { font-size: 34px; }
-    .medium-fish { font-size: 46px; }
-    .big-fish { font-size: 58px; }
-    .pearl { font-size: 48px; }
-    .bomb { font-size: 46px; }
+    .coral.c1 { left: 5%; }
+    .coral.c2 { left: 17%; font-size: 38px; }
+    .coral.c3 { right: 8%; }
+    .coral.c4 { right: 21%; font-size: 42px; }
 
     .bubble {
       position: absolute;
       bottom: -30px;
-      width: 16px;
-      height: 16px;
-      border: 2px solid rgba(255,255,255,0.7);
-      border-radius: 50%;
-      animation: rise 6s linear infinite;
-      opacity: 0.8;
+      border: 2px solid rgba(255,255,255,.62);
+      border-radius: 999px;
+      animation: rise linear infinite;
+      z-index: 1;
     }
 
     @keyframes rise {
-      from { transform: translateY(0); opacity: 0.8; }
-      to { transform: translateY(-430px); opacity: 0; }
+      from { transform: translateY(0); opacity: .72; }
+      to { transform: translateY(-110vh); opacity: 0; }
     }
 
-    .control-panel {
-      padding: 18px;
+    .top-ui {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .title-box, .stat-box {
+      background: rgba(255,255,255,.82);
+      border: 1px solid rgba(255,255,255,.78);
+      backdrop-filter: blur(12px);
+      border-radius: 22px;
+      box-shadow: 0 10px 30px rgba(0,35,70,.18);
+      pointer-events: auto;
+    }
+
+    .title-box {
+      padding: 14px 18px;
+      max-width: 520px;
+    }
+
+    .title-box h1 {
+      color: #005f91;
+      font-size: clamp(1.25rem, 2.8vw, 2rem);
+      letter-spacing: .5px;
+    }
+
+    .title-box p {
+      margin-top: 4px;
+      color: #345;
+      font-size: .92rem;
+    }
+
+    .stat-box {
+      padding: 10px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .stat {
+      min-width: 84px;
+      padding: 9px 12px;
+      background: rgba(0,119,178,.1);
+      border-radius: 16px;
+      text-align: center;
+      color: #005f91;
+      font-weight: 800;
+    }
+
+    .stat span {
+      display: block;
+      font-size: .76rem;
+      color: #42606e;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .stat strong { font-size: 1.25rem; }
+
+    .dock {
+      position: absolute;
+      top: 86px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 230px;
+      height: 34px;
+      background: #7c4826;
+      border-radius: 0 0 18px 18px;
+      z-index: 6;
+      box-shadow: 0 8px 0 rgba(55,31,18,.45), inset 0 -6px rgba(0,0,0,.15);
+    }
+
+    .dock::before {
+      content: "🎣";
+      position: absolute;
+      left: 90px;
+      top: -50px;
+      font-size: 54px;
+      filter: drop-shadow(0 4px 3px rgba(0,0,0,.22));
+    }
+
+    .rod-origin {
+      position: absolute;
+      top: 118px;
+      left: 50%;
+      width: 0;
+      height: 0;
+      z-index: 8;
+    }
+
+    .line {
+      position: absolute;
+      left: -2px;
+      top: 0;
+      width: 4px;
+      height: 180px;
+      background: #203949;
+      border-radius: 999px;
+      transform-origin: top center;
+      box-shadow: 0 2px 4px rgba(0,0,0,.25);
+    }
+
+    .hook {
+      position: absolute;
+      left: -18px;
+      top: 176px;
+      width: 36px;
+      height: 36px;
       display: grid;
+      place-items: center;
+      font-size: 30px;
+      transform-origin: center;
+      filter: drop-shadow(0 5px 3px rgba(0,0,0,.28));
+    }
+
+    .sea-item {
+      position: absolute;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      user-select: none;
+      z-index: 5;
+      filter: drop-shadow(0 7px 4px rgba(0,0,0,.22));
+      transition: transform .08s linear;
+    }
+
+    .small { font-size: 38px; width: 54px; height: 42px; }
+    .medium { font-size: 50px; width: 68px; height: 54px; }
+    .big { font-size: 64px; width: 86px; height: 70px; }
+    .pearl { font-size: 54px; width: 72px; height: 62px; }
+    .bomb { font-size: 52px; width: 64px; height: 60px; }
+
+    .bottom-ui {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 16px;
+      z-index: 12;
+      display: grid;
+      grid-template-columns: minmax(240px, 1fr) auto auto;
       gap: 12px;
-      background: #f6fcff;
+      align-items: stretch;
+    }
+
+    .message, .control-card {
+      background: rgba(255,255,255,.86);
+      border: 1px solid rgba(255,255,255,.75);
+      backdrop-filter: blur(12px);
+      border-radius: 22px;
+      box-shadow: 0 10px 30px rgba(0,35,70,.18);
     }
 
     .message {
-      min-height: 48px;
-      background: #e9f8fd;
-      border: 1px solid #c8edf8;
-      border-radius: 16px;
-      padding: 12px 14px;
-      line-height: 1.5;
+      padding: 14px 18px;
+      line-height: 1.55;
+      font-weight: 700;
+      color: #214052;
+      min-height: 56px;
     }
 
-    button, input {
-      border: none;
+    .control-card {
+      padding: 10px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    input, button {
+      border: 0;
       border-radius: 16px;
-      padding: 12px 16px;
+      padding: 12px 15px;
       font-size: 1rem;
+      outline: none;
     }
 
     input {
-      width: 100%;
-      border: 2px solid #d8edf5;
-      outline: none;
+      min-width: 220px;
       background: white;
-    }
-
-    input:focus {
-      border-color: #00a6c8;
+      border: 2px solid #bee9f7;
     }
 
     button {
-      background: linear-gradient(90deg, #ffb703, #fb8500);
-      color: #2d1900;
-      font-weight: 800;
+      background: linear-gradient(90deg, #ffcb3d, #ff8d1a);
+      color: #2b1600;
+      font-weight: 900;
       cursor: pointer;
-      box-shadow: 0 8px 14px rgba(251, 133, 0, 0.28);
-      transition: transform 0.15s ease, filter 0.15s ease;
+      box-shadow: 0 8px 16px rgba(255,141,26,.28);
+      transition: transform .15s ease, filter .15s ease;
+      white-space: nowrap;
     }
 
     button:hover { transform: translateY(-1px); filter: brightness(1.03); }
-    button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    button:disabled { opacity: .5; cursor: not-allowed; transform: none; }
 
     .secondary {
-      background: #e6f7ff;
-      color: #006da8;
+      background: #e9f8ff;
+      color: #00608d;
+      border: 1px solid #bfe9f8;
       box-shadow: none;
-      border: 1px solid #bceafe;
-    }
-
-    .side-card {
-      padding: 18px;
-      display: grid;
-      gap: 16px;
-      align-content: start;
-    }
-
-    .side-card h2 {
-      color: #006da8;
-      font-size: 1.25rem;
-    }
-
-    .rule-list {
-      display: grid;
-      gap: 8px;
-      font-size: 0.95rem;
-      line-height: 1.55;
-    }
-
-    .rule-item {
-      background: #f5fbff;
-      border: 1px solid #d9f1fb;
-      padding: 10px;
-      border-radius: 14px;
-    }
-
-    .leaderboard {
-      display: grid;
-      gap: 8px;
-    }
-
-    .leader-row {
-      display: grid;
-      grid-template-columns: 32px 1fr auto;
-      gap: 8px;
-      align-items: center;
-      background: #fff7df;
-      border: 1px solid #ffe5a1;
-      padding: 9px 10px;
-      border-radius: 14px;
-      font-size: 0.95rem;
     }
 
     .modal {
       position: fixed;
       inset: 0;
-      background: rgba(0, 20, 40, 0.65);
+      background: rgba(0, 20, 40, .64);
       display: none;
       justify-content: center;
       align-items: center;
       padding: 18px;
-      z-index: 20;
+      z-index: 40;
     }
 
     .modal.show { display: flex; }
 
     .modal-card {
-      width: min(680px, 100%);
-      background: white;
-      border-radius: 28px;
+      width: min(760px, 100%);
+      max-height: min(88vh, 760px);
+      overflow: auto;
+      background: rgba(255,255,255,.96);
+      border: 1px solid rgba(255,255,255,.75);
+      border-radius: 30px;
       padding: 24px;
-      box-shadow: 0 18px 50px rgba(0,0,0,0.3);
+      box-shadow: 0 24px 70px rgba(0,0,0,.33);
     }
 
     .modal-card h2 {
-      color: #006da8;
+      color: #006794;
       margin-bottom: 10px;
+      font-size: 1.55rem;
+    }
+
+    .intro-list, .leader-list {
+      display: grid;
+      gap: 10px;
+      margin: 14px 0;
+    }
+
+    .intro-item, .leader-row {
+      background: #f2fbff;
+      border: 1px solid #cfeff9;
+      border-radius: 16px;
+      padding: 11px 13px;
+      line-height: 1.55;
     }
 
     .question-meta {
       display: inline-block;
-      background: #e9f8fd;
-      color: #006a92;
+      background: #e8f8ff;
+      color: #006794;
       border-radius: 999px;
       padding: 6px 12px;
-      font-weight: 700;
+      font-weight: 800;
       margin-bottom: 12px;
-      font-size: 0.9rem;
+      font-size: .9rem;
     }
 
     .question-text {
-      font-size: 1.1rem;
-      line-height: 1.6;
+      font-size: 1.12rem;
+      line-height: 1.65;
       margin-bottom: 16px;
-      font-weight: 700;
+      font-weight: 800;
     }
 
     .options {
@@ -408,104 +365,113 @@
 
     .option-btn {
       text-align: left;
-      background: #f4fbff;
-      color: #123;
+      background: #f6fcff;
+      color: #102331;
       box-shadow: none;
-      border: 2px solid #d6eef8;
-      font-weight: 700;
+      border: 2px solid #d4eef7;
+      white-space: normal;
+      line-height: 1.45;
     }
 
-    .option-btn.correct {
-      background: #daf7e5;
-      border-color: #58c982;
-    }
-
-    .option-btn.wrong {
-      background: #ffe3df;
-      border-color: #ff8b7d;
-    }
+    .option-btn.correct { background: #dff7e8; border-color: #56c77e; }
+    .option-btn.wrong { background: #ffe3df; border-color: #ff8b7d; }
 
     .feedback {
       display: none;
       margin-top: 16px;
       padding: 14px;
       border-radius: 16px;
-      background: #fff9e8;
-      border: 1px solid #ffe2a1;
-      line-height: 1.65;
+      background: #fff8e4;
+      border: 1px solid #ffe0a3;
+      line-height: 1.68;
     }
 
     .feedback.show { display: block; }
 
-    .end-summary {
+    .leader-row {
       display: grid;
-      gap: 10px;
-      margin: 16px 0;
-      line-height: 1.6;
+      grid-template-columns: 42px 1fr auto;
+      gap: 8px;
+      align-items: center;
     }
 
     .tag {
       display: inline-block;
       padding: 4px 8px;
       border-radius: 999px;
-      background: #edf9ff;
-      color: #006da8;
-      font-size: 0.82rem;
-      font-weight: 700;
+      background: #e6f8ff;
+      color: #006794;
+      font-size: .8rem;
+      font-weight: 800;
       margin-left: 6px;
+    }
+
+    @media (max-width: 760px) {
+      .top-ui { flex-direction: column; }
+      .bottom-ui { grid-template-columns: 1fr; }
+      .control-card { flex-wrap: wrap; }
+      input { min-width: 100%; }
+      .stat-box { justify-content: flex-start; }
+      .dock { top: 132px; }
+      .rod-origin { top: 164px; }
     }
   </style>
 </head>
 <body>
-  <div class="app">
-    <header>
-      <div>
+  <div class="game-screen" id="gameScreen">
+    <div class="surface-wave"></div>
+    <div class="dock"></div>
+    <div class="rod-origin" id="rodOrigin">
+      <div class="line" id="line"></div>
+      <div class="hook" id="hook">⚓</div>
+    </div>
+    <div class="coral c1">🪸</div>
+    <div class="coral c2">🌿</div>
+    <div class="coral c3">🪸</div>
+    <div class="coral c4">🌊</div>
+    <div class="sand"></div>
+
+    <div class="top-ui">
+      <div class="title-box">
         <h1>健康知識大捕撈</h1>
-        <p>大學生健康素養挑戰｜捕魚、答題、學健康知識</p>
+        <p>大學生健康素養挑戰｜捕魚、答題、看回饋、累積分數</p>
       </div>
-      <div class="stats">
-        <div class="stat-card"><span>分數</span><strong id="score">0</strong></div>
-        <div class="stat-card"><span>剩餘拋竿</span><strong id="castsLeft">5</strong></div>
-        <div class="stat-card"><span>捕捉倒數</span><strong id="timer">8</strong></div>
+      <div class="stat-box">
+        <div class="stat"><span>玩家</span><strong id="playerLabel">尚未開始</strong></div>
+        <div class="stat"><span>分數</span><strong id="score">0</strong></div>
+        <div class="stat"><span>成功捕捉</span><strong id="catches">0/5</strong></div>
+        <div class="stat"><span>捕捉倒數</span><strong id="timer">8</strong></div>
       </div>
-    </header>
+    </div>
 
-    <main>
-      <section class="game-card">
-        <div class="game-area" id="gameArea">
-          <div class="sun"></div>
-          <div class="cloud one"></div>
-          <div class="water-line"></div>
-          <div class="boat"></div>
-          <div class="hook-wrapper swinging" id="hookWrapper">
-            <div class="line"></div>
-            <div class="hook">⚓</div>
-          </div>
-        </div>
-        <div class="control-panel">
-          <input id="playerName" type="text" maxlength="12" placeholder="請輸入玩家暱稱，例如：小明" />
-          <button id="startBtn">開始遊戲</button>
-          <button id="castBtn" disabled>按空白鍵或點我拋出魚竿</button>
-          <div class="message" id="message">請先輸入暱稱，按下「開始遊戲」。魚鉤會左右擺動，瞄準後按空白鍵捕捉。</div>
-        </div>
-      </section>
+    <div class="bottom-ui">
+      <div class="message" id="message">請先輸入暱稱，按下「查看規則」後再開始遊戲。</div>
+      <div class="control-card">
+        <input id="playerName" type="text" maxlength="12" placeholder="輸入暱稱，例如：小明" />
+        <button id="ruleBtn">查看規則</button>
+        <button id="castBtn" disabled>空白鍵／點我拋竿</button>
+      </div>
+      <div class="control-card">
+        <button class="secondary" id="boardBtn">排行榜</button>
+      </div>
+    </div>
+  </div>
 
-      <aside class="side-card">
-        <h2>遊戲規則</h2>
-        <div class="rule-list">
-          <div class="rule-item">🐟 小魚：簡單題，答對 +10 分</div>
-          <div class="rule-item">🐠 中魚：中等題，答對 +20 分</div>
-          <div class="rule-item">🐡 大魚：困難題，答對 +30 分</div>
-          <div class="rule-item">🦪 珍珠貝殼：挑戰題，答對 +50 分</div>
-          <div class="rule-item">💣 健康迷思炸彈：扣 20 分，但會顯示健康提醒</div>
-          <div class="rule-item">每位玩家共有 5 次拋竿機會，每次捕捉限時 8 秒。</div>
-        </div>
-
-        <h2>本機排行榜</h2>
-        <div class="leaderboard" id="leaderboard"></div>
-        <button class="secondary" id="clearBoardBtn">清除排行榜</button>
-      </aside>
-    </main>
+  <div class="modal" id="ruleModal">
+    <div class="modal-card">
+      <h2>遊戲規則說明</h2>
+      <p>歡迎來到海底健康知識大捕撈！魚鉤會左右甩動，請看準方向後按空白鍵或按鈕拋出魚竿。</p>
+      <div class="intro-list">
+        <div class="intro-item">🐟 小魚：簡單題，答對 +10 分。</div>
+        <div class="intro-item">🐠 中魚：中等題，答對 +20 分。</div>
+        <div class="intro-item">🐡 大魚：困難題，答對 +30 分。</div>
+        <div class="intro-item">🦪 珍珠貝殼：挑戰題，答對 +50 分。</div>
+        <div class="intro-item">💣 健康迷思炸彈：扣 20 分，並顯示健康提醒。</div>
+        <div class="intro-item">每位玩家需要完成 5 次「成功捕捉」。如果魚鉤沒有抓到任何東西，該次不扣機會，可以重新捕捉。</div>
+        <div class="intro-item">捕到魚或貝殼後，畫面會跳出健康知識題。答題後會顯示正確答案與知識補充。</div>
+      </div>
+      <button id="startGameBtn">我了解了，開始遊戲</button>
+    </div>
   </div>
 
   <div class="modal" id="questionModal">
@@ -519,156 +485,69 @@
     </div>
   </div>
 
+  <div class="modal" id="leaderModal">
+    <div class="modal-card">
+      <h2>本機排行榜</h2>
+      <div class="leader-list" id="leaderboard"></div>
+      <button class="secondary" id="clearBoardBtn">清除排行榜</button>
+      <button id="closeBoardBtn" style="margin-left:8px;">關閉</button>
+    </div>
+  </div>
+
   <div class="modal" id="endModal">
     <div class="modal-card">
       <h2>遊戲結束！</h2>
-      <div class="end-summary" id="endSummary"></div>
+      <div class="intro-list" id="endSummary"></div>
       <button id="playAgainBtn">再玩一次</button>
+      <button class="secondary" id="showBoardEndBtn" style="margin-left:8px;">查看排行榜</button>
     </div>
   </div>
 
   <script>
     const questionBank = {
       easy: [
-        {
-          topic: "運動與身體活動",
-          question: "下列哪一種狀態比較符合「中等強度身體活動」？",
-          options: ["完全不喘，可以唱歌", "可以順暢說話，但不太能唱歌", "完全無法說話，只能停下來", "只要坐著滑手機也算"],
-          answer: 1,
-          explanation: "中等強度活動通常會讓人有點累、呼吸和心跳變快；持續活動時可以說話，但不容易唱歌。"
-        },
-        {
-          topic: "飲食與營養",
-          question: "臺灣版「我的餐盤」把食物分成幾大類？",
-          options: ["3 大類", "4 大類", "5 大類", "6 大類"],
-          answer: 3,
-          explanation: "我的餐盤包含全穀雜糧、豆魚蛋肉、乳品、蔬菜、水果、油脂與堅果種子等 6 大類。"
-        },
-        {
-          topic: "飲食與營養",
-          question: "炎熱或口渴時，較健康的飲品選擇是什麼？",
-          options: ["含糖手搖飲", "能量飲料", "白開水", "每天喝大量奶茶"],
-          answer: 2,
-          explanation: "白開水是最基本也最健康的補水方式；含糖飲料容易增加糖分與熱量攝取。"
-        },
-        {
-          topic: "食品安全",
-          question: "看包裝食品營養標示時，哪一項可以幫助判斷吃進多少熱量與糖？",
-          options: ["包裝顏色", "代言人", "每份量與營養成分", "廣告標語"],
-          answer: 2,
-          explanation: "營養標示會列出每份量、熱量、糖、脂肪、鈉等資訊，有助於做出較健康的選擇。"
-        },
-        {
-          topic: "眼睛與數位健康",
-          question: "長時間使用電腦或手機時，哪一種行為較有助於眼睛保健？",
-          options: ["一直盯著螢幕直到做完", "在黑暗中把螢幕調最亮", "適時休息並讓眼睛離開螢幕", "越靠近螢幕越清楚"],
-          answer: 2,
-          explanation: "長時間近距離用眼容易造成疲勞，適時休息、調整距離與光線有助於眼睛健康。"
-        }
+        { topic: "運動與身體活動", question: "下列哪一種狀態比較符合「中等強度身體活動」？", options: ["完全不喘，可以唱歌", "可以順暢說話，但不太能唱歌", "完全無法說話，只能停下來", "只要坐著滑手機也算"], answer: 1, explanation: "中等強度活動通常會讓人有點累、呼吸和心跳變快；持續活動時可以說話，但不容易唱歌。" },
+        { topic: "飲食與營養", question: "臺灣版「我的餐盤」把食物分成幾大類？", options: ["3 大類", "4 大類", "5 大類", "6 大類"], answer: 3, explanation: "我的餐盤包含全穀雜糧、豆魚蛋肉、乳品、蔬菜、水果、油脂與堅果種子等 6 大類概念。" },
+        { topic: "飲食與營養", question: "炎熱或口渴時，較健康的飲品選擇是什麼？", options: ["含糖手搖飲", "能量飲料", "白開水", "每天喝大量奶茶"], answer: 2, explanation: "白開水是最基本也最健康的補水方式；含糖飲料容易增加糖分與熱量攝取。" },
+        { topic: "食品安全", question: "看包裝食品營養標示時，哪一項可以幫助判斷吃進多少熱量與糖？", options: ["包裝顏色", "代言人", "每份量與營養成分", "廣告標語"], answer: 2, explanation: "營養標示會列出每份量、熱量、糖、脂肪、鈉等資訊，有助於做出較健康的選擇。" },
+        { topic: "眼睛與數位健康", question: "長時間使用電腦或手機時，哪一種行為較有助於眼睛保健？", options: ["一直盯著螢幕直到做完", "在黑暗中把螢幕調最亮", "適時休息並讓眼睛離開螢幕", "越靠近螢幕越清楚"], answer: 2, explanation: "長時間近距離用眼容易造成疲勞，適時休息、調整距離與光線有助於眼睛健康。" },
+        { topic: "睡眠健康", question: "下列哪一項比較有助於提升睡眠品質？", options: ["睡前大量喝咖啡", "每天睡前固定滑手機到很晚", "維持規律作息並減少睡前刺激", "把熬夜當成固定習慣"], answer: 2, explanation: "規律作息、睡前減少刺激與放鬆，有助於建立較好的睡眠習慣。" },
+        { topic: "壓力調適", question: "當課業壓力很大時，下列哪一項是較健康的初步調適方式？", options: ["完全壓抑不說", "覺察壓力來源並安排休息", "只靠暴飲暴食", "一直拖延到最後一刻"], answer: 1, explanation: "先覺察壓力來源，再透過時間安排、休息、運動或求助，是較健康的壓力調適方式。" },
+        { topic: "口腔保健", question: "下列哪一項有助於維持口腔健康？", options: ["睡前不刷牙", "規律刷牙並定期檢查", "常嚼檳榔", "用含糖飲料代替水"], answer: 1, explanation: "規律刷牙、使用適當潔牙方式與定期檢查，有助於維持口腔健康。" },
+        { topic: "健康資訊識讀", question: "看到健康資訊時，哪一種做法比較好？", options: ["只看標題就相信", "確認來源是否可信", "朋友轉傳一定正確", "越誇張越有效"], answer: 1, explanation: "健康資訊應查證來源，尤其是療效誇大、快速見效或沒有明確根據的內容。" },
+        { topic: "水分攝取", question: "一般日常生活中，最適合當作主要補水來源的是什麼？", options: ["白開水", "高糖飲料", "酒精飲料", "濃茶取代所有水分"], answer: 0, explanation: "白開水是日常補水的基本選擇，含糖飲料與酒精飲料不適合當作主要水分來源。" }
       ],
       medium: [
-        {
-          topic: "運動與身體活動",
-          question: "對一般成人而言，下列哪一項較符合常見身體活動建議？",
-          options: ["每週累積 150 分鐘中等強度活動", "每週只要運動 5 分鐘", "完全不用運動，只要少吃", "只有激烈運動才有健康效果"],
-          answer: 0,
-          explanation: "每週累積約 150 分鐘中等強度身體活動，是常見的健康促進建議；可分次累積，不一定一次完成。"
-        },
-        {
-          topic: "菸害防制",
-          question: "關於電子煙，下列敘述何者較正確？",
-          options: ["電子煙一定沒有尼古丁", "電子煙可能含尼古丁與有害物質", "電子煙一定可以幫助戒菸", "電子煙完全不會影響旁人"],
-          answer: 1,
-          explanation: "電子煙可能含有尼古丁及有害物質，並非安全無害，也不應被視為無風險的替代品。"
-        },
-        {
-          topic: "口腔健康",
-          question: "下列哪一種行為會增加口腔癌風險？",
-          options: ["規律刷牙", "定期口腔檢查", "嚼檳榔", "多喝白開水"],
-          answer: 2,
-          explanation: "檳榔本身被列為致癌物，嚼檳榔與口腔癌風險有關；拒菸、拒檳榔是重要預防方式。"
-        },
-        {
-          topic: "性健康與自我保護",
-          question: "關於保險套使用，下列哪一項較正確？",
-          options: ["戴兩層會更安全", "可重複使用", "應全程正確使用並一次一個", "油性潤滑液一定最安全"],
-          answer: 2,
-          explanation: "保險套應全程且正確使用；戴兩層可能因摩擦增加破損機會，也不可重複使用。"
-        },
-        {
-          topic: "心理健康",
-          question: "當同學長期感到壓力很大、失眠、情緒低落時，較適合的做法是什麼？",
-          options: ["完全不要跟任何人說", "只靠熬夜滑手機轉移注意", "尋求可信任的人或專業資源協助", "假裝沒事就會消失"],
-          answer: 2,
-          explanation: "心理健康和身體健康一樣重要。若壓力或情緒困擾持續影響生活，可以尋求朋友、師長、諮商中心或醫療資源協助。"
-        }
+        { topic: "運動與身體活動", question: "對一般成人而言，下列哪一項較符合常見身體活動建議？", options: ["每週累積 150 分鐘中等強度活動", "每週只要運動 5 分鐘", "完全不用運動，只要少吃", "只有激烈運動才有健康效果"], answer: 0, explanation: "每週累積約 150 分鐘中等強度身體活動，是常見健康促進建議；可分次累積，不一定一次完成。" },
+        { topic: "菸害防制", question: "關於電子煙，下列敘述何者較正確？", options: ["電子煙一定沒有尼古丁", "電子煙可能含尼古丁與有害物質", "電子煙一定可以幫助戒菸", "電子煙完全不會影響旁人"], answer: 1, explanation: "電子煙可能含有尼古丁及有害物質，並非安全無害，也不應被視為無風險替代品。" },
+        { topic: "口腔健康", question: "下列哪一種行為會增加口腔癌風險？", options: ["規律刷牙", "定期口腔檢查", "嚼檳榔", "多喝白開水"], answer: 2, explanation: "檳榔本身被列為致癌物，嚼檳榔與口腔癌風險有關；拒菸、拒檳榔是重要預防方式。" },
+        { topic: "性健康與自我保護", question: "關於保險套使用，下列哪一項較正確？", options: ["戴兩層會更安全", "可重複使用", "應全程正確使用並一次一個", "油性潤滑液一定最安全"], answer: 2, explanation: "保險套應全程且正確使用；戴兩層可能因摩擦增加破損機會，也不可重複使用。" },
+        { topic: "心理健康", question: "當同學長期感到壓力很大、失眠、情緒低落時，較適合的做法是什麼？", options: ["完全不要跟任何人說", "只靠熬夜滑手機轉移注意", "尋求可信任的人或專業資源協助", "假裝沒事就會消失"], answer: 2, explanation: "心理健康和身體健康一樣重要。若壓力或情緒困擾持續影響生活，可以尋求朋友、師長、諮商中心或醫療資源協助。" },
+        { topic: "酒精健康", question: "關於飲酒，下列哪一項較正確？", options: ["喝酒一定能幫助睡眠品質", "短時間大量飲酒可能造成健康與安全風險", "酒精沒有熱量", "喝酒後騎車比較放鬆安全"], answer: 1, explanation: "短時間大量飲酒會增加意外、判斷力下降與健康風險，飲酒後也不應駕駛或騎車。" },
+        { topic: "久坐風險", question: "長時間讀書或打報告時，下列哪一項較能降低久坐影響？", options: ["每隔一段時間起身伸展或走動", "連坐 6 小時不要動", "只要坐姿隨便就好", "用含糖飲料提神即可"], answer: 0, explanation: "久坐會增加身體負擔。每隔一段時間起身活動，有助於減少肌肉痠痛與久坐風險。" },
+        { topic: "外食選擇", question: "大學生外食時，哪一種選擇較符合健康飲食？", options: ["每餐只吃炸物", "增加蔬菜並注意主食與蛋白質搭配", "完全不看份量", "每天以含糖飲料當正餐"], answer: 1, explanation: "外食仍可透過增加蔬菜、選擇適量主食與蛋白質，讓飲食更均衡。" },
+        { topic: "疾病預防", question: "下列哪一項是預防傳染病的基本方法之一？", options: ["生病時仍密集聚會", "正確洗手與注意呼吸道衛生", "完全不在意疫苗與衛生", "共用個人物品"], answer: 1, explanation: "正確洗手、咳嗽禮節、身體不適時適度休息，有助於降低傳染病傳播風險。" },
+        { topic: "情緒支持", question: "朋友遇到情緒低潮時，下列哪一種回應較適合？", options: ["你想太多了，不要煩我", "傾聽、陪伴，必要時鼓勵尋求專業協助", "嘲笑對方", "把他的事情到處傳"], answer: 1, explanation: "支持他人時，可以先傾聽與陪伴；若情緒困擾持續或影響生活，鼓勵尋求專業資源。" }
       ],
       hard: [
-        {
-          topic: "飲食與慢性病預防",
-          question: "大學生經常外食時，下列哪一種選擇較符合健康飲食原則？",
-          options: ["每餐只喝含糖飲料不吃飯", "完全不吃蔬菜水果", "注意主食、蛋白質、蔬菜與水果的搭配", "只看價格，不看營養"],
-          answer: 2,
-          explanation: "外食也可以盡量符合均衡飲食原則，例如注意全穀雜糧、蛋白質、蔬菜、水果與乳品攝取。"
-        },
-        {
-          topic: "健康迷思判斷",
-          question: "下列哪一項最能說明「健康促進」的概念？",
-          options: ["只在生病後治療", "幫助人們提升控制自身健康的能力", "只靠醫師決定所有健康行為", "完全不需要環境支持"],
-          answer: 1,
-          explanation: "健康促進不只是治療疾病，也重視讓人具備知識、能力與支持環境，進而改善健康行為。"
-        },
-        {
-          topic: "成癮與健康風險",
-          question: "為什麼電子煙不適合被視為大學生的安全休閒選擇？",
-          options: ["因為它可能含成癮物質與有害物質", "因為它完全沒有味道", "因為它一定沒有任何健康風險", "因為所有人使用後都能立刻戒菸"],
-          answer: 0,
-          explanation: "電子煙可能含尼古丁及其他有害物質，可能造成成癮與健康風險，因此不應被當成安全休閒。"
-        },
-        {
-          topic: "生活型態",
-          question: "下列哪一種做法最能降低久坐對健康的影響？",
-          options: ["坐越久越好，避免消耗體力", "每隔一段時間起身活動或伸展", "只要週末睡很久就可以", "邊坐邊喝含糖飲料"],
-          answer: 1,
-          explanation: "久坐是常見的大學生生活型態問題。讀書或使用電腦時，適時起身活動、伸展，有助於減少身體負擔。"
-        },
-        {
-          topic: "疾病預防",
-          question: "關於健康檢查與疾病預防，下列哪一項較正確？",
-          options: ["年輕人完全不需要關心健康數值", "只有嚴重不舒服才需要注意健康", "了解血壓、體重、生活習慣有助於早期預防", "健康只和遺傳有關"],
-          answer: 2,
-          explanation: "疾病預防重視早期覺察與生活型態管理。即使是大學生，也可以從運動、飲食、睡眠與健康數值開始關心。"
-        }
+        { topic: "飲食與慢性病預防", question: "大學生經常外食時，下列哪一種選擇較符合健康飲食原則？", options: ["每餐只喝含糖飲料不吃飯", "完全不吃蔬菜水果", "注意主食、蛋白質、蔬菜與水果的搭配", "只看價格，不看營養"], answer: 2, explanation: "外食也可以盡量符合均衡飲食原則，例如注意全穀雜糧、蛋白質、蔬菜、水果與乳品攝取。" },
+        { topic: "健康迷思判斷", question: "下列哪一項最能說明「健康促進」的概念？", options: ["只在生病後治療", "幫助人們提升控制自身健康的能力", "只靠醫師決定所有健康行為", "完全不需要環境支持"], answer: 1, explanation: "健康促進不只是治療疾病，也重視讓人具備知識、能力與支持環境，進而改善健康行為。" },
+        { topic: "成癮與健康風險", question: "為什麼電子煙不適合被視為大學生的安全休閒選擇？", options: ["因為它可能含成癮物質與有害物質", "因為它完全沒有味道", "因為它一定沒有任何健康風險", "因為所有人使用後都能立刻戒菸"], answer: 0, explanation: "電子煙可能含尼古丁及其他有害物質，可能造成成癮與健康風險，因此不應被當成安全休閒。" },
+        { topic: "生活型態", question: "下列哪一種做法最能降低久坐對健康的影響？", options: ["坐越久越好，避免消耗體力", "每隔一段時間起身活動或伸展", "只要週末睡很久就可以", "邊坐邊喝含糖飲料"], answer: 1, explanation: "久坐是常見的大學生生活型態問題。讀書或使用電腦時，適時起身活動、伸展，有助於減少身體負擔。" },
+        { topic: "疾病預防", question: "關於健康檢查與疾病預防，下列哪一項較正確？", options: ["年輕人完全不需要關心健康數值", "只有嚴重不舒服才需要注意健康", "了解血壓、體重、生活習慣有助於早期預防", "健康只和遺傳有關"], answer: 2, explanation: "疾病預防重視早期覺察與生活型態管理。即使是大學生，也可以從運動、飲食、睡眠與健康數值開始關心。" },
+        { topic: "健康素養", question: "網路上看到「三天快速瘦身、保證不復胖」的產品廣告，下列反應何者較適合？", options: ["立刻購買", "查證來源、避免相信誇大療效", "只要網紅推薦就可信", "越貴一定越有效"], answer: 1, explanation: "健康資訊應留意是否有誇大、保證療效或缺乏證據。遇到快速見效的宣稱更應查證。" },
+        { topic: "睡眠與咖啡因", question: "若想改善睡眠，下列哪一項較適合？", options: ["睡前喝大量咖啡因飲料", "固定睡前滑手機到凌晨", "建立規律作息並避免睡前過度刺激", "白天完全不活動"], answer: 2, explanation: "咖啡因與睡前刺激可能影響睡眠。規律作息、適度活動與睡前放鬆有助於睡眠品質。" },
+        { topic: "健康行為改變", question: "想開始規律運動，下列哪一種做法最容易持續？", options: ["一開始就設定過高目標", "從可達成的小目標開始並逐漸增加", "失敗一次就完全放棄", "只靠意志力不做安排"], answer: 1, explanation: "健康行為改變可以從小而可行的目標開始，逐步累積成功經驗，較容易長期維持。" },
+        { topic: "校園健康促進", question: "若要提升宿舍學生喝水與運動意願，下列哪一項最符合支持性環境？", options: ["只貼責罵標語", "提供飲水提醒、樓梯鼓勵與同儕活動", "完全不改變環境", "只要求學生自己負責"], answer: 1, explanation: "健康促進重視支持性環境，讓健康選擇更容易、更自然地發生。" },
+        { topic: "心理健康資源", question: "下列哪一種情況較需要考慮尋求專業協助？", options: ["情緒困擾持續並明顯影響生活與學習", "偶爾覺得累但可透過休息恢復", "今天心情普通", "考完試想睡覺"], answer: 0, explanation: "若情緒困擾持續且影響生活、課業、人際或安全，建議尋求校內諮商或醫療等專業資源。" }
       ],
       challenge: [
-        {
-          topic: "整合應用題",
-          question: "小安每天熬夜、常喝含糖飲料、久坐讀書，最近覺得精神差。下列哪一組改善策略最合適？",
-          options: ["只喝更多含糖飲料提神", "調整睡眠、減少含糖飲料、增加身體活動", "完全不吃早餐", "只在考完試後再處理健康"],
-          answer: 1,
-          explanation: "健康行為常常互相影響。睡眠、飲食與身體活動一起調整，通常比只改一件事更有幫助。"
-        },
-        {
-          topic: "健康素養挑戰",
-          question: "看到網路影片宣稱「某產品能快速排毒、治百病」，較好的健康素養行動是什麼？",
-          options: ["立刻大量購買", "只看留言決定真假", "查證來源、看是否有可信健康機構資訊", "朋友轉傳就一定正確"],
-          answer: 2,
-          explanation: "健康資訊需要查證來源。面對誇大療效或快速見效的說法，應提高警覺並參考可信機構資訊。"
-        },
-        {
-          topic: "安全性行為與人際界線",
-          question: "關於親密關係中的健康與安全，下列哪一項最重要？",
-          options: ["尊重彼此意願、溝通界線並採取保護措施", "只要對方沒有拒絕就一定可以", "不用討論保護措施", "為了避免尷尬什麼都不說"],
-          answer: 0,
-          explanation: "親密關係中的健康包含尊重、溝通與保護。清楚表達界線並採取安全措施，是保護自己與對方的重要方式。"
-        },
-        {
-          topic: "健康促進應用",
-          question: "如果要在宿舍推動健康生活，下列哪一項最符合健康促進精神？",
-          options: ["只要求大家自己變健康", "設計支持環境，例如飲水提醒、樓梯活動、健康資訊分享", "只處罰不健康的人", "完全不考慮同學需求"],
-          answer: 1,
-          explanation: "健康促進重視個人能力，也重視支持性環境。宿舍可以透過提醒、活動與友善環境讓健康選擇更容易。"
-        }
+        { topic: "整合應用題", question: "小安每天熬夜、常喝含糖飲料、久坐讀書，最近覺得精神差。下列哪一組改善策略最合適？", options: ["只喝更多含糖飲料提神", "調整睡眠、減少含糖飲料、增加身體活動", "完全不吃早餐", "只在考完試後再處理健康"], answer: 1, explanation: "健康行為常常互相影響。睡眠、飲食與身體活動一起調整，通常比只改一件事更有幫助。" },
+        { topic: "健康素養挑戰", question: "看到網路影片宣稱「某產品能快速排毒、治百病」，較好的健康素養行動是什麼？", options: ["立刻大量購買", "只看留言決定真假", "查證來源、看是否有可信健康機構資訊", "朋友轉傳就一定正確"], answer: 2, explanation: "健康資訊需要查證來源。面對誇大療效或快速見效的說法，應提高警覺並參考可信機構資訊。" },
+        { topic: "安全性行為與人際界線", question: "關於親密關係中的健康與安全，下列哪一項最重要？", options: ["尊重彼此意願、溝通界線並採取保護措施", "只要對方沒有拒絕就一定可以", "不用討論保護措施", "為了避免尷尬什麼都不說"], answer: 0, explanation: "親密關係中的健康包含尊重、溝通與保護。清楚表達界線並採取安全措施，是保護自己與對方的重要方式。" },
+        { topic: "健康促進應用", question: "如果要在宿舍推動健康生活，下列哪一項最符合健康促進精神？", options: ["只要求大家自己變健康", "設計支持環境，例如飲水提醒、樓梯活動、健康資訊分享", "只處罰不健康的人", "完全不考慮同學需求"], answer: 1, explanation: "健康促進重視個人能力，也重視支持性環境。宿舍可以透過提醒、活動與友善環境讓健康選擇更容易。" },
+        { topic: "生活情境判斷", question: "期末考前，小美連續熬夜、喝能量飲料、情緒焦躁。下列建議何者較全面？", options: ["繼續熬夜直到考完", "安排讀書區塊、睡眠、飲水與短暫活動", "完全不休息才有效率", "只靠含糖飲料撐住"], answer: 1, explanation: "讀書效率與睡眠、飲食、活動和壓力調適有關。適度休息與安排時間能幫助維持狀態。" },
+        { topic: "同儕健康支持", question: "朋友開始嘗試電子煙，並說只是好玩。你較適合怎麼回應？", options: ["鼓勵他多買幾種口味", "提醒可能的成癮與健康風險，必要時提供戒菸資源", "完全嘲笑他", "跟著一起使用"], answer: 1, explanation: "面對同儕風險行為，可以用支持而非羞辱的方式提醒健康風險，並提供可信資源。" }
       ]
     };
 
@@ -676,280 +555,392 @@
       "健康迷思炸彈：電子煙不是安全無害的替代品，仍可能含尼古丁與有害物質。",
       "健康迷思炸彈：嚼檳榔不是普通提神方式，會增加口腔健康風險。",
       "健康迷思炸彈：含糖飲料不能取代白開水，長期過量容易增加糖分攝取。",
-      "健康迷思炸彈：熬夜後補眠不一定能完全抵銷睡眠不足對身體的影響。"
+      "健康迷思炸彈：熬夜後補眠不一定能完全抵銷睡眠不足對身體的影響。",
+      "健康迷思炸彈：健康資訊不是越聳動越可信，應優先查證來源與證據。"
     ];
 
     const itemTypes = [
-      { type: "small", emoji: "🐟", className: "small-fish", points: 10, difficulty: "easy", label: "小魚｜簡單題" },
-      { type: "medium", emoji: "🐠", className: "medium-fish", points: 20, difficulty: "medium", label: "中魚｜中等題" },
-      { type: "big", emoji: "🐡", className: "big-fish", points: 30, difficulty: "hard", label: "大魚｜困難題" },
-      { type: "pearl", emoji: "🦪", className: "pearl", points: 50, difficulty: "challenge", label: "珍珠貝殼｜挑戰題" },
-      { type: "bomb", emoji: "💣", className: "bomb", points: -20, difficulty: null, label: "健康迷思炸彈" }
+      { type: "small", emoji: "🐟", className: "small", points: 10, difficulty: "easy", label: "小魚｜簡單題", radius: 34 },
+      { type: "medium", emoji: "🐠", className: "medium", points: 20, difficulty: "medium", label: "中魚｜中等題", radius: 42 },
+      { type: "big", emoji: "🐡", className: "big", points: 30, difficulty: "hard", label: "大魚｜困難題", radius: 52 },
+      { type: "pearl", emoji: "🦪", className: "pearl", points: 50, difficulty: "challenge", label: "珍珠貝殼｜挑戰題", radius: 46 },
+      { type: "bomb", emoji: "💣", className: "bomb", points: -20, difficulty: null, label: "健康迷思炸彈", radius: 42 }
     ];
 
-    const gameArea = document.getElementById("gameArea");
-    const hookWrapper = document.getElementById("hookWrapper");
+    const gameScreen = document.getElementById("gameScreen");
+    const rodOrigin = document.getElementById("rodOrigin");
+    const line = document.getElementById("line");
+    const hook = document.getElementById("hook");
+    const playerLabel = document.getElementById("playerLabel");
     const scoreEl = document.getElementById("score");
-    const castsLeftEl = document.getElementById("castsLeft");
+    const catchesEl = document.getElementById("catches");
     const timerEl = document.getElementById("timer");
-    const startBtn = document.getElementById("startBtn");
-    const castBtn = document.getElementById("castBtn");
     const messageEl = document.getElementById("message");
     const playerNameInput = document.getElementById("playerName");
-    const leaderboardEl = document.getElementById("leaderboard");
-    const clearBoardBtn = document.getElementById("clearBoardBtn");
+    const ruleBtn = document.getElementById("ruleBtn");
+    const castBtn = document.getElementById("castBtn");
+    const boardBtn = document.getElementById("boardBtn");
 
+    const ruleModal = document.getElementById("ruleModal");
+    const startGameBtn = document.getElementById("startGameBtn");
     const questionModal = document.getElementById("questionModal");
     const questionMeta = document.getElementById("questionMeta");
     const questionText = document.getElementById("questionText");
     const optionsEl = document.getElementById("options");
     const feedbackEl = document.getElementById("feedback");
     const nextBtn = document.getElementById("nextBtn");
-
+    const leaderModal = document.getElementById("leaderModal");
+    const leaderboardEl = document.getElementById("leaderboard");
+    const clearBoardBtn = document.getElementById("clearBoardBtn");
+    const closeBoardBtn = document.getElementById("closeBoardBtn");
     const endModal = document.getElementById("endModal");
     const endSummary = document.getElementById("endSummary");
     const playAgainBtn = document.getElementById("playAgainBtn");
+    const showBoardEndBtn = document.getElementById("showBoardEndBtn");
 
     let score = 0;
-    let castsLeft = 5;
+    let catchCount = 0;
     let timer = 8;
     let timerInterval = null;
-    let seaItems = [];
-    let currentCaughtItem = null;
-    let currentQuestion = null;
+    let animationId = null;
+    let items = [];
+    let bubblesMade = false;
     let isGameRunning = false;
     let isCasting = false;
-    let stats = { answered: 0, correct: 0, wrong: 0, bombs: 0 };
+    let swingAngle = 0;
+    let swingDirection = 1;
+    let castDistance = 180;
+    let castAngle = 0;
+    let currentCaughtItem = null;
+    let currentQuestion = null;
+    let stats = { answered: 0, correct: 0, wrong: 0, bombs: 0, misses: 0 };
 
-    function randomItem(array) {
-      return array[Math.floor(Math.random() * array.length)];
-    }
+    function random(min, max) { return Math.random() * (max - min) + min; }
+    function randomItem(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+    function clamp(value, min, max) { return Math.max(min, Math.min(max, value)); }
 
-    function updateStats() {
+    function updateHud() {
       scoreEl.textContent = score;
-      castsLeftEl.textContent = castsLeft;
+      catchesEl.textContent = `${catchCount}/5`;
       timerEl.textContent = timer;
+      playerLabel.textContent = playerNameInput.value.trim() || "尚未開始";
     }
 
-    function createBubbles() {
-      for (let i = 0; i < 18; i++) {
+    function makeBubbles() {
+      if (bubblesMade) return;
+      bubblesMade = true;
+      for (let i = 0; i < 42; i++) {
         const bubble = document.createElement("div");
         bubble.className = "bubble";
-        bubble.style.left = Math.random() * 96 + "%";
-        bubble.style.animationDelay = Math.random() * 6 + "s";
-        bubble.style.animationDuration = 4 + Math.random() * 5 + "s";
-        bubble.style.width = bubble.style.height = 8 + Math.random() * 18 + "px";
-        gameArea.appendChild(bubble);
+        const size = random(8, 24);
+        bubble.style.width = `${size}px`;
+        bubble.style.height = `${size}px`;
+        bubble.style.left = `${random(0, 100)}%`;
+        bubble.style.animationDuration = `${random(5, 12)}s`;
+        bubble.style.animationDelay = `${random(0, 9)}s`;
+        gameScreen.appendChild(bubble);
       }
     }
 
-    function createSeaItems() {
-      removeSeaItems();
-      const lanes = [210, 270, 335, 400, 465];
-      const count = 11;
-
-      for (let i = 0; i < count; i++) {
-        const weighted = [itemTypes[0], itemTypes[0], itemTypes[1], itemTypes[1], itemTypes[2], itemTypes[3], itemTypes[4]];
-        const item = randomItem(weighted);
-        const el = document.createElement("div");
-        el.className = `sea-item ${item.className}`;
-        el.textContent = item.emoji;
-        el.dataset.type = item.type;
-        el.dataset.points = item.points;
-        el.dataset.difficulty = item.difficulty || "";
-        el.dataset.label = item.label;
-        el.style.top = randomItem(lanes) + "px";
-        el.style.left = -200 - Math.random() * 700 + "px";
-        el.style.animationDuration = 9 + Math.random() * 10 + "s";
-        el.style.animationDelay = Math.random() * 4 + "s";
-        gameArea.appendChild(el);
-        seaItems.push(el);
-      }
-    }
-
-    function removeSeaItems() {
-      seaItems.forEach(item => item.remove());
-      seaItems = [];
-    }
-
-    function startGame() {
+    function showRules() {
       const name = playerNameInput.value.trim();
       if (!name) {
-        messageEl.textContent = "請先輸入玩家暱稱，再開始遊戲。";
+        messageEl.textContent = "請先輸入暱稱，才能查看規則並開始遊戲。";
         playerNameInput.focus();
         return;
       }
+      updateHud();
+      ruleModal.classList.add("show");
+    }
 
+    function startGame() {
+      ruleModal.classList.remove("show");
       score = 0;
-      castsLeft = 5;
+      catchCount = 0;
       timer = 8;
-      stats = { answered: 0, correct: 0, wrong: 0, bombs: 0 };
+      stats = { answered: 0, correct: 0, wrong: 0, bombs: 0, misses: 0 };
       isGameRunning = true;
       isCasting = false;
-      currentCaughtItem = null;
-      updateStats();
-      createSeaItems();
-      startRoundTimer();
-      startBtn.disabled = true;
-      castBtn.disabled = false;
+      castDistance = 180;
       playerNameInput.disabled = true;
-      messageEl.textContent = "遊戲開始！魚鉤左右擺動時，按空白鍵或按鈕拋出魚竿。";
+      ruleBtn.disabled = true;
+      castBtn.disabled = false;
+      makeBubbles();
+      createItems();
+      startAnimationLoop();
+      startRoundTimer();
+      updateHud();
+      messageEl.textContent = "遊戲開始！看準魚鉤方向，按空白鍵或按鈕拋竿。沒有抓到不扣成功捕捉次數。";
+    }
+
+    function createItems() {
+      removeItems();
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      const topLimit = Math.max(170, height * 0.22);
+      const bottomLimit = height - 130;
+      const wantedCount = Math.max(15, Math.floor(width / 85));
+      const weighted = [itemTypes[0], itemTypes[0], itemTypes[0], itemTypes[1], itemTypes[1], itemTypes[2], itemTypes[3], itemTypes[4]];
+      const placed = [];
+
+      for (let i = 0; i < wantedCount; i++) {
+        const type = randomItem(weighted);
+        let x, y, ok = false;
+        for (let tries = 0; tries < 80; tries++) {
+          x = random(50, width - 80);
+          y = random(topLimit, bottomLimit);
+          ok = placed.every(p => Math.hypot(p.x - x, p.y - y) > p.r + type.radius + 18);
+          if (ok) break;
+        }
+        if (!ok) continue;
+        placed.push({ x, y, r: type.radius });
+
+        const el = document.createElement("div");
+        el.className = `sea-item ${type.className}`;
+        el.textContent = type.emoji;
+        el.dataset.type = type.type;
+        gameScreen.appendChild(el);
+
+        items.push({
+          el,
+          ...type,
+          x,
+          y,
+          vx: random(-0.75, 0.75) || 0.35,
+          vy: random(-0.35, 0.35) || 0.18,
+          phase: random(0, Math.PI * 2),
+          baseY: y
+        });
+      }
+    }
+
+    function removeItems() {
+      items.forEach(item => item.el.remove());
+      items = [];
+    }
+
+    function startAnimationLoop() {
+      if (animationId) cancelAnimationFrame(animationId);
+      let last = performance.now();
+      const loop = (now) => {
+        const dt = Math.min(32, now - last);
+        last = now;
+        animateRod(dt);
+        animateItems(dt, now);
+        animationId = requestAnimationFrame(loop);
+      };
+      animationId = requestAnimationFrame(loop);
+    }
+
+    function animateRod(dt) {
+      if (!isCasting) {
+        swingAngle += swingDirection * dt * 0.055;
+        if (swingAngle > 55) { swingAngle = 55; swingDirection = -1; }
+        if (swingAngle < -55) { swingAngle = -55; swingDirection = 1; }
+        castAngle = swingAngle;
+        castDistance = 180;
+      }
+      line.style.height = `${castDistance}px`;
+      line.style.transform = `rotate(${castAngle}deg)`;
+      const rad = (castAngle - 90) * Math.PI / 180;
+      const hookX = Math.cos(rad) * castDistance;
+      const hookY = Math.sin(rad) * castDistance;
+      hook.style.left = `${hookX - 18}px`;
+      hook.style.top = `${hookY - 18}px`;
+      hook.style.transform = `rotate(${castAngle}deg)`;
+    }
+
+    function animateItems(dt, now) {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      const topLimit = Math.max(170, height * 0.22);
+      const bottomLimit = height - 130;
+
+      items.forEach(item => {
+        item.x += item.vx * dt * 0.06;
+        item.y += item.vy * dt * 0.06 + Math.sin(now * 0.0015 + item.phase) * 0.18;
+
+        if (item.x < 30) { item.x = 30; item.vx = Math.abs(item.vx); }
+        if (item.x > width - 80) { item.x = width - 80; item.vx = -Math.abs(item.vx); }
+        if (item.y < topLimit) { item.y = topLimit; item.vy = Math.abs(item.vy); }
+        if (item.y > bottomLimit) { item.y = bottomLimit; item.vy = -Math.abs(item.vy); }
+
+        const face = item.vx < 0 ? "scaleX(-1)" : "scaleX(1)";
+        item.el.style.left = `${item.x}px`;
+        item.el.style.top = `${item.y}px`;
+        item.el.style.transform = face;
+      });
     }
 
     function startRoundTimer() {
       clearInterval(timerInterval);
       timer = 8;
-      updateStats();
+      updateHud();
       timerInterval = setInterval(() => {
         if (!isGameRunning || isCasting || questionModal.classList.contains("show")) return;
-        timer -= 1;
-        updateStats();
+        timer--;
+        updateHud();
         if (timer <= 0) {
-          castsLeft -= 1;
-          messageEl.textContent = "這回合沒有拋出魚竿，失去一次機會。準備下一回合！";
-          updateStats();
-          if (castsLeft <= 0) endGame();
-          else startRoundTimer();
+          stats.misses++;
+          messageEl.textContent = "時間到，這次沒有拋竿，但不扣成功捕捉次數。重新計時，請再試一次！";
+          startRoundTimer();
         }
       }, 1000);
     }
 
     function castHook() {
-      if (!isGameRunning || isCasting || castsLeft <= 0) return;
+      if (!isGameRunning || isCasting || questionModal.classList.contains("show")) return;
       isCasting = true;
       castBtn.disabled = true;
       clearInterval(timerInterval);
-      hookWrapper.classList.remove("swinging");
-      hookWrapper.style.height = "390px";
-      messageEl.textContent = "魚竿拋出中……看看捕到什麼！";
+      castAngle = swingAngle;
+      messageEl.textContent = "魚鉤甩出中……";
 
-      setTimeout(() => {
+      const maxDistance = Math.min(window.innerHeight * 0.86, 650);
+      const start = performance.now();
+      const duration = 520;
+
+      function extend(now) {
+        const progress = clamp((now - start) / duration, 0, 1);
+        castDistance = 180 + (maxDistance - 180) * easeOutCubic(progress);
         const caught = detectCollision();
-        castsLeft -= 1;
-        updateStats();
-
         if (caught) {
           handleCaught(caught);
-        } else {
-          messageEl.textContent = "這次沒有捕到東西。別灰心，下一次再試試！";
-          resetHookAfterDelay();
+          return;
         }
-      }, 760);
+        if (progress < 1) requestAnimationFrame(extend);
+        else retractMiss();
+      }
+      requestAnimationFrame(extend);
+    }
+
+    function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
+    function getHookCenter() {
+      const originRect = rodOrigin.getBoundingClientRect();
+      const rad = (castAngle - 90) * Math.PI / 180;
+      return {
+        x: originRect.left + Math.cos(rad) * castDistance,
+        y: originRect.top + Math.sin(rad) * castDistance
+      };
     }
 
     function detectCollision() {
-      const hookRect = hookWrapper.getBoundingClientRect();
-      const hookX = hookRect.left + hookRect.width / 2;
-      const hookY = hookRect.bottom - 10;
-
-      let closest = null;
-      let closestDistance = Infinity;
-
-      seaItems.forEach(item => {
-        const rect = item.getBoundingClientRect();
-        const itemX = rect.left + rect.width / 2;
-        const itemY = rect.top + rect.height / 2;
-        const distance = Math.hypot(hookX - itemX, hookY - itemY);
-        if (distance < closestDistance && distance < 58) {
-          closest = item;
-          closestDistance = distance;
+      const h = getHookCenter();
+      let nearest = null;
+      let nearestDistance = Infinity;
+      for (const item of items) {
+        const rect = item.el.getBoundingClientRect();
+        const x = rect.left + rect.width / 2;
+        const y = rect.top + rect.height / 2;
+        const distance = Math.hypot(h.x - x, h.y - y);
+        if (distance < item.radius + 16 && distance < nearestDistance) {
+          nearest = item;
+          nearestDistance = distance;
         }
-      });
-
-      return closest;
+      }
+      return nearest;
     }
 
-    function handleCaught(itemEl) {
-      const item = {
-        type: itemEl.dataset.type,
-        points: Number(itemEl.dataset.points),
-        difficulty: itemEl.dataset.difficulty,
-        label: itemEl.dataset.label
-      };
-
-      currentCaughtItem = item;
-      itemEl.remove();
-      seaItems = seaItems.filter(el => el !== itemEl);
+    function handleCaught(item) {
+      isCasting = false;
+      items = items.filter(i => i !== item);
+      item.el.remove();
+      catchCount++;
+      updateHud();
+      castDistance = 180;
 
       if (item.type === "bomb") {
         score = Math.max(0, score + item.points);
-        stats.bombs += 1;
-        updateStats();
-        messageEl.textContent = randomItem(myths) + " 扣 20 分。";
-        resetHookAfterDelay();
+        stats.bombs++;
+        updateHud();
+        messageEl.textContent = `${randomItem(myths)} 扣 20 分。`;
+        afterCatchContinue();
         return;
       }
 
+      currentCaughtItem = item;
       currentQuestion = randomItem(questionBank[item.difficulty]);
       showQuestion(item, currentQuestion);
     }
 
+    function retractMiss() {
+      stats.misses++;
+      messageEl.textContent = "沒有捕捉到東西，這次不扣成功捕捉次數。魚鉤收回後可以再試一次！";
+      const start = performance.now();
+      const from = castDistance;
+      const duration = 360;
+      function retract(now) {
+        const progress = clamp((now - start) / duration, 0, 1);
+        castDistance = from + (180 - from) * progress;
+        if (progress < 1) requestAnimationFrame(retract);
+        else {
+          isCasting = false;
+          castBtn.disabled = false;
+          startRoundTimer();
+        }
+      }
+      requestAnimationFrame(retract);
+    }
+
+    function afterCatchContinue() {
+      if (catchCount >= 5) {
+        setTimeout(endGame, 650);
+      } else {
+        setTimeout(() => {
+          isCasting = false;
+          castBtn.disabled = false;
+          if (items.length < 8) createItems();
+          startRoundTimer();
+        }, 650);
+      }
+    }
+
     function showQuestion(item, question) {
+      clearInterval(timerInterval);
       questionMeta.textContent = `${item.label}｜答對 +${item.points} 分｜${question.topic}`;
       questionText.textContent = question.question;
       optionsEl.innerHTML = "";
       feedbackEl.classList.remove("show");
       feedbackEl.innerHTML = "";
       nextBtn.style.display = "none";
-
       question.options.forEach((option, index) => {
         const btn = document.createElement("button");
         btn.className = "option-btn";
         btn.textContent = `${String.fromCharCode(65 + index)}. ${option}`;
-        btn.addEventListener("click", () => answerQuestion(index, btn));
+        btn.addEventListener("click", () => answerQuestion(index));
         optionsEl.appendChild(btn);
       });
-
       questionModal.classList.add("show");
     }
 
     function answerQuestion(selectedIndex) {
       const buttons = [...optionsEl.querySelectorAll("button")];
       buttons.forEach(btn => btn.disabled = true);
-
       const isCorrect = selectedIndex === currentQuestion.answer;
-      stats.answered += 1;
-
+      stats.answered++;
       if (isCorrect) {
         score += currentCaughtItem.points;
-        stats.correct += 1;
+        stats.correct++;
         buttons[selectedIndex].classList.add("correct");
       } else {
-        stats.wrong += 1;
+        stats.wrong++;
         buttons[selectedIndex].classList.add("wrong");
         buttons[currentQuestion.answer].classList.add("correct");
       }
-
-      updateStats();
-      const correctOption = currentQuestion.options[currentQuestion.answer];
+      updateHud();
       feedbackEl.innerHTML = `
         <strong>${isCorrect ? "答對了！" : "答錯了，沒關係！"}</strong><br>
-        正確答案：${correctOption}<br>
+        正確答案：${currentQuestion.options[currentQuestion.answer]}<br>
         <strong>健康知識補充：</strong>${currentQuestion.explanation}
       `;
       feedbackEl.classList.add("show");
-      nextBtn.style.display = "block";
+      nextBtn.style.display = "inline-block";
     }
 
-    function continueGame() {
+    function continueAfterQuestion() {
       questionModal.classList.remove("show");
-      resetHookAfterDelay(120);
-    }
-
-    function resetHookAfterDelay(delay = 900) {
-      setTimeout(() => {
-        hookWrapper.style.height = "260px";
-        hookWrapper.classList.add("swinging");
-        isCasting = false;
-
-        if (castsLeft <= 0) {
-          endGame();
-        } else {
-          castBtn.disabled = false;
-          createSeaItems();
-          startRoundTimer();
-        }
-      }, delay);
+      afterCatchContinue();
     }
 
     function endGame() {
@@ -957,67 +948,64 @@
       isGameRunning = false;
       isCasting = false;
       castBtn.disabled = true;
-      startBtn.disabled = false;
+      ruleBtn.disabled = false;
       playerNameInput.disabled = false;
-      hookWrapper.style.height = "260px";
-      hookWrapper.classList.add("swinging");
-      removeSeaItems();
       saveScore();
       renderLeaderboard();
-
-      const playerName = playerNameInput.value.trim() || "玩家";
       endSummary.innerHTML = `
-        <div><strong>${playerName}</strong> 的總分：<strong>${score}</strong> 分</div>
-        <div>答題數：${stats.answered} 題｜答對：${stats.correct} 題｜答錯：${stats.wrong} 題｜捕到炸彈：${stats.bombs} 次</div>
-        <div>學習提醒：分數不是唯一目標，答題後的健康知識補充才是最重要的學習收穫。</div>
+        <div class="intro-item"><strong>${playerNameInput.value.trim() || "玩家"}</strong> 的總分：<strong>${score}</strong> 分</div>
+        <div class="intro-item">成功捕捉：${catchCount} 次｜答題數：${stats.answered} 題｜答對：${stats.correct} 題｜答錯：${stats.wrong} 題｜炸彈：${stats.bombs} 次</div>
+        <div class="intro-item">沒有捕捉到：${stats.misses} 次。提醒：這些次數不會扣成功捕捉機會。</div>
+        <div class="intro-item">學習回顧：每題的健康知識補充可以幫助你辨識健康迷思，分數只是增加參與動機。</div>
       `;
       endModal.classList.add("show");
-      messageEl.textContent = "遊戲結束！可以查看排行榜，或重新開始。";
+      messageEl.textContent = "遊戲結束！可以查看排行榜或再玩一次。";
     }
 
     function saveScore() {
-      const playerName = playerNameInput.value.trim() || "匿名玩家";
-      const records = JSON.parse(localStorage.getItem("healthFishingLeaderboard") || "[]");
-      records.push({ name: playerName, score, date: new Date().toLocaleDateString("zh-TW") });
+      const records = JSON.parse(localStorage.getItem("healthFishingLeaderboardV2") || "[]");
+      records.push({ name: playerNameInput.value.trim() || "匿名玩家", score, date: new Date().toLocaleDateString("zh-TW") });
       records.sort((a, b) => b.score - a.score);
-      localStorage.setItem("healthFishingLeaderboard", JSON.stringify(records.slice(0, 8)));
+      localStorage.setItem("healthFishingLeaderboardV2", JSON.stringify(records.slice(0, 10)));
     }
 
     function renderLeaderboard() {
-      const records = JSON.parse(localStorage.getItem("healthFishingLeaderboard") || "[]");
+      const records = JSON.parse(localStorage.getItem("healthFishingLeaderboardV2") || "[]");
       leaderboardEl.innerHTML = "";
-
-      if (records.length === 0) {
-        leaderboardEl.innerHTML = "<div class='rule-item'>目前尚無紀錄，開始遊戲後會出現排名。</div>";
+      if (!records.length) {
+        leaderboardEl.innerHTML = "<div class='intro-item'>目前尚無紀錄，完成一次遊戲後會出現排名。</div>";
         return;
       }
-
       records.forEach((record, index) => {
         const row = document.createElement("div");
         row.className = "leader-row";
-        row.innerHTML = `
-          <strong>#${index + 1}</strong>
-          <span>${record.name}<span class="tag">${record.date}</span></span>
-          <strong>${record.score}</strong>
-        `;
+        row.innerHTML = `<strong>#${index + 1}</strong><span>${record.name}<span class="tag">${record.date}</span></span><strong>${record.score}</strong>`;
         leaderboardEl.appendChild(row);
       });
     }
 
-    function clearLeaderboard() {
-      localStorage.removeItem("healthFishingLeaderboard");
+    function openBoard() {
       renderLeaderboard();
-      messageEl.textContent = "排行榜已清除。";
+      leaderModal.classList.add("show");
     }
 
-    startBtn.addEventListener("click", startGame);
-    castBtn.addEventListener("click", castHook);
-    nextBtn.addEventListener("click", continueGame);
-    playAgainBtn.addEventListener("click", () => {
+    function resetForReplay() {
       endModal.classList.remove("show");
-      startGame();
+      ruleModal.classList.add("show");
+    }
+
+    ruleBtn.addEventListener("click", showRules);
+    startGameBtn.addEventListener("click", startGame);
+    castBtn.addEventListener("click", castHook);
+    nextBtn.addEventListener("click", continueAfterQuestion);
+    boardBtn.addEventListener("click", openBoard);
+    closeBoardBtn.addEventListener("click", () => leaderModal.classList.remove("show"));
+    showBoardEndBtn.addEventListener("click", openBoard);
+    playAgainBtn.addEventListener("click", resetForReplay);
+    clearBoardBtn.addEventListener("click", () => {
+      localStorage.removeItem("healthFishingLeaderboardV2");
+      renderLeaderboard();
     });
-    clearBoardBtn.addEventListener("click", clearLeaderboard);
 
     document.addEventListener("keydown", (event) => {
       if (event.code === "Space") {
@@ -1026,9 +1014,14 @@
       }
     });
 
-    createBubbles();
+    window.addEventListener("resize", () => {
+      if (isGameRunning) createItems();
+    });
+
+    makeBubbles();
     renderLeaderboard();
-    updateStats();
+    updateHud();
   </script>
 </body>
 </html>
+
