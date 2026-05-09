@@ -3,1033 +3,799 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>健康知識大捕撈：大學生健康素養挑戰</title>
+  <title>健康小勇者遊戲</title>
   <style>
-    * {
-      box-sizing: border-box;
+    * { box-sizing: border-box; }
+    html, body {
       margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", Arial, sans-serif;
+      background: #041126;
+      color: white;
+      user-select: none;
     }
-
     body {
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
-      background: #034b78;
-      color: #102331;
-    }
-
-    .game-screen {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
       background:
-        radial-gradient(circle at 18% 15%, rgba(255,255,255,.55), transparent 10%),
-        radial-gradient(circle at 82% 18%, rgba(255,255,255,.35), transparent 12%),
-        linear-gradient(180deg, #6bd8ff 0%, #2aa7df 28%, #0b6fa7 56%, #013a62 100%);
+        radial-gradient(circle at 20% 20%, rgba(37, 99, 235, .22), transparent 28%),
+        radial-gradient(circle at 82% 32%, rgba(14, 165, 233, .16), transparent 28%),
+        linear-gradient(135deg, #020617 0%, #071a3b 52%, #082f49 100%);
     }
-
-    .surface-wave {
+    #app { position: relative; width: 100vw; height: 100vh; }
+    canvas { display: block; width: 100vw; height: 100vh; outline: none; }
+    .hud {
       position: absolute;
-      top: 78px;
-      left: 0;
-      width: 100%;
-      height: 34px;
-      background: repeating-linear-gradient(90deg, rgba(255,255,255,.76) 0 42px, rgba(255,255,255,.14) 42px 84px);
-      opacity: .75;
-      animation: waveMove 5s linear infinite;
-      z-index: 2;
-    }
-
-    @keyframes waveMove {
-      from { background-position-x: 0; }
-      to { background-position-x: 168px; }
-    }
-
-    .sand {
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      width: 100%;
-      height: 92px;
-      background: linear-gradient(180deg, #e3bd71, #c7903d);
-      border-radius: 48% 52% 0 0 / 40% 50% 0 0;
-      z-index: 2;
-    }
-
-    .coral {
-      position: absolute;
-      bottom: 50px;
-      font-size: 52px;
-      z-index: 3;
-      filter: drop-shadow(0 5px 4px rgba(0,0,0,.2));
-      opacity: .95;
-    }
-
-    .coral.c1 { left: 5%; }
-    .coral.c2 { left: 17%; font-size: 38px; }
-    .coral.c3 { right: 8%; }
-    .coral.c4 { right: 21%; font-size: 42px; }
-
-    .bubble {
-      position: absolute;
-      bottom: -30px;
-      border: 2px solid rgba(255,255,255,.62);
-      border-radius: 999px;
-      animation: rise linear infinite;
-      z-index: 1;
-    }
-
-    @keyframes rise {
-      from { transform: translateY(0); opacity: .72; }
-      to { transform: translateY(-110vh); opacity: 0; }
-    }
-
-    .top-ui {
-      position: absolute;
-      top: 16px;
-      left: 16px;
-      right: 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 14px;
-      z-index: 10;
-      pointer-events: none;
-    }
-
-    .title-box, .stat-box {
-      background: rgba(255,255,255,.82);
-      border: 1px solid rgba(255,255,255,.78);
-      backdrop-filter: blur(12px);
-      border-radius: 22px;
-      box-shadow: 0 10px 30px rgba(0,35,70,.18);
-      pointer-events: auto;
-    }
-
-    .title-box {
-      padding: 14px 18px;
-      max-width: 520px;
-    }
-
-    .title-box h1 {
-      color: #005f91;
-      font-size: clamp(1.25rem, 2.8vw, 2rem);
-      letter-spacing: .5px;
-    }
-
-    .title-box p {
-      margin-top: 4px;
-      color: #345;
-      font-size: .92rem;
-    }
-
-    .stat-box {
-      padding: 10px;
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-
-    .stat {
-      min-width: 84px;
-      padding: 9px 12px;
-      background: rgba(0,119,178,.1);
-      border-radius: 16px;
-      text-align: center;
-      color: #005f91;
-      font-weight: 800;
-    }
-
-    .stat span {
-      display: block;
-      font-size: .76rem;
-      color: #42606e;
-      font-weight: 700;
-      margin-bottom: 2px;
-    }
-
-    .stat strong { font-size: 1.25rem; }
-
-    .dock {
-      position: absolute;
-      top: 86px;
+      top: 22px;
       left: 50%;
       transform: translateX(-50%);
-      width: 230px;
-      height: 34px;
-      background: #7c4826;
-      border-radius: 0 0 18px 18px;
-      z-index: 6;
-      box-shadow: 0 8px 0 rgba(55,31,18,.45), inset 0 -6px rgba(0,0,0,.15);
-    }
-
-    .dock::before {
-      content: "🎣";
-      position: absolute;
-      left: 90px;
-      top: -50px;
-      font-size: 54px;
-      filter: drop-shadow(0 4px 3px rgba(0,0,0,.22));
-    }
-
-    .rod-origin {
-      position: absolute;
-      top: 118px;
-      left: 50%;
-      width: 0;
-      height: 0;
-      z-index: 8;
-    }
-
-    .rod-arm {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 0;
-      height: 180px;
-      transform-origin: top center;
-      transform: rotate(0deg);
-      z-index: 8;
-    }
-
-    .line {
-      position: absolute;
-      left: -2px;
-      top: 0;
-      width: 4px;
-      height: 100%;
-      background: #203949;
-      border-radius: 999px;
-      box-shadow: 0 2px 4px rgba(0,0,0,.25);
-    }
-
-    .hook {
-      position: absolute;
-      left: -18px;
-      bottom: -28px;
-      width: 36px;
-      height: 36px;
-      display: grid;
-      place-items: center;
-      font-size: 30px;
-      filter: drop-shadow(0 5px 3px rgba(0,0,0,.28));
-    }
-
-    .sea-item {
-      position: absolute;
-      display: grid;
-      place-items: center;
-      border-radius: 50%;
-      user-select: none;
-      z-index: 5;
-      filter: drop-shadow(0 7px 4px rgba(0,0,0,.22));
-      transition: transform .08s linear;
-    }
-
-    .small { font-size: 38px; width: 54px; height: 42px; }
-    .medium { font-size: 50px; width: 68px; height: 54px; }
-    .big { font-size: 64px; width: 86px; height: 70px; }
-    .pearl { font-size: 54px; width: 72px; height: 62px; }
-    .bomb { font-size: 52px; width: 64px; height: 60px; }
-
-    .bottom-ui {
-      position: absolute;
-      left: 16px;
-      right: 16px;
-      bottom: 16px;
-      z-index: 12;
-      display: grid;
-      grid-template-columns: minmax(240px, 1fr) auto auto;
-      gap: 12px;
-      align-items: stretch;
-    }
-
-    .message, .control-card {
-      background: rgba(255,255,255,.86);
-      border: 1px solid rgba(255,255,255,.75);
-      backdrop-filter: blur(12px);
-      border-radius: 22px;
-      box-shadow: 0 10px 30px rgba(0,35,70,.18);
-    }
-
-    .message {
-      padding: 14px 18px;
-      line-height: 1.55;
-      font-weight: 700;
-      color: #214052;
-      min-height: 56px;
-    }
-
-    .control-card {
-      padding: 10px;
       display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-
-    input, button {
-      border: 0;
-      border-radius: 16px;
-      padding: 12px 15px;
-      font-size: 1rem;
-      outline: none;
-    }
-
-    input {
-      min-width: 220px;
-      background: white;
-      border: 2px solid #bee9f7;
-    }
-
-    button {
-      background: linear-gradient(90deg, #ffcb3d, #ff8d1a);
-      color: #2b1600;
-      font-weight: 900;
-      cursor: pointer;
-      box-shadow: 0 8px 16px rgba(255,141,26,.28);
-      transition: transform .15s ease, filter .15s ease;
-      white-space: nowrap;
-    }
-
-    button:hover { transform: translateY(-1px); filter: brightness(1.03); }
-    button:disabled { opacity: .5; cursor: not-allowed; transform: none; }
-
-    .secondary {
-      background: #e9f8ff;
-      color: #00608d;
-      border: 1px solid #bfe9f8;
-      box-shadow: none;
-    }
-
-    .modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 20, 40, .64);
-      display: none;
+      gap: 12px;
       justify-content: center;
       align-items: center;
-      padding: 18px;
-      z-index: 40;
+      flex-wrap: wrap;
+      z-index: 5;
+      pointer-events: none;
     }
-
-    .modal.show { display: flex; }
-
-    .modal-card {
-      width: min(760px, 100%);
-      max-height: min(88vh, 760px);
-      overflow: auto;
-      background: rgba(255,255,255,.96);
-      border: 1px solid rgba(255,255,255,.75);
-      border-radius: 30px;
-      padding: 24px;
-      box-shadow: 0 24px 70px rgba(0,0,0,.33);
-    }
-
-    .modal-card h2 {
-      color: #006794;
-      margin-bottom: 10px;
-      font-size: 1.55rem;
-    }
-
-    .intro-list, .leader-list {
-      display: grid;
-      gap: 10px;
-      margin: 14px 0;
-    }
-
-    .intro-item, .leader-row {
-      background: #f2fbff;
-      border: 1px solid #cfeff9;
-      border-radius: 16px;
-      padding: 11px 13px;
-      line-height: 1.55;
-    }
-
-    .question-meta {
-      display: inline-block;
-      background: #e8f8ff;
-      color: #006794;
+    .pill {
+      background: rgba(15, 23, 42, .78);
+      border: 1px solid rgba(148, 163, 184, .28);
+      padding: 9px 15px;
       border-radius: 999px;
-      padding: 6px 12px;
-      font-weight: 800;
-      margin-bottom: 12px;
-      font-size: .9rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      font-weight: 700;
+      white-space: nowrap;
     }
-
-    .question-text {
-      font-size: 1.12rem;
-      line-height: 1.65;
-      margin-bottom: 16px;
-      font-weight: 800;
-    }
-
-    .options {
-      display: grid;
-      gap: 10px;
-    }
-
-    .option-btn {
-      text-align: left;
-      background: #f6fcff;
-      color: #102331;
-      box-shadow: none;
-      border: 2px solid #d4eef7;
-      white-space: normal;
-      line-height: 1.45;
-    }
-
-    .option-btn.correct { background: #dff7e8; border-color: #56c77e; }
-    .option-btn.wrong { background: #ffe3df; border-color: #ff8b7d; }
-
-    .feedback {
-      display: none;
-      margin-top: 16px;
-      padding: 14px;
-      border-radius: 16px;
-      background: #fff8e4;
-      border: 1px solid #ffe0a3;
-      line-height: 1.68;
-    }
-
-    .feedback.show { display: block; }
-
-    .leader-row {
-      display: grid;
-      grid-template-columns: 42px 1fr auto;
-      gap: 8px;
+    .pill strong { color: #facc15; }
+    .overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      display: flex;
       align-items: center;
+      justify-content: center;
+      background: rgba(2, 6, 23, .76);
+      backdrop-filter: blur(10px);
+      padding: 24px;
     }
-
-    .tag {
+    .card {
+      width: min(760px, 92vw);
+      max-height: 92vh;
+      overflow: auto;
+      background: linear-gradient(180deg, rgba(15,23,42,.98), rgba(12,31,65,.98));
+      border: 1px solid rgba(125,211,252,.28);
+      border-radius: 26px;
+      box-shadow: 0 28px 90px rgba(0,0,0,.45);
+      padding: 28px;
+    }
+    h1, h2, h3 { margin: 0 0 12px; line-height: 1.25; }
+    h1 { font-size: clamp(30px, 4vw, 48px); color: #facc15; }
+    h2 { color: #7dd3fc; }
+    p, li { color: #dbeafe; line-height: 1.75; }
+    .muted { color: #93c5fd; font-size: 14px; }
+    .kbd {
       display: inline-block;
-      padding: 4px 8px;
-      border-radius: 999px;
-      background: #e6f8ff;
-      color: #006794;
-      font-size: .8rem;
+      padding: 2px 8px;
+      margin: 0 2px;
+      border-radius: 8px;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.18);
+      color: #fff;
       font-weight: 800;
-      margin-left: 6px;
     }
-
-    @media (max-width: 760px) {
-      .top-ui { flex-direction: column; }
-      .bottom-ui { grid-template-columns: 1fr; }
-      .control-card { flex-wrap: wrap; }
-      input { min-width: 100%; }
-      .stat-box { justify-content: flex-start; }
-      .dock { top: 132px; }
-      .rod-origin { top: 164px; }
+    button {
+      border: 0;
+      border-radius: 16px;
+      padding: 13px 18px;
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+      color: #082f49;
+      background: linear-gradient(135deg, #facc15, #fb923c);
+      box-shadow: 0 12px 28px rgba(250,204,21,.18);
+    }
+    button:hover { filter: brightness(1.06); }
+    .level-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .level-box {
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(14,165,233,.09);
+      border: 1px solid rgba(125,211,252,.2);
+    }
+    .level-box b { color: #fef08a; }
+    .options { display: grid; gap: 10px; margin-top: 16px; }
+    .option-btn {
+      width: 100%;
+      text-align: left;
+      color: #eff6ff;
+      background: rgba(15,23,42,.86);
+      border: 1px solid rgba(125,211,252,.25);
+      box-shadow: none;
+      font-weight: 800;
+    }
+    .option-btn.correct { background: rgba(22,163,74,.48); border-color: #86efac; }
+    .option-btn.wrong { background: rgba(220,38,38,.45); border-color: #fca5a5; }
+    .feedback {
+      margin-top: 16px;
+      border-radius: 18px;
+      padding: 14px 16px;
+      background: rgba(2,6,23,.48);
+      border: 1px solid rgba(148,163,184,.2);
+      display: none;
+    }
+    .feedback.show { display: block; }
+    .hidden { display: none !important; }
+    @media (max-width: 900px) {
+      .level-grid { grid-template-columns: 1fr; }
+      .hud { width: 94vw; }
+      .pill { font-size: 12px; padding: 7px 10px; }
+      .card { padding: 20px; border-radius: 22px; }
     }
   </style>
 </head>
 <body>
-  <div class="game-screen" id="gameScreen">
-    <div class="surface-wave"></div>
-    <div class="dock"></div>
-    <div class="rod-origin" id="rodOrigin">
-      <div class="rod-arm" id="rodArm">
-        <div class="line" id="line"></div>
-        <div class="hook" id="hook">⚓</div>
-      </div>
-    </div>
-    <div class="coral c1">🪸</div>
-    <div class="coral c2">🌿</div>
-    <div class="coral c3">🪸</div>
-    <div class="coral c4">🌊</div>
-    <div class="sand"></div>
-
-    <div class="top-ui">
-      <div class="title-box">
-        <h1>健康知識大捕撈</h1>
-        <p>大學生健康素養挑戰｜捕魚、答題、看回饋、累積分數</p>
-      </div>
-      <div class="stat-box">
-        <div class="stat"><span>玩家</span><strong id="playerLabel">尚未開始</strong></div>
-        <div class="stat"><span>分數</span><strong id="score">0</strong></div>
-        <div class="stat"><span>成功捕捉</span><strong id="catches">0/5</strong></div>
-        <div class="stat"><span>捕捉倒數</span><strong id="timer">8</strong></div>
-      </div>
+  <div id="app">
+    <canvas id="game" tabindex="0"></canvas>
+    <div class="hud">
+      <div class="pill">玩家：<strong>健康小勇者</strong></div>
+      <div class="pill">關卡：<strong id="hudLevel">1（簡易）</strong></div>
+      <div class="pill">發光膠囊：<strong id="hudPower">0 / 1</strong></div>
+      <div class="pill">分數：<strong id="hudScore">0</strong></div>
     </div>
 
-    <div class="bottom-ui">
-      <div class="message" id="message">請先輸入暱稱，按下「查看規則」後再開始遊戲。</div>
-      <div class="control-card">
-        <input id="playerName" type="text" maxlength="12" placeholder="輸入暱稱，例如：小明" />
-        <button id="ruleBtn">查看規則</button>
-        <button id="castBtn" disabled>空白鍵／點我拋竿</button>
+    <section id="startOverlay" class="overlay">
+      <div class="card">
+        <h1>健康小勇者遊戲</h1>
+        <p>用鍵盤 <span class="kbd">W</span><span class="kbd">A</span><span class="kbd">S</span><span class="kbd">D</span> 或 <span class="kbd">↑</span><span class="kbd">↓</span><span class="kbd">←</span><span class="kbd">→</span> 操控健康小勇者，吃掉健康星星跟發光膠囊過關吧！<br>過程中要記得避開跑來跑去的細菌怪們！</p>
+        <div class="level-grid">
+          <div class="level-box"><b>第一關目標</b><br>吃掉 1 個發光膠囊</div>
+          <div class="level-box"><b>第二關目標</b><br>吃掉 3 個發光膠囊</div>
+          <div class="level-box"><b>第三關目標</b><br>吃掉 5 個發光膠囊</div>
+        </div>
+        <button id="startGameBtn">開始遊戲</button>
       </div>
-      <div class="control-card">
-        <button class="secondary" id="boardBtn">排行榜</button>
+    </section>
+
+    <section id="questionOverlay" class="overlay hidden">
+      <div class="card">
+        <p class="muted" id="questionMeta">健康知識題</p>
+        <h2 id="questionText">題目</h2>
+        <div id="options" class="options"></div>
+        <div id="feedback" class="feedback"></div>
+        <button id="continueBtn" class="hidden" style="margin-top:14px;">繼續遊戲</button>
       </div>
-    </div>
-  </div>
+    </section>
 
-  <div class="modal" id="ruleModal">
-    <div class="modal-card">
-      <h2>遊戲規則說明</h2>
-      <p>歡迎來到海底健康知識大捕撈！魚鉤會左右甩動，請看準方向後按空白鍵或按鈕拋出魚竿。</p>
-      <div class="intro-list">
-        <div class="intro-item">🐟 小魚：簡單題，答對 +10 分。</div>
-        <div class="intro-item">🐠 中魚：中等題，答對 +20 分。</div>
-        <div class="intro-item">🐡 大魚：困難題，答對 +30 分。</div>
-        <div class="intro-item">🦪 珍珠貝殼：挑戰題，答對 +50 分。</div>
-        <div class="intro-item">💣 健康迷思炸彈：扣 20 分，並顯示健康提醒。</div>
-        <div class="intro-item">每位玩家需要完成 5 次「成功捕捉」。如果魚鉤沒有抓到任何東西，該次不扣機會，可以重新捕捉。</div>
-        <div class="intro-item">捕到魚或貝殼後，畫面會跳出健康知識題。答題後會顯示正確答案與知識補充。</div>
+    <section id="resultOverlay" class="overlay hidden">
+      <div class="card">
+        <h1 id="resultTitle">挑戰結果</h1>
+        <p id="resultText"></p>
+        <button id="restartBtn">重新挑戰</button>
       </div>
-      <button id="startGameBtn">我了解了，開始遊戲</button>
-    </div>
-  </div>
-
-  <div class="modal" id="questionModal">
-    <div class="modal-card">
-      <span class="question-meta" id="questionMeta"></span>
-      <h2>健康知識題</h2>
-      <div class="question-text" id="questionText"></div>
-      <div class="options" id="options"></div>
-      <div class="feedback" id="feedback"></div>
-      <button id="nextBtn" style="display:none; margin-top:16px;">繼續捕魚</button>
-    </div>
-  </div>
-
-  <div class="modal" id="leaderModal">
-    <div class="modal-card">
-      <h2>本機排行榜</h2>
-      <div class="leader-list" id="leaderboard"></div>
-      <button class="secondary" id="clearBoardBtn">清除排行榜</button>
-      <button id="closeBoardBtn" style="margin-left:8px;">關閉</button>
-    </div>
-  </div>
-
-  <div class="modal" id="endModal">
-    <div class="modal-card">
-      <h2>遊戲結束！</h2>
-      <div class="intro-list" id="endSummary"></div>
-      <button id="playAgainBtn">再玩一次</button>
-      <button class="secondary" id="showBoardEndBtn" style="margin-left:8px;">查看排行榜</button>
-    </div>
+    </section>
   </div>
 
   <script>
-    const questionBank = {
-      easy: [
-        { topic: "運動與身體活動", question: "下列哪一種狀態比較符合「中等強度身體活動」？", options: ["完全不喘，可以唱歌", "可以順暢說話，但不太能唱歌", "完全無法說話，只能停下來", "只要坐著滑手機也算"], answer: 1, explanation: "中等強度活動通常會讓人有點累、呼吸和心跳變快；持續活動時可以說話，但不容易唱歌。" },
-        { topic: "飲食與營養", question: "臺灣版「我的餐盤」把食物分成幾大類？", options: ["3 大類", "4 大類", "5 大類", "6 大類"], answer: 3, explanation: "我的餐盤包含全穀雜糧、豆魚蛋肉、乳品、蔬菜、水果、油脂與堅果種子等 6 大類概念。" },
-        { topic: "飲食與營養", question: "炎熱或口渴時，較健康的飲品選擇是什麼？", options: ["含糖手搖飲", "能量飲料", "白開水", "每天喝大量奶茶"], answer: 2, explanation: "白開水是最基本也最健康的補水方式；含糖飲料容易增加糖分與熱量攝取。" },
-        { topic: "食品安全", question: "看包裝食品營養標示時，哪一項可以幫助判斷吃進多少熱量與糖？", options: ["包裝顏色", "代言人", "每份量與營養成分", "廣告標語"], answer: 2, explanation: "營養標示會列出每份量、熱量、糖、脂肪、鈉等資訊，有助於做出較健康的選擇。" },
-        { topic: "眼睛與數位健康", question: "長時間使用電腦或手機時，哪一種行為較有助於眼睛保健？", options: ["一直盯著螢幕直到做完", "在黑暗中把螢幕調最亮", "適時休息並讓眼睛離開螢幕", "越靠近螢幕越清楚"], answer: 2, explanation: "長時間近距離用眼容易造成疲勞，適時休息、調整距離與光線有助於眼睛健康。" },
-        { topic: "睡眠健康", question: "下列哪一項比較有助於提升睡眠品質？", options: ["睡前大量喝咖啡", "每天睡前固定滑手機到很晚", "維持規律作息並減少睡前刺激", "把熬夜當成固定習慣"], answer: 2, explanation: "規律作息、睡前減少刺激與放鬆，有助於建立較好的睡眠習慣。" },
-        { topic: "壓力調適", question: "當課業壓力很大時，下列哪一項是較健康的初步調適方式？", options: ["完全壓抑不說", "覺察壓力來源並安排休息", "只靠暴飲暴食", "一直拖延到最後一刻"], answer: 1, explanation: "先覺察壓力來源，再透過時間安排、休息、運動或求助，是較健康的壓力調適方式。" },
-        { topic: "口腔保健", question: "下列哪一項有助於維持口腔健康？", options: ["睡前不刷牙", "規律刷牙並定期檢查", "常嚼檳榔", "用含糖飲料代替水"], answer: 1, explanation: "規律刷牙、使用適當潔牙方式與定期檢查，有助於維持口腔健康。" },
-        { topic: "健康資訊識讀", question: "看到健康資訊時，哪一種做法比較好？", options: ["只看標題就相信", "確認來源是否可信", "朋友轉傳一定正確", "越誇張越有效"], answer: 1, explanation: "健康資訊應查證來源，尤其是療效誇大、快速見效或沒有明確根據的內容。" },
-        { topic: "水分攝取", question: "一般日常生活中，最適合當作主要補水來源的是什麼？", options: ["白開水", "高糖飲料", "酒精飲料", "濃茶取代所有水分"], answer: 0, explanation: "白開水是日常補水的基本選擇，含糖飲料與酒精飲料不適合當作主要水分來源。" }
-      ],
-      medium: [
-        { topic: "運動與身體活動", question: "對一般成人而言，下列哪一項較符合常見身體活動建議？", options: ["每週累積 150 分鐘中等強度活動", "每週只要運動 5 分鐘", "完全不用運動，只要少吃", "只有激烈運動才有健康效果"], answer: 0, explanation: "每週累積約 150 分鐘中等強度身體活動，是常見健康促進建議；可分次累積，不一定一次完成。" },
-        { topic: "菸害防制", question: "關於電子煙，下列敘述何者較正確？", options: ["電子煙一定沒有尼古丁", "電子煙可能含尼古丁與有害物質", "電子煙一定可以幫助戒菸", "電子煙完全不會影響旁人"], answer: 1, explanation: "電子煙可能含有尼古丁及有害物質，並非安全無害，也不應被視為無風險替代品。" },
-        { topic: "口腔健康", question: "下列哪一種行為會增加口腔癌風險？", options: ["規律刷牙", "定期口腔檢查", "嚼檳榔", "多喝白開水"], answer: 2, explanation: "檳榔本身被列為致癌物，嚼檳榔與口腔癌風險有關；拒菸、拒檳榔是重要預防方式。" },
-        { topic: "性健康與自我保護", question: "關於保險套使用，下列哪一項較正確？", options: ["戴兩層會更安全", "可重複使用", "應全程正確使用並一次一個", "油性潤滑液一定最安全"], answer: 2, explanation: "保險套應全程且正確使用；戴兩層可能因摩擦增加破損機會，也不可重複使用。" },
-        { topic: "心理健康", question: "當同學長期感到壓力很大、失眠、情緒低落時，較適合的做法是什麼？", options: ["完全不要跟任何人說", "只靠熬夜滑手機轉移注意", "尋求可信任的人或專業資源協助", "假裝沒事就會消失"], answer: 2, explanation: "心理健康和身體健康一樣重要。若壓力或情緒困擾持續影響生活，可以尋求朋友、師長、諮商中心或醫療資源協助。" },
-        { topic: "酒精健康", question: "關於飲酒，下列哪一項較正確？", options: ["喝酒一定能幫助睡眠品質", "短時間大量飲酒可能造成健康與安全風險", "酒精沒有熱量", "喝酒後騎車比較放鬆安全"], answer: 1, explanation: "短時間大量飲酒會增加意外、判斷力下降與健康風險，飲酒後也不應駕駛或騎車。" },
-        { topic: "久坐風險", question: "長時間讀書或打報告時，下列哪一項較能降低久坐影響？", options: ["每隔一段時間起身伸展或走動", "連坐 6 小時不要動", "只要坐姿隨便就好", "用含糖飲料提神即可"], answer: 0, explanation: "久坐會增加身體負擔。每隔一段時間起身活動，有助於減少肌肉痠痛與久坐風險。" },
-        { topic: "外食選擇", question: "大學生外食時，哪一種選擇較符合健康飲食？", options: ["每餐只吃炸物", "增加蔬菜並注意主食與蛋白質搭配", "完全不看份量", "每天以含糖飲料當正餐"], answer: 1, explanation: "外食仍可透過增加蔬菜、選擇適量主食與蛋白質，讓飲食更均衡。" },
-        { topic: "疾病預防", question: "下列哪一項是預防傳染病的基本方法之一？", options: ["生病時仍密集聚會", "正確洗手與注意呼吸道衛生", "完全不在意疫苗與衛生", "共用個人物品"], answer: 1, explanation: "正確洗手、咳嗽禮節、身體不適時適度休息，有助於降低傳染病傳播風險。" },
-        { topic: "情緒支持", question: "朋友遇到情緒低潮時，下列哪一種回應較適合？", options: ["你想太多了，不要煩我", "傾聽、陪伴，必要時鼓勵尋求專業協助", "嘲笑對方", "把他的事情到處傳"], answer: 1, explanation: "支持他人時，可以先傾聽與陪伴；若情緒困擾持續或影響生活，鼓勵尋求專業資源。" }
-      ],
-      hard: [
-        { topic: "飲食與慢性病預防", question: "大學生經常外食時，下列哪一種選擇較符合健康飲食原則？", options: ["每餐只喝含糖飲料不吃飯", "完全不吃蔬菜水果", "注意主食、蛋白質、蔬菜與水果的搭配", "只看價格，不看營養"], answer: 2, explanation: "外食也可以盡量符合均衡飲食原則，例如注意全穀雜糧、蛋白質、蔬菜、水果與乳品攝取。" },
-        { topic: "健康迷思判斷", question: "下列哪一項最能說明「健康促進」的概念？", options: ["只在生病後治療", "幫助人們提升控制自身健康的能力", "只靠醫師決定所有健康行為", "完全不需要環境支持"], answer: 1, explanation: "健康促進不只是治療疾病，也重視讓人具備知識、能力與支持環境，進而改善健康行為。" },
-        { topic: "成癮與健康風險", question: "為什麼電子煙不適合被視為大學生的安全休閒選擇？", options: ["因為它可能含成癮物質與有害物質", "因為它完全沒有味道", "因為它一定沒有任何健康風險", "因為所有人使用後都能立刻戒菸"], answer: 0, explanation: "電子煙可能含尼古丁及其他有害物質，可能造成成癮與健康風險，因此不應被當成安全休閒。" },
-        { topic: "生活型態", question: "下列哪一種做法最能降低久坐對健康的影響？", options: ["坐越久越好，避免消耗體力", "每隔一段時間起身活動或伸展", "只要週末睡很久就可以", "邊坐邊喝含糖飲料"], answer: 1, explanation: "久坐是常見的大學生生活型態問題。讀書或使用電腦時，適時起身活動、伸展，有助於減少身體負擔。" },
-        { topic: "疾病預防", question: "關於健康檢查與疾病預防，下列哪一項較正確？", options: ["年輕人完全不需要關心健康數值", "只有嚴重不舒服才需要注意健康", "了解血壓、體重、生活習慣有助於早期預防", "健康只和遺傳有關"], answer: 2, explanation: "疾病預防重視早期覺察與生活型態管理。即使是大學生，也可以從運動、飲食、睡眠與健康數值開始關心。" },
-        { topic: "健康素養", question: "網路上看到「三天快速瘦身、保證不復胖」的產品廣告，下列反應何者較適合？", options: ["立刻購買", "查證來源、避免相信誇大療效", "只要網紅推薦就可信", "越貴一定越有效"], answer: 1, explanation: "健康資訊應留意是否有誇大、保證療效或缺乏證據。遇到快速見效的宣稱更應查證。" },
-        { topic: "睡眠與咖啡因", question: "若想改善睡眠，下列哪一項較適合？", options: ["睡前喝大量咖啡因飲料", "固定睡前滑手機到凌晨", "建立規律作息並避免睡前過度刺激", "白天完全不活動"], answer: 2, explanation: "咖啡因與睡前刺激可能影響睡眠。規律作息、適度活動與睡前放鬆有助於睡眠品質。" },
-        { topic: "健康行為改變", question: "想開始規律運動，下列哪一種做法最容易持續？", options: ["一開始就設定過高目標", "從可達成的小目標開始並逐漸增加", "失敗一次就完全放棄", "只靠意志力不做安排"], answer: 1, explanation: "健康行為改變可以從小而可行的目標開始，逐步累積成功經驗，較容易長期維持。" },
-        { topic: "校園健康促進", question: "若要提升宿舍學生喝水與運動意願，下列哪一項最符合支持性環境？", options: ["只貼責罵標語", "提供飲水提醒、樓梯鼓勵與同儕活動", "完全不改變環境", "只要求學生自己負責"], answer: 1, explanation: "健康促進重視支持性環境，讓健康選擇更容易、更自然地發生。" },
-        { topic: "心理健康資源", question: "下列哪一種情況較需要考慮尋求專業協助？", options: ["情緒困擾持續並明顯影響生活與學習", "偶爾覺得累但可透過休息恢復", "今天心情普通", "考完試想睡覺"], answer: 0, explanation: "若情緒困擾持續且影響生活、課業、人際或安全，建議尋求校內諮商或醫療等專業資源。" }
-      ],
-      challenge: [
-        { topic: "整合應用題", question: "小安每天熬夜、常喝含糖飲料、久坐讀書，最近覺得精神差。下列哪一組改善策略最合適？", options: ["只喝更多含糖飲料提神", "調整睡眠、減少含糖飲料、增加身體活動", "完全不吃早餐", "只在考完試後再處理健康"], answer: 1, explanation: "健康行為常常互相影響。睡眠、飲食與身體活動一起調整，通常比只改一件事更有幫助。" },
-        { topic: "健康素養挑戰", question: "看到網路影片宣稱「某產品能快速排毒、治百病」，較好的健康素養行動是什麼？", options: ["立刻大量購買", "只看留言決定真假", "查證來源、看是否有可信健康機構資訊", "朋友轉傳就一定正確"], answer: 2, explanation: "健康資訊需要查證來源。面對誇大療效或快速見效的說法，應提高警覺並參考可信機構資訊。" },
-        { topic: "安全性行為與人際界線", question: "關於親密關係中的健康與安全，下列哪一項最重要？", options: ["尊重彼此意願、溝通界線並採取保護措施", "只要對方沒有拒絕就一定可以", "不用討論保護措施", "為了避免尷尬什麼都不說"], answer: 0, explanation: "親密關係中的健康包含尊重、溝通與保護。清楚表達界線並採取安全措施，是保護自己與對方的重要方式。" },
-        { topic: "健康促進應用", question: "如果要在宿舍推動健康生活，下列哪一項最符合健康促進精神？", options: ["只要求大家自己變健康", "設計支持環境，例如飲水提醒、樓梯活動、健康資訊分享", "只處罰不健康的人", "完全不考慮同學需求"], answer: 1, explanation: "健康促進重視個人能力，也重視支持性環境。宿舍可以透過提醒、活動與友善環境讓健康選擇更容易。" },
-        { topic: "生活情境判斷", question: "期末考前，小美連續熬夜、喝能量飲料、情緒焦躁。下列建議何者較全面？", options: ["繼續熬夜直到考完", "安排讀書區塊、睡眠、飲水與短暫活動", "完全不休息才有效率", "只靠含糖飲料撐住"], answer: 1, explanation: "讀書效率與睡眠、飲食、活動和壓力調適有關。適度休息與安排時間能幫助維持狀態。" },
-        { topic: "同儕健康支持", question: "朋友開始嘗試電子煙，並說只是好玩。你較適合怎麼回應？", options: ["鼓勵他多買幾種口味", "提醒可能的成癮與健康風險，必要時提供戒菸資源", "完全嘲笑他", "跟著一起使用"], answer: 1, explanation: "面對同儕風險行為，可以用支持而非羞辱的方式提醒健康風險，並提供可信資源。" }
-      ]
-    };
-
-    const myths = [
-      "健康迷思炸彈：電子煙不是安全無害的替代品，仍可能含尼古丁與有害物質。",
-      "健康迷思炸彈：嚼檳榔不是普通提神方式，會增加口腔健康風險。",
-      "健康迷思炸彈：含糖飲料不能取代白開水，長期過量容易增加糖分攝取。",
-      "健康迷思炸彈：熬夜後補眠不一定能完全抵銷睡眠不足對身體的影響。",
-      "健康迷思炸彈：健康資訊不是越聳動越可信，應優先查證來源與證據。"
+    const questionBank = [
+      { level: 1, topic: "均衡飲食", q: "「我的餐盤」把每日飲食分成幾大類食物？", options: ["3大類", "4大類", "6大類", "8大類"], answer: 2, explain: "臺灣版「我的餐盤」包含全穀雜糧、豆魚蛋肉、乳品、蔬菜、水果、油脂與堅果種子等6大類，重點是多樣且均衡。" },
+      { level: 1, topic: "我的餐盤", q: "依照「我的餐盤」口訣，下列哪一項最接近建議？", options: ["每天早晚一杯奶", "每餐只吃肉", "完全不吃水果", "把含糖飲料當水喝"], answer: 0, explain: "「我的餐盤」強調每天早晚一杯奶、每餐水果拳頭大、菜比水果多一點、飯跟蔬菜一樣多等概念。" },
+      { level: 1, topic: "身體活動", q: "成人健康管理常見建議是每週累積多少中等強度身體活動？", options: ["30分鐘", "60分鐘", "150分鐘", "600分鐘"], answer: 2, explain: "成人可從每週累積150分鐘中等強度活動開始，例如快走、騎腳踏車等。" },
+      { level: 1, topic: "運動強度", q: "哪一種描述比較符合中等強度運動？", options: ["完全不喘，可以唱歌", "還能說話，但不容易唱歌", "完全不能說話", "坐著滑手機"], answer: 1, explain: "中等強度運動通常會讓心跳和呼吸變快，還能說話，但不太能唱歌。" },
+      { level: 1, topic: "手部衛生", q: "預防腸病毒最重要的日常方法之一是什麼？", options: ["只用香水噴手", "用肥皂或洗手乳正確洗手", "吃很多甜食", "只在生病後才洗手"], answer: 1, explain: "腸病毒傳染力強，返家、進食前、如廁後都應落實正確洗手。" },
+      { level: 1, topic: "洗手時機", q: "下列哪一個時機特別需要洗手？", options: ["吃東西前", "剛洗完手立刻再洗", "睡覺時", "看電視時每分鐘洗一次"], answer: 0, explain: "用餐前、如廁後、外出返家後、接觸分泌物後，都是重要的洗手時機。" },
+      { level: 1, topic: "口腔健康", q: "下列哪一個行為會增加口腔癌風險？", options: ["規律刷牙", "嚼檳榔", "多喝白開水", "使用牙線"], answer: 1, explain: "檳榔本身就是一級致癌物，嚼檳榔會增加口腔癌風險。" },
+      { level: 1, topic: "飲水習慣", q: "下列哪一種飲品最適合作為日常主要補充水分來源？", options: ["白開水", "含糖手搖飲", "能量飲料", "高糖汽水"], answer: 0, explain: "日常補水以白開水為主較健康，含糖飲料容易增加糖分與熱量攝取。" },
+      { level: 1, topic: "睡眠健康", q: "維持良好睡眠較適合的做法是什麼？", options: ["每天睡前大量喝咖啡", "固定作息並減少睡前滑手機", "連續熬夜補進度", "睡前劇烈爭吵"], answer: 1, explain: "固定作息、睡前放鬆、減少螢幕刺激，有助於維持睡眠品質。" },
+      { level: 1, topic: "心理健康", q: "當感到壓力時，下列哪一種做法較健康？", options: ["長期忽略壓力", "規律作息並找可信任的人談談", "完全不睡覺", "只靠熬夜打電動紓壓"], answer: 1, explain: "心理健康可從規律作息、適度活動、情緒覺察與尋求支持開始。" },
+      { level: 1, topic: "飲食衛生", q: "用餐及喝水前，較好的衛生習慣是什麼？", options: ["不用洗手", "用乾淨流動水和肥皂洗手", "只擦衣服", "只沖一下手背"], answer: 1, explain: "用餐與喝水前應落實正確洗手，能降低經由手部接觸造成感染的風險。" },
+      { level: 1, topic: "蔬果攝取", q: "下列哪一項比較符合健康飲食概念？", options: ["蔬菜和水果都要攝取", "只吃零食不吃正餐", "完全不吃蔬菜", "水果可以完全取代蔬菜"], answer: 0, explain: "蔬菜和水果提供不同營養素，健康飲食強調多樣化攝取。" },
+      { level: 2, topic: "健康體位", q: "若想控制體重，最完整的做法通常是什麼？", options: ["只靠單次大量運動", "完全不吃主食", "規律身體活動並搭配健康飲食", "只喝含糖飲料補充體力"], answer: 2, explain: "健康體位管理需要搭配均衡飲食、規律活動與良好生活習慣。" },
+      { level: 2, topic: "腸病毒", q: "關於腸病毒環境消毒，下列哪一項較正確？", options: ["酒精對腸病毒效果有限", "只要開冷氣就能殺死病毒", "灰塵越多越安全", "完全不用清潔玩具"], answer: 0, explain: "酒精對腸病毒效果有限，幼兒常接觸物品應定期清潔消毒。" },
+      { level: 2, topic: "登革熱", q: "預防登革熱最重要的環境行動之一是什麼？", options: ["清除積水容器", "把水桶裝滿水放著", "只在室內點香", "完全不處理花盆底盤"], answer: 0, explain: "登革熱防治重點是巡、倒、清、刷，清除積水容器，降低病媒蚊孳生機會。" },
+      { level: 2, topic: "防蚊行動", q: "住家附近若有不用的空瓶、空罐，較好的做法是什麼？", options: ["任其積水", "倒掉積水並清除容器", "放更多水養蚊子", "只用紙蓋住"], answer: 1, explain: "容器積水容易成為病媒蚊孳生處，應定期清除積水與不用容器。" },
+      { level: 2, topic: "心理健康", q: "下列哪一項比較能幫助維持心理健康？", options: ["長期封閉自己", "保持規律生活、適度活動與社會支持", "每天熬夜到很晚", "遇到壓力只責怪自己"], answer: 1, explain: "規律作息、適度活動、與人連結和必要時求助，都是重要保護因子。" },
+      { level: 2, topic: "飲食", q: "下列哪一種飲食選擇較符合健康飲食原則？", options: ["蔬果多樣化，選擇全穀", "每天只吃油炸食物", "完全不吃蔬菜", "用含糖飲料代替水"], answer: 0, explain: "健康飲食可從多樣蔬果、全穀未精製雜糧、優質蛋白質、減少高油高鹽高糖開始。" },
+      { level: 2, topic: "菸害防制", q: "關於吸菸，下列哪一項較正確？", options: ["吸菸只影響牙齒顏色", "吸菸會增加多種疾病風險", "少量吸菸完全無風險", "吸菸可以提升肺功能"], answer: 1, explain: "吸菸會危害呼吸系統、心血管系統，也與多種癌症風險有關。" },
+      { level: 2, topic: "口腔癌警訊", q: "若口腔出現長期不癒合的破皮、硬塊或異常斑塊，較適合怎麼做？", options: ["忽略它", "自己亂刮掉", "盡快就醫檢查", "只喝冰水"], answer: 2, explain: "口腔若出現長期不癒合破皮、斑塊或硬塊，應儘快就醫檢查。" },
+      { level: 2, topic: "用藥安全", q: "服用藥物時，下列哪一項較安全？", options: ["自行加倍劑量", "依照醫囑或藥袋指示使用", "吃別人的藥", "把多種藥混在一起不確認"], answer: 1, explain: "用藥應遵照醫囑或藥袋指示，不應任意加量、停藥或服用他人藥物。" },
+      { level: 2, topic: "食品標示", q: "購買包裝食品時，哪一項資訊值得注意？", options: ["有效日期與營養標示", "包裝越亮越健康", "只看廣告詞", "完全不用看標示"], answer: 0, explain: "有效日期、保存方式、成分與營養標示，有助於做出較健康與安全的選擇。" },
+      { level: 2, topic: "視力保健", q: "長時間近距離用眼時，較好的做法是什麼？", options: ["一直盯著螢幕不休息", "適度休息並增加戶外活動", "在很暗的地方看書", "越近看越清楚"], answer: 1, explain: "規律休息、保持適當距離與增加戶外活動，有助於視力保健。" },
+      { level: 3, topic: "健康資訊辨識", q: "看到網路健康偏方時，最適合的做法是什麼？", options: ["馬上照做並轉傳", "只看標題就相信", "查證來源，優先參考政府或專業醫療機構資訊", "越誇張越可信"], answer: 2, explain: "健康資訊應查證來源與證據，優先參考政府衛生單位、醫療院所或專業健康資訊。" },
+      { level: 3, topic: "運動", q: "若一次無法運動30分鐘，較可行的方式是什麼？", options: ["完全放棄運動", "分次累積，例如每次10分鐘以上", "只在月底一次運動很久", "只看運動影片不動"], answer: 1, explain: "若一次無法達到30分鐘，可分次累積身體活動，重點是規律且總量達標。" },
+      { level: 3, topic: "檳榔迷思", q: "關於檳榔，下列哪一項正確？", options: ["沒有加紅白灰就完全不會致癌", "吐掉檳榔汁就沒有風險", "檳榔本身就是一級致癌物", "嚼檳榔可以保護牙齦"], answer: 2, explain: "檳榔本身就是一級致癌物，不論有無添加物都可能增加口腔癌風險。" },
+      { level: 3, topic: "飲食衛生", q: "外食時，下列哪一項較能降低飲食衛生風險？", options: ["選擇注重衛生的店家並落實洗手", "吃飯前不用洗手", "共飲共食不使用公筷母匙", "生水看起來乾淨就直接喝"], answer: 0, explain: "外食可選擇注重衛生的店家，並在用餐前洗手，降低感染風險。" },
+      { level: 3, topic: "慢性病預防", q: "預防慢性病較重要的生活方式包含哪一項？", options: ["規律活動、均衡飲食、定期健康檢查", "每天暴飲暴食", "完全不活動", "只靠保健食品"], answer: 0, explain: "慢性病預防重視長期生活型態，包含健康飲食、規律活動、體重管理與定期檢查。" },
+      { level: 3, topic: "疫苗觀念", q: "關於疫苗，下列哪一項較正確？", options: ["所有疫苗都完全不需評估", "疫苗接種可降低特定疾病重症風險", "打疫苗一定會得到該疾病", "疫苗都沒有任何作用"], answer: 1, explain: "疫苗接種可協助身體建立保護力，降低特定疾病感染、重症或併發症風險。" },
+      { level: 3, topic: "熱傷害預防", q: "炎熱天氣進行戶外活動時，哪一項較能預防熱傷害？", options: ["補充水分並避免長時間曝曬", "完全不喝水", "穿厚重不透氣衣物", "只喝高糖飲料"], answer: 0, explain: "高溫環境應補充水分、適度休息、注意遮陽與通風，降低熱傷害風險。" },
+      { level: 3, topic: "壓力調適", q: "面對長期壓力時，下列哪一項比較適合？", options: ["覺察壓力來源並尋求支持", "完全否認壓力", "只靠熬夜硬撐", "把所有問題都怪自己"], answer: 0, explain: "壓力調適可從覺察壓力來源、規劃可行行動、放鬆練習與尋求支持開始。" },
+      { level: 3, topic: "癌症篩檢", q: "關於癌症篩檢，下列哪一項較正確？", options: ["符合條件者可依建議定期篩檢", "沒有症狀就永遠不用管", "篩檢可以取代所有治療", "篩檢結果不用看"], answer: 0, explain: "符合條件者可依建議定期篩檢，早期發現有助於後續處理與治療。" }
     ];
 
-    const itemTypes = [
-      { type: "small", emoji: "🐟", className: "small", points: 10, difficulty: "easy", label: "小魚｜簡單題", radius: 34 },
-      { type: "medium", emoji: "🐠", className: "medium", points: 20, difficulty: "medium", label: "中魚｜中等題", radius: 42 },
-      { type: "big", emoji: "🐡", className: "big", points: 30, difficulty: "hard", label: "大魚｜困難題", radius: 52 },
-      { type: "pearl", emoji: "🦪", className: "pearl", points: 50, difficulty: "challenge", label: "珍珠貝殼｜挑戰題", radius: 46 },
-      { type: "bomb", emoji: "💣", className: "bomb", points: -20, difficulty: null, label: "健康迷思炸彈", radius: 42 }
+    const maze = [
+      "#####################",
+      "#.........#.........#",
+      "#.###.###.#.###.###.#",
+      "#.#.............#...#",
+      "#.#.###.#.###.#.#.#.#",
+      "#.....#.#...#.#.....#",
+      "###.#.#.###.#.#.#.###",
+      "#...#.....#.....#...#",
+      "#.#####.#.#.#.#####.#",
+      "#.......#...#.......#",
+      "###.#.###.#.###.#.###",
+      "#...#.....#.....#...#",
+      "#.#####.#.#.#.#####.#",
+      "#.....#.#...#.#.....#",
+      "#.#.#.#.###.#.#.#.#.#",
+      "#.#.............#...#",
+      "#.###.###.#.###.###.#",
+      "#.........#.........#",
+      "#####################"
     ];
 
-    const gameScreen = document.getElementById("gameScreen");
-    const rodOrigin = document.getElementById("rodOrigin");
-    const rodArm = document.getElementById("rodArm");
-    const line = document.getElementById("line");
-    const hook = document.getElementById("hook");
-    const playerLabel = document.getElementById("playerLabel");
-    const scoreEl = document.getElementById("score");
-    const catchesEl = document.getElementById("catches");
-    const timerEl = document.getElementById("timer");
-    const messageEl = document.getElementById("message");
-    const playerNameInput = document.getElementById("playerName");
-    const ruleBtn = document.getElementById("ruleBtn");
-    const castBtn = document.getElementById("castBtn");
-    const boardBtn = document.getElementById("boardBtn");
-
-    const ruleModal = document.getElementById("ruleModal");
-    const startGameBtn = document.getElementById("startGameBtn");
-    const questionModal = document.getElementById("questionModal");
+    const canvas = document.getElementById("game");
+    const ctx = canvas.getContext("2d");
+    const startOverlay = document.getElementById("startOverlay");
+    const questionOverlay = document.getElementById("questionOverlay");
+    const resultOverlay = document.getElementById("resultOverlay");
+    const hudLevel = document.getElementById("hudLevel");
+    const hudPower = document.getElementById("hudPower");
+    const hudScore = document.getElementById("hudScore");
     const questionMeta = document.getElementById("questionMeta");
     const questionText = document.getElementById("questionText");
     const optionsEl = document.getElementById("options");
     const feedbackEl = document.getElementById("feedback");
-    const nextBtn = document.getElementById("nextBtn");
-    const leaderModal = document.getElementById("leaderModal");
-    const leaderboardEl = document.getElementById("leaderboard");
-    const clearBoardBtn = document.getElementById("clearBoardBtn");
-    const closeBoardBtn = document.getElementById("closeBoardBtn");
-    const endModal = document.getElementById("endModal");
-    const endSummary = document.getElementById("endSummary");
-    const playAgainBtn = document.getElementById("playAgainBtn");
-    const showBoardEndBtn = document.getElementById("showBoardEndBtn");
+    const continueBtn = document.getElementById("continueBtn");
+    const resultTitle = document.getElementById("resultTitle");
+    const resultText = document.getElementById("resultText");
 
-    let score = 0;
-    let catchCount = 0;
-    let timer = 8;
-    let timerInterval = null;
-    let animationId = null;
-    let items = [];
-    let bubblesMade = false;
-    let isGameRunning = false;
-    let isCasting = false;
-    let swingAngle = 0;
-    let swingDirection = 1;
-    let castDistance = 180;
-    let castAngle = 0;
-    let currentCaughtItem = null;
-    let currentQuestion = null;
-    let stats = { answered: 0, correct: 0, wrong: 0, bombs: 0, misses: 0 };
+    const levels = [
+      // 三關差異只保留「細菌數量」與「移動速度」：移動範圍與巡邏邏輯三關都一樣大。
+      { label: "簡易", need: 1, ghosts: 2, ghostSpeed: 2.05 },
+      { label: "中等", need: 3, ghosts: 3, ghostSpeed: 2.38 },
+      { label: "困難", need: 5, ghosts: 4, ghostSpeed: 2.7 }
+    ];
 
-    function random(min, max) { return Math.random() * (max - min) + min; }
-    function randomItem(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
-    function clamp(value, min, max) { return Math.max(min, Math.min(max, value)); }
+    const state = {
+      level: 1,
+      score: 0,
+      powerGot: 0,
+      running: false,
+      paused: true,
+      cell: 32,
+      ox: 0,
+      oy: 0,
+      dots: new Set(),
+      powers: [],
+      usedQuestions: new Set(),
+      recentQuestions: JSON.parse(localStorage.getItem("healthMazeRecentQuestions") || "[]"),
+      currentQuestion: null,
+      lastAnswerCorrect: false,
+      player: null,
+      ghosts: [],
+      lastTime: 0
+    };
 
-    function updateHud() {
-      scoreEl.textContent = score;
-      catchesEl.textContent = `${catchCount}/5`;
-      timerEl.textContent = timer;
-      playerLabel.textContent = playerNameInput.value.trim() || "尚未開始";
+    const DIRS = {
+      up: { x: 0, y: -1 },
+      down: { x: 0, y: 1 },
+      left: { x: -1, y: 0 },
+      right: { x: 1, y: 0 }
+    };
+    const ALL_DIRS = [DIRS.right, DIRS.left, DIRS.down, DIRS.up];
+
+    function resize() {
+      canvas.width = Math.floor(window.innerWidth * devicePixelRatio);
+      canvas.height = Math.floor(window.innerHeight * devicePixelRatio);
+      ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+      const cols = maze[0].length;
+      const rows = maze.length;
+      const maxW = Math.min(window.innerWidth * 0.68, 900);
+      const maxH = window.innerHeight - 170;
+      state.cell = Math.max(24, Math.min(maxW / cols, maxH / rows));
+      state.ox = (window.innerWidth - cols * state.cell) / 2;
+      state.oy = Math.max(108, (window.innerHeight - rows * state.cell) / 2 + 42);
     }
+    window.addEventListener("resize", resize);
+    resize();
 
-    function makeBubbles() {
-      if (bubblesMade) return;
-      bubblesMade = true;
-      for (let i = 0; i < 42; i++) {
-        const bubble = document.createElement("div");
-        bubble.className = "bubble";
-        const size = random(8, 24);
-        bubble.style.width = `${size}px`;
-        bubble.style.height = `${size}px`;
-        bubble.style.left = `${random(0, 100)}%`;
-        bubble.style.animationDuration = `${random(5, 12)}s`;
-        bubble.style.animationDelay = `${random(0, 9)}s`;
-        gameScreen.appendChild(bubble);
-      }
+    function isWallCell(c, r) {
+      if (r < 0 || r >= maze.length || c < 0 || c >= maze[0].length) return true;
+      return maze[r][c] === "#";
     }
-
-    function showRules() {
-      const name = playerNameInput.value.trim();
-      if (!name) {
-        messageEl.textContent = "請先輸入暱稱，才能查看規則並開始遊戲。";
-        playerNameInput.focus();
-        return;
-      }
-      updateHud();
-      ruleModal.classList.add("show");
+    function cellOf(e) { return { c: Math.floor(e.x), r: Math.floor(e.y) }; }
+    function atCenter(e) { return Math.abs(e.x - (Math.floor(e.x) + 0.5)) < 0.04 && Math.abs(e.y - (Math.floor(e.y) + 0.5)) < 0.04; }
+    function snap(e) { e.x = Math.floor(e.x) + 0.5; e.y = Math.floor(e.y) + 0.5; }
+    function canMove(e, dir) {
+      const nextC = Math.floor(e.x + dir.x * 0.55);
+      const nextR = Math.floor(e.y + dir.y * 0.55);
+      return !isWallCell(nextC, nextR);
     }
+    function px(x) { return state.ox + x * state.cell; }
+    function py(y) { return state.oy + y * state.cell; }
 
-    function startGame() {
-      ruleModal.classList.remove("show");
-      score = 0;
-      catchCount = 0;
-      timer = 8;
-      stats = { answered: 0, correct: 0, wrong: 0, bombs: 0, misses: 0 };
-      isGameRunning = true;
-      isCasting = false;
-      castDistance = 180;
-      playerNameInput.disabled = true;
-      ruleBtn.disabled = true;
-      castBtn.disabled = false;
-      makeBubbles();
-      createItems();
-      startAnimationLoop();
-      startRoundTimer();
-      updateHud();
-      messageEl.textContent = "遊戲開始！看準魚鉤方向，按空白鍵或按鈕拋竿。沒有抓到不扣成功捕捉次數。";
-    }
-
-    function createItems() {
-      removeItems();
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-      const topLimit = Math.max(170, height * 0.22);
-      const bottomLimit = height - 130;
-      const wantedCount = Math.max(15, Math.floor(width / 85));
-      const weighted = [itemTypes[0], itemTypes[0], itemTypes[0], itemTypes[1], itemTypes[1], itemTypes[2], itemTypes[3], itemTypes[4]];
-      const placed = [];
-
-      for (let i = 0; i < wantedCount; i++) {
-        const type = randomItem(weighted);
-        let x, y, ok = false;
-        for (let tries = 0; tries < 80; tries++) {
-          x = random(50, width - 80);
-          y = random(topLimit, bottomLimit);
-          ok = placed.every(p => Math.hypot(p.x - x, p.y - y) > p.r + type.radius + 18);
-          if (ok) break;
+    function openCells() {
+      const cells = [];
+      for (let r = 1; r < maze.length - 1; r++) {
+        for (let c = 1; c < maze[0].length - 1; c++) {
+          if (!isWallCell(c, r)) cells.push({ c, r });
         }
-        if (!ok) continue;
-        placed.push({ x, y, r: type.radius });
+      }
+      return cells;
+    }
 
-        const el = document.createElement("div");
-        el.className = `sea-item ${type.className}`;
-        el.textContent = type.emoji;
-        el.dataset.type = type.type;
-        gameScreen.appendChild(el);
+    function nearestOpen(c, r) {
+      if (!isWallCell(c, r)) return { c, r };
+      let best = null;
+      let bestD = Infinity;
+      for (const cell of openCells()) {
+        const d = Math.abs(cell.c - c) + Math.abs(cell.r - r);
+        if (d < bestD) { bestD = d; best = cell; }
+      }
+      return best;
+    }
 
-        items.push({
-          el,
-          ...type,
-          x,
-          y,
-          vx: random(-0.75, 0.75) || 0.35,
-          vy: random(-0.35, 0.35) || 0.18,
-          phase: random(0, Math.PI * 2),
-          baseY: y
+    function buildDots() {
+      state.dots.clear();
+      for (const cell of openCells()) state.dots.add(`${cell.c},${cell.r}`);
+      ["1,1", "9,9", "11,9", "9,11", "11,11"].forEach(k => state.dots.delete(k));
+    }
+
+    function choosePowerCells(count) {
+      const all = openCells()
+        .filter(cell => Math.abs(cell.c - 1) + Math.abs(cell.r - 1) >= 15)
+        .filter(cell => !(cell.c >= 8 && cell.c <= 12 && cell.r >= 8 && cell.r <= 12));
+      const selected = [];
+      while (selected.length < count && all.length) {
+        let best = all[0], bestScore = -1;
+        for (const cell of all) {
+          const distStart = Math.abs(cell.c - 1) + Math.abs(cell.r - 1);
+          const distOthers = selected.length ? Math.min(...selected.map(s => Math.abs(s.c - cell.c) + Math.abs(s.r - cell.r))) : 20;
+          const score = distStart + distOthers * 2 + Math.random();
+          if (score > bestScore) { bestScore = score; best = cell; }
+        }
+        selected.push(best);
+        all.splice(all.findIndex(x => x.c === best.c && x.r === best.r), 1);
+      }
+      return selected;
+    }
+
+    function placePowers() {
+      state.powers = choosePowerCells(levels[state.level - 1].need).map(cell => ({ c: cell.c, r: cell.r, active: true, pulse: Math.random() * 10 }));
+      for (const p of state.powers) state.dots.delete(`${p.c},${p.r}`);
+    }
+
+    function resetLevel() {
+      const start = nearestOpen(1, 1);
+      state.player = { x: start.c + 0.5, y: start.r + 0.5, dir: { x: 0, y: 0 }, nextDir: null, speed: 3.6, anim: 0 };
+      state.powerGot = 0;
+      state.ghosts = [];
+      const centers = [nearestOpen(9, 9), nearestOpen(11, 9), nearestOpen(9, 11), nearestOpen(11, 11)];
+      // 每一關都使用同一組「大範圍巡邏目標」，差別只在細菌數量與速度。
+      // 這些點分散在迷宮四角與遠端通道，避免第一、二關只在中央小範圍移動。
+      const patrolTargets = [
+        nearestOpen(17, 1),
+        nearestOpen(1, 17),
+        nearestOpen(17, 17),
+        nearestOpen(3, 3),
+        nearestOpen(15, 15),
+        nearestOpen(5, 13),
+        nearestOpen(13, 5),
+        nearestOpen(7, 17)
+      ];
+      const setting = levels[state.level - 1];
+      for (let i = 0; i < setting.ghosts; i++) {
+        const c = centers[i];
+        state.ghosts.push({
+          x: c.c + 0.5,
+          y: c.r + 0.5,
+          dir: ALL_DIRS[i],
+          speed: setting.ghostSpeed,
+          type: i,
+          target: patrolTargets[i % patrolTargets.length],
+          scatterTimer: 1.5 + i * 0.7,
+          targetIndex: i % patrolTargets.length
         });
       }
+      buildDots();
+      placePowers();
+      updateHUD();
     }
 
-    function removeItems() {
-      items.forEach(item => item.el.remove());
-      items = [];
+    function updateHUD() {
+      const level = levels[state.level - 1];
+      hudLevel.textContent = `${state.level}（${level.label}）`;
+      hudPower.textContent = `${state.powerGot} / ${level.need}`;
+      hudScore.textContent = state.score;
     }
 
-    function startAnimationLoop() {
-      if (animationId) cancelAnimationFrame(animationId);
-      let last = performance.now();
-      const loop = (now) => {
-        const dt = Math.min(32, now - last);
-        last = now;
-        animateRod(dt);
-        animateItems(dt, now);
-        animationId = requestAnimationFrame(loop);
-      };
-      animationId = requestAnimationFrame(loop);
-    }
-
-    function animateRod(dt) {
-      if (!isCasting) {
-        swingAngle += swingDirection * dt * 0.055;
-        if (swingAngle > 55) { swingAngle = 55; swingDirection = -1; }
-        if (swingAngle < -55) { swingAngle = -55; swingDirection = 1; }
-        castAngle = swingAngle;
-        castDistance = 180;
+    function moveEntity(e, dt) {
+      if (atCenter(e)) {
+        snap(e);
+        if (e.nextDir && canMove(e, e.nextDir)) e.dir = { ...e.nextDir };
+        if (!canMove(e, e.dir)) e.dir = { x: 0, y: 0 };
       }
-
-      // 魚線與魚鉤放在同一個 rodArm 容器內，一起旋轉、一起伸縮。
-      // 這樣看起來會連在一起，碰撞判定也會跟畫面同步。
-      rodArm.style.height = `${castDistance}px`;
-      rodArm.style.transform = `rotate(${castAngle}deg)`;
+      if (e.dir.x === 0 && e.dir.y === 0) return;
+      const nx = e.x + e.dir.x * e.speed * dt;
+      const ny = e.y + e.dir.y * e.speed * dt;
+      const probeC = Math.floor(nx + e.dir.x * 0.40);
+      const probeR = Math.floor(ny + e.dir.y * 0.40);
+      if (!isWallCell(probeC, probeR)) { e.x = nx; e.y = ny; }
+      else { snap(e); e.dir = { x: 0, y: 0 }; }
     }
 
-    function animateItems(dt, now) {
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-      const topLimit = Math.max(170, height * 0.22);
-      const bottomLimit = height - 130;
+    function setDirection(name) {
+      if (!state.player) return;
+      const dir = DIRS[name];
+      state.player.nextDir = dir;
+      if (atCenter(state.player) && canMove(state.player, dir)) {
+        snap(state.player);
+        state.player.dir = { ...dir };
+      }
+    }
 
-      items.forEach(item => {
-        item.x += item.vx * dt * 0.06;
-        item.y += item.vy * dt * 0.06 + Math.sin(now * 0.0015 + item.phase) * 0.18;
+    function randomFarTarget(fromCell) {
+      const candidates = openCells().filter(cell => Math.abs(cell.c - fromCell.c) + Math.abs(cell.r - fromCell.r) >= 10);
+      return candidates[Math.floor(Math.random() * candidates.length)] || nearestOpen(10, 9);
+    }
 
-        if (item.x < 30) { item.x = 30; item.vx = Math.abs(item.vx); }
-        if (item.x > width - 80) { item.x = width - 80; item.vx = -Math.abs(item.vx); }
-        if (item.y < topLimit) { item.y = topLimit; item.vy = Math.abs(item.vy); }
-        if (item.y > bottomLimit) { item.y = bottomLimit; item.vy = -Math.abs(item.vy); }
+    function nextPatrolTarget(g) {
+      const patrolTargets = [
+        nearestOpen(17, 1), nearestOpen(1, 17), nearestOpen(17, 17), nearestOpen(3, 3),
+        nearestOpen(15, 15), nearestOpen(5, 13), nearestOpen(13, 5), nearestOpen(7, 17)
+      ];
+      g.targetIndex = ((g.targetIndex || 0) + 1 + g.type) % patrolTargets.length;
+      return patrolTargets[g.targetIndex];
+    }
 
-        const face = item.vx < 0 ? "scaleX(-1)" : "scaleX(1)";
-        item.el.style.left = `${item.x}px`;
-        item.el.style.top = `${item.y}px`;
-        item.el.style.transform = face;
+    function chooseGhostDir(g) {
+      let possible = ALL_DIRS.filter(d => canMove(g, d));
+      const reverse = { x: -g.dir.x, y: -g.dir.y };
+      if (possible.length > 1) possible = possible.filter(d => !(d.x === reverse.x && d.y === reverse.y));
+
+      const gc = cellOf(g);
+      const currentTarget = g.target || nextPatrolTarget(g);
+      const reachedTarget = Math.abs(gc.c - currentTarget.c) + Math.abs(gc.r - currentTarget.r) <= 1;
+      if (reachedTarget) g.target = nextPatrolTarget(g);
+
+      // 三關都採用大範圍巡邏：主要往遠方巡邏點移動，偶爾才追小勇者。
+      let target = g.target;
+      if (Math.random() < 0.16) target = cellOf(state.player);
+
+      possible.sort((a, b) => {
+        const da = Math.abs(target.c - (gc.c + a.x)) + Math.abs(target.r - (gc.r + a.y));
+        const db = Math.abs(target.c - (gc.c + b.x)) + Math.abs(target.r - (gc.r + b.y));
+        return da - db;
       });
-    }
 
-    function startRoundTimer() {
-      clearInterval(timerInterval);
-      timer = 8;
-      updateHud();
-      timerInterval = setInterval(() => {
-        if (!isGameRunning || isCasting || questionModal.classList.contains("show")) return;
-        timer--;
-        updateHud();
-        if (timer <= 0) {
-          stats.misses++;
-          messageEl.textContent = "時間到，這次沒有拋竿，但不扣成功捕捉次數。重新計時，請再試一次！";
-          startRoundTimer();
-        }
-      }, 1000);
-    }
-
-    function castHook() {
-      if (!isGameRunning || isCasting || questionModal.classList.contains("show")) return;
-      isCasting = true;
-      castBtn.disabled = true;
-      clearInterval(timerInterval);
-      castAngle = swingAngle;
-      messageEl.textContent = "魚鉤甩出中……";
-
-      const maxDistance = Math.min(window.innerHeight * 0.86, 650);
-      const start = performance.now();
-      const duration = 520;
-
-      function extend(now) {
-        const progress = clamp((now - start) / duration, 0, 1);
-        castDistance = 180 + (maxDistance - 180) * easeOutCubic(progress);
-        const caught = detectCollision();
-        if (caught) {
-          handleCaught(caught);
-          return;
-        }
-        if (progress < 1) requestAnimationFrame(extend);
-        else retractMiss();
+      if (Math.random() < 0.18 && possible.length > 1) {
+        return possible[Math.floor(Math.random() * Math.min(2, possible.length))];
       }
-      requestAnimationFrame(extend);
+      return possible[0] || { x: 0, y: 0 };
     }
 
-    function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
-
-    function getHookCenter() {
-      // 直接讀取畫面上魚鉤的實際中心位置，避免數學座標與視覺位置不一致。
-      const rect = hook.getBoundingClientRect();
-      return {
-        x: rect.left + rect.width / 2,
-        y: rect.top + rect.height / 2
-      };
-    }
-
-    function detectCollision() {
-      const h = getHookCenter();
-      let nearest = null;
-      let nearestDistance = Infinity;
-      for (const item of items) {
-        const rect = item.el.getBoundingClientRect();
-        const x = rect.left + rect.width / 2;
-        const y = rect.top + rect.height / 2;
-        const distance = Math.hypot(h.x - x, h.y - y);
-        if (distance < item.radius + 16 && distance < nearestDistance) {
-          nearest = item;
-          nearestDistance = distance;
+    function moveGhosts(dt) {
+      for (const g of state.ghosts) {
+        g.scatterTimer -= dt;
+        if (g.scatterTimer <= 0) {
+          // 定期指定下一個遠方巡邏點，讓第一、二關也會跑遍迷宮。
+          g.target = nextPatrolTarget(g);
+          g.scatterTimer = 4.5 + Math.random() * 2.5;
+        }
+        if (atCenter(g)) {
+          snap(g);
+          g.dir = chooseGhostDir(g);
+        }
+        moveEntity(g, dt);
+        if (g.dir.x === 0 && g.dir.y === 0) {
+          g.target = nextPatrolTarget(g);
+          g.dir = chooseGhostDir(g);
         }
       }
-      return nearest;
     }
 
-    function handleCaught(item) {
-      isCasting = false;
-      items = items.filter(i => i !== item);
-      item.el.remove();
-      catchCount++;
-      updateHud();
-      castDistance = 180;
-
-      if (item.type === "bomb") {
-        score = Math.max(0, score + item.points);
-        stats.bombs++;
-        updateHud();
-        messageEl.textContent = `${randomItem(myths)} 扣 20 分。`;
-        afterCatchContinue();
-        return;
-      }
-
-      currentCaughtItem = item;
-      currentQuestion = randomItem(questionBank[item.difficulty]);
-      showQuestion(item, currentQuestion);
+    function checkCollectibles() {
+      const cell = cellOf(state.player);
+      const key = `${cell.c},${cell.r}`;
+      if (state.dots.has(key)) { state.dots.delete(key); state.score += 10; }
+      const power = state.powers.find(p => p.active && p.c === cell.c && p.r === cell.r);
+      if (power) { power.active = false; openQuestion(power); }
+      updateHUD();
     }
 
-    function retractMiss() {
-      stats.misses++;
-      messageEl.textContent = "沒有捕捉到東西，這次不扣成功捕捉次數。魚鉤收回後可以再試一次！";
-      const start = performance.now();
-      const from = castDistance;
-      const duration = 360;
-      function retract(now) {
-        const progress = clamp((now - start) / duration, 0, 1);
-        castDistance = from + (180 - from) * progress;
-        if (progress < 1) requestAnimationFrame(retract);
-        else {
-          isCasting = false;
-          castBtn.disabled = false;
-          startRoundTimer();
-        }
-      }
-      requestAnimationFrame(retract);
-    }
-
-    function afterCatchContinue() {
-      if (catchCount >= 5) {
-        setTimeout(endGame, 650);
-      } else {
-        setTimeout(() => {
-          isCasting = false;
-          castBtn.disabled = false;
-          if (items.length < 8) createItems();
-          startRoundTimer();
-        }, 650);
+    function checkCollision() {
+      if (!state.running || state.paused) return;
+      for (const g of state.ghosts) {
+        if (Math.hypot(state.player.x - g.x, state.player.y - g.y) < 0.58) { endGame(false); return; }
       }
     }
 
-    function showQuestion(item, question) {
-      clearInterval(timerInterval);
-      questionMeta.textContent = `${item.label}｜答對 +${item.points} 分｜${question.topic}`;
-      questionText.textContent = question.question;
+    function pickQuestion() {
+      const allowed = questionBank.map((q, i) => ({ q, i })).filter(item => item.q.level <= state.level).map(item => item.i);
+      let available = allowed.filter(i => !state.usedQuestions.has(i));
+      if (!available.length) {
+        // 同一次挑戰先盡量不重複；真的用完才重新開放。
+        state.usedQuestions.clear();
+        available = [...allowed];
+      }
+
+      const recentSet = new Set(state.recentQuestions || []);
+      const lessRecent = available.filter(i => !recentSet.has(i));
+      const pool = lessRecent.length ? lessRecent : available;
+      const chosen = pool[Math.floor(Math.random() * pool.length)];
+      state.usedQuestions.add(chosen);
+
+      state.recentQuestions = [chosen, ...(state.recentQuestions || []).filter(i => i !== chosen)].slice(0, 12);
+      localStorage.setItem("healthMazeRecentQuestions", JSON.stringify(state.recentQuestions));
+      return questionBank[chosen];
+    }
+
+    function openQuestion(power) {
+      state.paused = true;
+      state.currentQuestion = { data: pickQuestion(), power };
+      const q = state.currentQuestion.data;
+      questionMeta.textContent = `第 ${state.level} 關｜${q.topic}`;
+      questionText.textContent = q.q;
       optionsEl.innerHTML = "";
-      feedbackEl.classList.remove("show");
+      feedbackEl.className = "feedback";
       feedbackEl.innerHTML = "";
-      nextBtn.style.display = "none";
-      question.options.forEach((option, index) => {
+      continueBtn.classList.add("hidden");
+      q.options.forEach((text, i) => {
         const btn = document.createElement("button");
         btn.className = "option-btn";
-        btn.textContent = `${String.fromCharCode(65 + index)}. ${option}`;
-        btn.addEventListener("click", () => answerQuestion(index));
+        btn.textContent = `${String.fromCharCode(65 + i)}. ${text}`;
+        btn.onclick = () => answerQuestion(i);
         optionsEl.appendChild(btn);
       });
-      questionModal.classList.add("show");
+      questionOverlay.classList.remove("hidden");
     }
 
-    function answerQuestion(selectedIndex) {
-      const buttons = [...optionsEl.querySelectorAll("button")];
-      buttons.forEach(btn => btn.disabled = true);
-      const isCorrect = selectedIndex === currentQuestion.answer;
-      stats.answered++;
-      if (isCorrect) {
-        score += currentCaughtItem.points;
-        stats.correct++;
-        buttons[selectedIndex].classList.add("correct");
-      } else {
-        stats.wrong++;
-        buttons[selectedIndex].classList.add("wrong");
-        buttons[currentQuestion.answer].classList.add("correct");
-      }
-      updateHud();
-      feedbackEl.innerHTML = `
-        <strong>${isCorrect ? "答對了！" : "答錯了，沒關係！"}</strong><br>
-        正確答案：${currentQuestion.options[currentQuestion.answer]}<br>
-        <strong>健康知識補充：</strong>${currentQuestion.explanation}
-      `;
-      feedbackEl.classList.add("show");
-      nextBtn.style.display = "inline-block";
-    }
-
-    function continueAfterQuestion() {
-      questionModal.classList.remove("show");
-      afterCatchContinue();
-    }
-
-    function endGame() {
-      clearInterval(timerInterval);
-      isGameRunning = false;
-      isCasting = false;
-      castBtn.disabled = true;
-      ruleBtn.disabled = false;
-      playerNameInput.disabled = false;
-      saveScore();
-      renderLeaderboard();
-      endSummary.innerHTML = `
-        <div class="intro-item"><strong>${playerNameInput.value.trim() || "玩家"}</strong> 的總分：<strong>${score}</strong> 分</div>
-        <div class="intro-item">成功捕捉：${catchCount} 次｜答題數：${stats.answered} 題｜答對：${stats.correct} 題｜答錯：${stats.wrong} 題｜炸彈：${stats.bombs} 次</div>
-        <div class="intro-item">沒有捕捉到：${stats.misses} 次。提醒：這些次數不會扣成功捕捉機會。</div>
-        <div class="intro-item">學習回顧：每題的健康知識補充可以幫助你辨識健康迷思，分數只是增加參與動機。</div>
-      `;
-      endModal.classList.add("show");
-      messageEl.textContent = "遊戲結束！可以查看排行榜或再玩一次。";
-    }
-
-    function saveScore() {
-      const records = JSON.parse(localStorage.getItem("healthFishingLeaderboardV2") || "[]");
-      records.push({ name: playerNameInput.value.trim() || "匿名玩家", score, date: new Date().toLocaleDateString("zh-TW") });
-      records.sort((a, b) => b.score - a.score);
-      localStorage.setItem("healthFishingLeaderboardV2", JSON.stringify(records.slice(0, 10)));
-    }
-
-    function renderLeaderboard() {
-      const records = JSON.parse(localStorage.getItem("healthFishingLeaderboardV2") || "[]");
-      leaderboardEl.innerHTML = "";
-      if (!records.length) {
-        leaderboardEl.innerHTML = "<div class='intro-item'>目前尚無紀錄，完成一次遊戲後會出現排名。</div>";
-        return;
-      }
-      records.forEach((record, index) => {
-        const row = document.createElement("div");
-        row.className = "leader-row";
-        row.innerHTML = `<strong>#${index + 1}</strong><span>${record.name}<span class="tag">${record.date}</span></span><strong>${record.score}</strong>`;
-        leaderboardEl.appendChild(row);
+    function answerQuestion(i) {
+      const q = state.currentQuestion.data;
+      [...document.querySelectorAll(".option-btn")].forEach((btn, index) => {
+        btn.disabled = true;
+        if (index === q.answer) btn.classList.add("correct");
+        if (index === i && index !== q.answer) btn.classList.add("wrong");
       });
+      state.lastAnswerCorrect = i === q.answer;
+      if (state.lastAnswerCorrect) { state.powerGot++; state.score += 100; feedbackEl.innerHTML = `<h3>答對了！</h3><p>${q.explain}</p>`; }
+      else { feedbackEl.innerHTML = `<h3>答錯了，正確答案是 ${String.fromCharCode(65 + q.answer)}。</h3><p>${q.explain}</p><p class="muted">這個發光膠囊會移到較遠的位置。</p>`; }
+      feedbackEl.classList.add("show");
+      continueBtn.classList.remove("hidden");
+      updateHUD();
     }
 
-    function openBoard() {
-      renderLeaderboard();
-      leaderModal.classList.add("show");
-    }
+    function relocatePower(power) {
+      const used = state.powers
+        .filter(p => p.active)
+        .map(p => `${p.c},${p.r}`);
+      const playerCell = cellOf(state.player);
+      const corners = [nearestOpen(17, 1), nearestOpen(1, 17), nearestOpen(17, 17), nearestOpen(3, 15), nearestOpen(15, 3)];
+      let candidates = openCells()
+        .filter(cell => Math.abs(cell.c - playerCell.c) + Math.abs(cell.r - playerCell.r) >= 12)
+        .filter(cell => !used.includes(`${cell.c},${cell.r}`));
 
-    function resetForReplay() {
-      endModal.classList.remove("show");
-      ruleModal.classList.add("show");
-    }
-
-    ruleBtn.addEventListener("click", showRules);
-    startGameBtn.addEventListener("click", startGame);
-    castBtn.addEventListener("click", castHook);
-    nextBtn.addEventListener("click", continueAfterQuestion);
-    boardBtn.addEventListener("click", openBoard);
-    closeBoardBtn.addEventListener("click", () => leaderModal.classList.remove("show"));
-    showBoardEndBtn.addEventListener("click", openBoard);
-    playAgainBtn.addEventListener("click", resetForReplay);
-    clearBoardBtn.addEventListener("click", () => {
-      localStorage.removeItem("healthFishingLeaderboardV2");
-      renderLeaderboard();
-    });
-
-    document.addEventListener("keydown", (event) => {
-      if (event.code === "Space") {
-        event.preventDefault();
-        castHook();
+      if (!candidates.length) {
+        candidates = openCells().filter(cell => !used.includes(`${cell.c},${cell.r}`));
       }
-    });
 
-    window.addEventListener("resize", () => {
-      if (isGameRunning) createItems();
-    });
+      let best = candidates[0] || nearestOpen(17, 17);
+      let bestScore = -Infinity;
+      for (const cell of candidates) {
+        const distPlayer = Math.abs(cell.c - playerCell.c) + Math.abs(cell.r - playerCell.r);
+        const distCorner = Math.min(...corners.map(c => Math.abs(c.c - cell.c) + Math.abs(c.r - cell.r)));
+        const distOtherPowers = state.powers
+          .filter(p => p !== power && p.active)
+          .map(p => Math.abs(p.c - cell.c) + Math.abs(p.r - cell.r));
+        const minOther = distOtherPowers.length ? Math.min(...distOtherPowers) : 10;
+        const score = distPlayer * 2 + minOther * 2 - distCorner + Math.random();
+        if (score > bestScore) { bestScore = score; best = cell; }
+      }
+      power.c = best.c;
+      power.r = best.r;
+      power.active = true;
+      power.pulse = Math.random() * 10;
+      state.dots.delete(`${best.c},${best.r}`);
+    }
 
-    makeBubbles();
-    renderLeaderboard();
-    updateHud();
+    continueBtn.onclick = () => {
+      const power = state.currentQuestion.power;
+      questionOverlay.classList.add("hidden");
+      if (!state.lastAnswerCorrect) {
+        relocatePower(power);
+      }
+      state.currentQuestion = null;
+      if (state.powerGot >= levels[state.level - 1].need) {
+        if (state.level >= 3) endGame(true);
+        else { state.level++; resetLevel(); state.paused = false; focusCanvas(); }
+      } else { state.paused = false; focusCanvas(); }
+    };
+
+    function endGame(success) {
+      state.running = false;
+      state.paused = true;
+      resultTitle.textContent = success ? "挑戰成功！" : "挑戰失敗！";
+      resultText.innerHTML = success ? `你完成三關挑戰，總分 <b>${state.score}</b> 分。` : `碰到病菌怪了，遊戲結束。可以重新挑戰。`;
+      resultOverlay.classList.remove("hidden");
+    }
+
+    function focusCanvas() { setTimeout(() => { window.focus(); canvas.focus(); }, 0); }
+
+    function handleKey(e) {
+      const key = e.key || "";
+      const code = e.keyCode || e.which;
+      const map = {
+        ArrowUp: "up", ArrowDown: "down", ArrowLeft: "left", ArrowRight: "right",
+        w: "up", W: "up", a: "left", A: "left", s: "down", S: "down", d: "right", D: "right",
+        38: "up", 40: "down", 37: "left", 39: "right", 87: "up", 65: "left", 83: "down", 68: "right"
+      };
+      const dir = map[key] || map[code];
+      if (dir) { e.preventDefault(); e.stopPropagation(); setDirection(dir); return false; }
+    }
+    window.addEventListener("keydown", handleKey, true);
+    document.addEventListener("keydown", handleKey, true);
+    canvas.addEventListener("keydown", handleKey, true);
+    canvas.addEventListener("click", focusCanvas);
+
+    document.getElementById("startGameBtn").onclick = () => {
+      resize();
+      state.level = 1;
+      state.score = 0;
+      state.powerGot = 0;
+      state.usedQuestions.clear();
+      state.running = true;
+      state.paused = false;
+      resetLevel();
+      startOverlay.classList.add("hidden");
+      focusCanvas();
+    };
+
+    document.getElementById("restartBtn").onclick = () => {
+      resultOverlay.classList.add("hidden");
+      startOverlay.classList.remove("hidden");
+      state.running = false;
+      state.paused = true;
+      state.level = 1;
+      state.score = 0;
+      state.powerGot = 0;
+      state.usedQuestions.clear();
+      resetLevel();
+      updateHUD();
+    };
+
+    function roundRect(x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + w, y, x + w, y + h, r);
+      ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r);
+      ctx.arcTo(x, y, x + w, y, r);
+      ctx.closePath();
+    }
+
+    function drawBackground(t) {
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      for (let i = 0; i < 28; i++) {
+        const x = (i * 97 + t * 0.012) % window.innerWidth;
+        const y = (i * 53 + Math.sin(t / 900 + i) * 18 + 80) % window.innerHeight;
+        ctx.strokeStyle = "rgba(125,211,252,.16)";
+        ctx.beginPath(); ctx.arc(x, y, 3 + (i % 4), 0, Math.PI * 2); ctx.stroke();
+      }
+    }
+
+    function drawMaze() {
+      for (let r = 0; r < maze.length; r++) {
+        for (let c = 0; c < maze[0].length; c++) {
+          if (maze[r][c] === "#") {
+            const x = px(c), y = py(r);
+            const grad = ctx.createLinearGradient(x, y, x + state.cell, y + state.cell);
+            grad.addColorStop(0, "#1d4ed8"); grad.addColorStop(1, "#0284c7");
+            ctx.fillStyle = grad;
+            roundRect(x + 2, y + 2, state.cell - 4, state.cell - 4, 8);
+            ctx.fill();
+            ctx.strokeStyle = "rgba(125,211,252,.38)"; ctx.stroke();
+          }
+        }
+      }
+    }
+
+    function drawDots() {
+      ctx.fillStyle = "rgba(250,250,210,.92)";
+      for (const key of state.dots) {
+        const [c, r] = key.split(",").map(Number);
+        const x = px(c + 0.5), y = py(r + 0.5);
+        const outer = Math.max(4, state.cell * .13), inner = outer * .45;
+        ctx.beginPath();
+        for (let i = 0; i < 10; i++) {
+          const a = -Math.PI / 2 + i * Math.PI / 5;
+          const rad = i % 2 === 0 ? outer : inner;
+          const sx = x + Math.cos(a) * rad, sy = y + Math.sin(a) * rad;
+          if (i === 0) ctx.moveTo(sx, sy); else ctx.lineTo(sx, sy);
+        }
+        ctx.closePath(); ctx.fill();
+      }
+    }
+
+    function drawPowers(t) {
+      for (const p of state.powers) {
+        if (!p.active) continue;
+        const x = px(p.c + 0.5), y = py(p.r + 0.5);
+        const r = state.cell * (0.25 + Math.sin(t / 180 + p.pulse) * 0.035);
+        const glow = ctx.createRadialGradient(x, y, 2, x, y, r * 2.1);
+        glow.addColorStop(0, "rgba(255,255,255,.95)"); glow.addColorStop(.45, "rgba(34,211,238,.75)"); glow.addColorStop(1, "rgba(34,211,238,0)");
+        ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(x, y, r * 2.1, 0, Math.PI * 2); ctx.fill();
+        ctx.save(); ctx.translate(x, y); ctx.rotate(Math.sin(t / 420 + p.pulse) * .22);
+        ctx.fillStyle = "#22d3ee"; roundRect(-r * 1.45, -r * .62, r * 2.9, r * 1.24, r * .62); ctx.fill();
+        ctx.fillStyle = "#f8fafc"; roundRect(-r * 1.45, -r * .62, r * 1.45, r * 1.24, r * .62); ctx.fill();
+        ctx.strokeStyle = "rgba(15,23,42,.45)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(0, -r * .58); ctx.lineTo(0, r * .58); ctx.stroke(); ctx.restore();
+      }
+    }
+
+    function drawPlayer() {
+      const p = state.player;
+      const x = px(p.x), y = py(p.y) + Math.sin(p.anim * 1.6) * 2;
+      const r = state.cell * .38;
+      ctx.save(); ctx.translate(x, y);
+      ctx.fillStyle = "#34d399"; ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#dcfce7"; ctx.beginPath(); ctx.arc(0, r * .1, r * .58, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#0f172a"; ctx.beginPath(); ctx.arc(-r*.23, -r*.08, r*.08, 0, Math.PI*2); ctx.arc(r*.23, -r*.08, r*.08, 0, Math.PI*2); ctx.fill();
+      ctx.strokeStyle = "#0f172a"; ctx.lineWidth = Math.max(2, state.cell*.04); ctx.beginPath(); ctx.arc(0, r*.08, r*.22, .15, Math.PI-.15); ctx.stroke();
+      ctx.fillStyle = "#f8fafc"; roundRect(-r*.45, -r*1.05, r*.9, r*.36, r*.12); ctx.fill();
+      ctx.fillStyle = "#ef4444"; ctx.fillRect(-r*.07, -r*.99, r*.14, r*.24); ctx.fillRect(-r*.18, -r*.9, r*.36, r*.08);
+      ctx.restore();
+    }
+
+    function drawGhosts(t) {
+      const colors = ["#fb7185", "#a78bfa", "#f97316", "#22c55e"];
+      for (const g of state.ghosts) {
+        const x = px(g.x), y = py(g.y), r = state.cell * .34, type = g.type % 4, color = colors[type];
+        ctx.save(); ctx.translate(x, y); ctx.rotate(Math.sin(t / 520 + g.type) * .1);
+        if (type === 0) {
+          ctx.strokeStyle = color; ctx.lineWidth = Math.max(2, state.cell * .045);
+          for (let i = 0; i < 10; i++) {
+            const a = i * Math.PI * 2 / 10;
+            ctx.beginPath(); ctx.moveTo(Math.cos(a)*r*.82, Math.sin(a)*r*.82); ctx.lineTo(Math.cos(a)*r*1.22, Math.sin(a)*r*1.22); ctx.stroke();
+            ctx.beginPath(); ctx.arc(Math.cos(a)*r*1.22, Math.sin(a)*r*1.22, r*.1, 0, Math.PI*2); ctx.fillStyle = color; ctx.fill();
+          }
+          ctx.fillStyle = color; ctx.beginPath(); ctx.arc(0,0,r,0,Math.PI*2); ctx.fill();
+        } else if (type === 1) {
+          ctx.fillStyle = color; roundRect(-r*1.25, -r*.62, r*2.5, r*1.24, r*.62); ctx.fill();
+        } else if (type === 2) {
+          ctx.fillStyle = color; roundRect(-r*1.05, -r*.58, r*2.1, r*1.16, r*.58); ctx.fill();
+          ctx.fillStyle = "#f8fafc"; roundRect(-r*1.05, -r*.58, r*1.05, r*1.16, r*.58); ctx.fill();
+        } else {
+          ctx.fillStyle = color; ctx.beginPath(); ctx.ellipse(0, 0, r*1.05, r*.88, .25, 0, Math.PI*2); ctx.fill();
+          ctx.fillStyle = "rgba(255,255,255,.38)"; ctx.beginPath(); ctx.arc(-r*.38, -r*.28, r*.18, 0, Math.PI*2); ctx.arc(r*.34, r*.26, r*.14, 0, Math.PI*2); ctx.fill();
+        }
+        ctx.fillStyle = "rgba(255,255,255,.92)"; ctx.beginPath(); ctx.arc(-r*.28,-r*.12,r*.17,0,Math.PI*2); ctx.arc(r*.28,-r*.12,r*.17,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle = "#0f172a"; ctx.beginPath(); ctx.arc(-r*.23 + g.dir.x*2,-r*.1 + g.dir.y*2,r*.065,0,Math.PI*2); ctx.arc(r*.33 + g.dir.x*2,-r*.1 + g.dir.y*2,r*.065,0,Math.PI*2); ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    function loop(time) {
+      const dt = Math.min(0.033, (time - state.lastTime || 16) / 1000);
+      state.lastTime = time;
+      drawBackground(time);
+      drawMaze();
+      if (state.running && !state.paused) {
+        moveEntity(state.player, dt);
+        state.player.anim += dt * 8;
+        moveGhosts(dt);
+        checkCollectibles();
+        checkCollision();
+      }
+      drawDots(); drawPowers(time); if (state.player) drawPlayer(); drawGhosts(time);
+      requestAnimationFrame(loop);
+    }
+
+    resetLevel();
+    requestAnimationFrame(loop);
   </script>
 </body>
 </html>
