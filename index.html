@@ -375,11 +375,8 @@
       state.player = {
         x: start.c + 0.5,
         y: start.r + 0.5,
-        targetX: start.c + 0.5,
-        targetY: start.r + 0.5,
-        moving: false,
         dir: { x: 0, y: 0 },
-        speed: 7.2,
+        moving: false,
         anim: 0
       };
       state.powerGot = 0;
@@ -440,38 +437,26 @@
 
     function setDirection(name) {
       if (!state.player || !state.running || state.paused) return;
-      // 改成「按一次移動一格」：小勇者正在移動到下一格時，不接受新的移動指令。
-      if (state.player.moving) return;
       const dir = DIRS[name];
       if (!dir) return;
-      const nextX = state.player.x + dir.x;
-      const nextY = state.player.y + dir.y;
-      const nextC = Math.floor(nextX);
-      const nextR = Math.floor(nextY);
+
+      // 穩定版「按一次移動一步」：直接以格子為單位移動，不使用連續動畫位移，避免座標誤差造成畫面當機。
+      const current = cellOf(state.player);
+      const nextC = current.c + dir.x;
+      const nextR = current.r + dir.y;
       if (isWallCell(nextC, nextR)) return;
+
+      state.player.x = nextC + 0.5;
+      state.player.y = nextR + 0.5;
       state.player.dir = { ...dir };
-      state.player.targetX = nextX;
-      state.player.targetY = nextY;
-      state.player.moving = true;
+      state.player.anim += 1;
+      checkCollectibles();
+      checkCollision();
     }
 
     function movePlayerStep(dt) {
-      const p = state.player;
-      if (!p || !p.moving) return;
-      const dx = p.targetX - p.x;
-      const dy = p.targetY - p.y;
-      const dist = Math.hypot(dx, dy);
-      const step = p.speed * dt;
-      p.anim += dt * 8;
-      if (dist <= step) {
-        p.x = p.targetX;
-        p.y = p.targetY;
-        p.moving = false;
-        snap(p);
-        return;
-      }
-      p.x += (dx / dist) * step;
-      p.y += (dy / dist) * step;
+      // 小勇者已改成按一次直接走一格，這裡保留函式避免主迴圈呼叫時出錯。
+      if (!state.player) return;
     }
 
     function chooseGhostDir(g) {
@@ -521,8 +506,6 @@
     }
 
     function checkCollectibles() {
-      // 等小勇者完整走到格子中心後再判定收集，避免走到一半就觸發答題視窗。
-      if (state.player && state.player.moving) return;
       const cell = cellOf(state.player);
       const key = `${cell.c},${cell.r}`;
       if (state.dots.has(key)) { state.dots.delete(key); state.score += 10; }
