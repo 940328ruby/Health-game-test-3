@@ -307,10 +307,19 @@
     function atCenter(e) { return Math.abs(e.x - (Math.floor(e.x) + 0.5)) < 0.055 && Math.abs(e.y - (Math.floor(e.y) + 0.5)) < 0.055; }
     function snap(e) { e.x = Math.floor(e.x) + 0.5; e.y = Math.floor(e.y) + 0.5; }
     function canMove(e, dir) {
-      const nextC = Math.floor(e.x + dir.x * 0.55);
-      const nextR = Math.floor(e.y + dir.y * 0.55);
+      if (!e || !dir) return false;
+      const base = cellOf(e);
+      const nextC = base.c + dir.x;
+      const nextR = base.r + dir.y;
       return !isWallCell(nextC, nextR);
     }
+
+    function openNeighborDirs(cell) {
+      return ALL_DIRS.filter(d => !isWallCell(cell.c + d.x, cell.r + d.y));
+    }
+
+    function dirKey(d) { return `${d.x},${d.y}`; }
+
     function px(x) { return state.ox + x * state.cell; }
     function py(y) { return state.oy + y * state.cell; }
 
@@ -416,48 +425,102 @@
 
     function moveEntity(e, dt) {
       if (!e) return;
+
+      // 只在格子中心判斷轉向，避免角色或細菌因小數座標誤差卡住。
       if (atCenter(e)) {
         snap(e);
-        if (e.nextDir && canMove(e, e.nextDir)) e.dir = { ...e.nextDir };
-        if (!canMove(e, e.dir)) e.dir = { x: 0, y: 0 };
+        if (e.nextDir && canMove(e, e.nextDir)) {
+          e.dir = { ...e.nextDir };
+        }
+        if (!canMove(e, e.dir)) {
+          e.dir = { x: 0, y: 0 };
+        }
       }
-      if (e.dir.x === 0 && e.dir.y === 0) return;
-      const nx = e.x + e.dir.x * e.speed * dt;
-      const ny = e.y + e.dir.y * e.speed * dt;
-      const probeC = Math.floor(nx + e.dir.x * 0.40);
-      const probeR = Math.floor(ny + e.dir.y * 0.40);
-      if (!isWallCell(probeC, probeR)) { e.x = nx; e.y = ny; }
-      else { snap(e); e.dir = { x: 0, y: 0 }; }
+
+      if (!e.dir || (e.dir.x === 0 && e.dir.y === 0)) return;
+
+      const oldX = e.x;
+      const oldY = e.y;
+      e.x += e.dir.x * e.speed * dt;
+      e.y += e.dir.y * e.speed * dt;
+
+      const oldCell = { c: Math.floor(oldX), r: Math.floor(oldY) };
+      const newCell = { c: Math.floor(e.x), r: Math.floor(e.y) };
+
+      // 若跨入牆格，立刻退回原本格子中心，避免整個遊戲座標跑掉。
+      if (isWallCell(newCell.c, newCell.r)) {
+        e.x = oldCell.c + 0.5;
+        e.y = oldCell.r + 0.5;
+        e.dir = { x: 0, y: 0 };
+        return;
+      }
+
+      // 防止速度造成一次跨太多格。
+      if (Math.abs(e.x - oldX) > 0.25 || Math.abs(e.y - oldY) > 0.25) {
+        e.x = oldX;
+        e.y = oldY;
+      }
     }
 
     function setDirection(name) {
       if (!state.player || !state.running || state.paused) return;
       const dir = DIRS[name];
       if (!dir) return;
+
       state.player.nextDir = { ...dir };
-      if (atCenter(state.player) && canMove(state.player, dir)) {
+
+      // 在格子中心時立即轉向；不在中心時先記住下一個方向，到了路口再轉。
+      if (atCenter(state.player)) {
         snap(state.player);
-        state.player.dir = { ...dir };
+        if (canMove(state.player, dir)) {
+          state.player.dir = { ...dir };
+        }
       }
     }
 
+    function findNextDirByBFS(start, target, currentDir) {
+      const queue = [{ c: start.c, r: start.r, first: null }];
+      const visited = new Set([`${start.c},${start.r}`]);
+      let steps = 0;
+
+      while (queue.length && steps < 500) {
+        steps++;
+        const node = queue.shift();
+        if (node.c === target.c && node.r === target.r) return node.first || currentDir;
+
+        for (const d of ALL_DIRS) {
+          const nc = node.c + d.x;
+          const nr = node.r + d.y;
+          const key = `${nc},${nr}`;
+          if (visited.has(key) || isWallCell(nc, nr)) continue;
+          visited.add(key);
+          queue.push({ c: nc, r: nr, first: node.first || d });
+        }
+      }
+      return currentDir || { x: 0, y: 0 };
+    }
+
     function chooseGhostDir(g) {
-      let possible = ALL_DIRS.filter(d => canMove(g, d));
-      const reverse = { x: -g.dir.x, y: -g.dir.y };
-      if (possible.length > 1) possible = possible.filter(d => !(d.x === reverse.x && d.y === reverse.y));
       const gc = cellOf(g);
-      const currentTarget = g.target || nextPatrolTarget(g);
-      const reachedTarget = Math.abs(gc.c - currentTarget.c) + Math.abs(gc.r - currentTarget.r) <= 1;
-      if (reachedTarget) g.target = nextPatrolTarget(g);
-      let target = g.target;
-      if (Math.random() < 0.16) target = cellOf(state.player);
-      possible.sort((a, b) => {
-        const da = Math.abs(target.c - (gc.c + a.x)) + Math.abs(target.r - (gc.r + a.y));
-        const db = Math.abs(target.c - (gc.c + b.x)) + Math.abs(target.r - (gc.r + b.y));
-        return da - db;
-      });
-      if (Math.random() < 0.18 && possible.length > 1) return possible[Math.floor(Math.random() * Math.min(2, possible.length))];
-      return possible[0] || { x: 0, y: 0 };
+      const openDirs = openNeighborDirs(gc);
+      if (!openDirs.length) return { x: 0, y: 0 };
+
+      const reachedTarget = g.target && Math.abs(gc.c - g.target.c) + Math.abs(gc.r - g.target.r) <= 1;
+      if (!g.target || reachedTarget) g.target = nextPatrolTarget(g);
+
+      // 以大範圍巡邏為主，偶爾追小勇者；用 BFS 找路，避免只在中央橫移。
+      const target = Math.random() < 0.16 ? cellOf(state.player) : g.target;
+      let dir = findNextDirByBFS(gc, target, g.dir);
+
+      // 若 BFS 給的方向不能走，就改選可走方向。
+      if (!openDirs.some(d => d.x === dir.x && d.y === dir.y)) {
+        const reverse = { x: -g.dir.x, y: -g.dir.y };
+        const choices = openDirs.length > 1
+          ? openDirs.filter(d => !(d.x === reverse.x && d.y === reverse.y))
+          : openDirs;
+        dir = choices[Math.floor(Math.random() * choices.length)] || openDirs[0];
+      }
+      return dir;
     }
 
     function moveGhosts(dt) {
@@ -590,19 +653,30 @@
 
     function handleKey(e) {
       const key = e.key || "";
-      const code = e.keyCode || e.which;
+      const code = e.code || "";
+      const keyCode = e.keyCode || e.which;
       const map = {
         ArrowUp: "up", ArrowDown: "down", ArrowLeft: "left", ArrowRight: "right",
+        KeyW: "up", KeyA: "left", KeyS: "down", KeyD: "right",
         w: "up", W: "up", a: "left", A: "left", s: "down", S: "down", d: "right", D: "right",
         38: "up", 40: "down", 37: "left", 39: "right", 87: "up", 65: "left", 83: "down", 68: "right"
       };
-      const dir = map[key] || map[code];
-      if (dir) { e.preventDefault(); e.stopPropagation(); setDirection(dir); return false; }
+      const dir = map[key] || map[code] || map[keyCode];
+      if (dir) {
+        e.preventDefault();
+        e.stopPropagation();
+        setDirection(dir);
+        return false;
+      }
     }
     window.addEventListener("keydown", handleKey, true);
     document.addEventListener("keydown", handleKey, true);
+    document.body.addEventListener("keydown", handleKey, true);
     canvas.addEventListener("keydown", handleKey, true);
+    window.onkeydown = handleKey;
+    document.onkeydown = handleKey;
     canvas.addEventListener("click", focusCanvas);
+    document.body.addEventListener("click", focusCanvas);
 
     document.getElementById("startGameBtn").onclick = () => {
       resize();
