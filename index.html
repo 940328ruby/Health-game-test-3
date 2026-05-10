@@ -151,7 +151,7 @@
     <section id="startOverlay" class="overlay">
       <div class="card">
         <h1>健康小勇者遊戲</h1>
-        <p>用鍵盤 <span class="kbd">W</span><span class="kbd">A</span><span class="kbd">S</span><span class="kbd">D</span> 或 <span class="kbd">↑</span><span class="kbd">↓</span><span class="kbd">←</span><span class="kbd">→</span> 操控健康小勇者，每按一次移動一步，吃掉健康星星跟發光膠囊過關吧！<br>過程中要記得避開跑來跑去的細菌怪們！</p>
+        <p>用鍵盤 <span class="kbd">W</span><span class="kbd">A</span><span class="kbd">S</span><span class="kbd">D</span> 或 <span class="kbd">↑</span><span class="kbd">↓</span><span class="kbd">←</span><span class="kbd">→</span> 操控健康小勇者，以較慢速度移動，吃掉健康星星跟發光膠囊過關吧！<br>過程中要記得避開跑來跑去的細菌怪們！</p>
         <div class="level-grid">
           <div class="level-box"><b>第一關目標</b><br>吃掉 1 個發光膠囊</div>
           <div class="level-box"><b>第二關目標</b><br>吃掉 3 個發光膠囊</div>
@@ -376,7 +376,8 @@
         x: start.c + 0.5,
         y: start.r + 0.5,
         dir: { x: 0, y: 0 },
-        moving: false,
+        nextDir: null,
+        speed: 2.35,
         anim: 0
       };
       state.powerGot = 0;
@@ -440,23 +441,22 @@
       const dir = DIRS[name];
       if (!dir) return;
 
-      // 穩定版「按一次移動一步」：直接以格子為單位移動，不使用連續動畫位移，避免座標誤差造成畫面當機。
-      const current = cellOf(state.player);
-      const nextC = current.c + dir.x;
-      const nextR = current.r + dir.y;
-      if (isWallCell(nextC, nextR)) return;
+      // 穩定版連續移動：按鍵只改變「下一個方向」。
+      // 小勇者會用較慢速度沿著迷宮滑行，抵達格子中心時才嘗試轉彎。
+      state.player.nextDir = { ...dir };
 
-      state.player.x = nextC + 0.5;
-      state.player.y = nextR + 0.5;
-      state.player.dir = { ...dir };
-      state.player.anim += 1;
-      checkCollectibles();
-      checkCollision();
+      if (atCenter(state.player) && canMove(state.player, dir)) {
+        snap(state.player);
+        state.player.dir = { ...dir };
+      }
     }
 
     function movePlayerStep(dt) {
-      // 小勇者已改成按一次直接走一格，這裡保留函式避免主迴圈呼叫時出錯。
       if (!state.player) return;
+      moveEntity(state.player, dt);
+      if (state.player.dir.x !== 0 || state.player.dir.y !== 0) {
+        state.player.anim += dt * 8;
+      }
     }
 
     function chooseGhostDir(g) {
@@ -506,6 +506,7 @@
     }
 
     function checkCollectibles() {
+      if (!state.player) return;
       const cell = cellOf(state.player);
       const key = `${cell.c},${cell.r}`;
       if (state.dots.has(key)) { state.dots.delete(key); state.score += 10; }
@@ -644,8 +645,7 @@
       if (dir) {
         e.preventDefault();
         e.stopPropagation();
-        // 長按鍵盤時瀏覽器會連續觸發 keydown。這裡忽略重複事件，確保是「按一次走一步」。
-        if (!e.repeat) setDirection(dir);
+        setDirection(dir);
         return false;
       }
     }
