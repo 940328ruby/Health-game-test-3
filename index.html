@@ -71,7 +71,7 @@
     h1, h2, h3 { margin: 0 0 12px; line-height: 1.25; }
     h1 { font-size: clamp(30px, 4vw, 48px); color: #facc15; }
     h2 { color: #7dd3fc; }
-    p, li { color: #dbeafe; line-height: 1.75; }
+    p { color: #dbeafe; line-height: 1.75; }
     .kbd {
       display: inline-block;
       padding: 2px 8px;
@@ -281,7 +281,8 @@
       lastAnswerCorrect: false,
       player: null,
       ghosts: [],
-      lastTime: 0
+      lastTime: 0,
+      inputDir: null
     };
 
     function resize() {
@@ -304,44 +305,37 @@
       return maze[r][c] === "#";
     }
     function cellOf(e) { return { c: Math.floor(e.x), r: Math.floor(e.y) }; }
-    function atCenter(e) { return Math.abs(e.x - (Math.floor(e.x) + 0.5)) < 0.055 && Math.abs(e.y - (Math.floor(e.y) + 0.5)) < 0.055; }
-    function snap(e) { e.x = Math.floor(e.x) + 0.5; e.y = Math.floor(e.y) + 0.5; }
-    function canMove(e, dir) {
-      if (!e || !dir) return false;
-      const base = cellOf(e);
-      const nextC = base.c + dir.x;
-      const nextR = base.r + dir.y;
-      return !isWallCell(nextC, nextR);
+    function centerOf(c, r) { return { x: c + 0.5, y: r + 0.5 }; }
+    function nearCenter(e, tolerance = 0.08) {
+      return Math.abs(e.x - (Math.floor(e.x) + 0.5)) < tolerance && Math.abs(e.y - (Math.floor(e.y) + 0.5)) < tolerance;
     }
-
-    function openNeighborDirs(cell) {
-      return ALL_DIRS.filter(d => !isWallCell(cell.c + d.x, cell.r + d.y));
+    function snap(e) {
+      const cell = cellOf(e);
+      e.x = cell.c + 0.5;
+      e.y = cell.r + 0.5;
     }
-
-    function dirKey(d) { return `${d.x},${d.y}`; }
-
+    function canGoFromCell(cell, dir) {
+      return !isWallCell(cell.c + dir.x, cell.r + dir.y);
+    }
     function px(x) { return state.ox + x * state.cell; }
     function py(y) { return state.oy + y * state.cell; }
 
     function openCells() {
       const cells = [];
       for (let r = 1; r < maze.length - 1; r++) {
-        for (let c = 1; c < maze[0].length - 1; c++) {
-          if (!isWallCell(c, r)) cells.push({ c, r });
-        }
+        for (let c = 1; c < maze[0].length - 1; c++) if (!isWallCell(c, r)) cells.push({ c, r });
       }
       return cells;
     }
 
     function nearestOpen(c, r) {
       if (!isWallCell(c, r)) return { c, r };
-      let best = null;
-      let bestD = Infinity;
+      let best = { c: 1, r: 1 }, bestD = Infinity;
       for (const cell of openCells()) {
         const d = Math.abs(cell.c - c) + Math.abs(cell.r - r);
         if (d < bestD) { bestD = d; best = cell; }
       }
-      return best || { c: 1, r: 1 };
+      return best;
     }
 
     function buildDots() {
@@ -351,8 +345,7 @@
     }
 
     function choosePowerCells(count) {
-      const all = openCells()
-        .filter(cell => Math.abs(cell.c - 1) + Math.abs(cell.r - 1) >= 15)
+      const all = openCells().filter(cell => Math.abs(cell.c - 1) + Math.abs(cell.r - 1) >= 15)
         .filter(cell => !(cell.c >= 8 && cell.c <= 12 && cell.r >= 8 && cell.r <= 12));
       const selected = [];
       while (selected.length < count && all.length) {
@@ -382,24 +375,15 @@
     }
 
     function nextPatrolTarget(g) {
-      const targets = [
-        nearestOpen(17, 1), nearestOpen(1, 17), nearestOpen(17, 17), nearestOpen(3, 3),
-        nearestOpen(15, 15), nearestOpen(5, 13), nearestOpen(13, 5), nearestOpen(7, 17)
-      ];
+      const targets = [nearestOpen(17, 1), nearestOpen(1, 17), nearestOpen(17, 17), nearestOpen(3, 3), nearestOpen(15, 15), nearestOpen(5, 13), nearestOpen(13, 5), nearestOpen(7, 17)];
       g.targetIndex = ((g.targetIndex || 0) + 1 + g.type) % targets.length;
       return targets[g.targetIndex];
     }
 
     function resetLevel() {
       const start = nearestOpen(1, 1);
-      state.player = {
-        x: start.c + 0.5,
-        y: start.r + 0.5,
-        dir: { x: 0, y: 0 },
-        nextDir: null,
-        speed: 2.35,
-        anim: 0
-      };
+      state.player = { x: start.c + 0.5, y: start.r + 0.5, dir: { x: 0, y: 0 }, nextDir: null, speed: 2.35, anim: 0 };
+      state.inputDir = null;
       state.powerGot = 0;
       state.ghosts = [];
       const centers = [nearestOpen(9, 9), nearestOpen(11, 9), nearestOpen(9, 11), nearestOpen(11, 11)];
@@ -423,103 +407,95 @@
       updateHUD();
     }
 
-    function moveEntity(e, dt) {
-      if (!e) return;
+    function movePlayer(dt) {
+      const p = state.player;
+      if (!p) return;
 
-      // 只在格子中心判斷轉向，避免角色或細菌因小數座標誤差卡住。
-      if (atCenter(e)) {
-        snap(e);
-        if (e.nextDir && canMove(e, e.nextDir)) {
-          e.dir = { ...e.nextDir };
-        }
-        if (!canMove(e, e.dir)) {
-          e.dir = { x: 0, y: 0 };
-        }
+      if (state.inputDir) p.nextDir = { ...state.inputDir };
+
+      if (nearCenter(p, 0.1)) {
+        snap(p);
+        const cell = cellOf(p);
+        if (p.nextDir && canGoFromCell(cell, p.nextDir)) p.dir = { ...p.nextDir };
+        if (!canGoFromCell(cell, p.dir)) p.dir = { x: 0, y: 0 };
       }
 
-      if (!e.dir || (e.dir.x === 0 && e.dir.y === 0)) return;
+      if (p.dir.x === 0 && p.dir.y === 0) return;
 
-      const oldX = e.x;
-      const oldY = e.y;
+      const oldX = p.x;
+      const oldY = p.y;
+      p.x += p.dir.x * p.speed * dt;
+      p.y += p.dir.y * p.speed * dt;
+      p.anim += dt * 8;
+
+      const nextCell = cellOf(p);
+      if (isWallCell(nextCell.c, nextCell.r)) {
+        p.x = Math.floor(oldX) + 0.5;
+        p.y = Math.floor(oldY) + 0.5;
+        p.dir = { x: 0, y: 0 };
+      }
+    }
+
+    function moveEntityAuto(e, dt) {
+      if (!e) return;
+      if (nearCenter(e, 0.1)) {
+        snap(e);
+        const cell = cellOf(e);
+        if (!canGoFromCell(cell, e.dir)) e.dir = { x: 0, y: 0 };
+      }
+      if (e.dir.x === 0 && e.dir.y === 0) return;
+      const oldX = e.x, oldY = e.y;
       e.x += e.dir.x * e.speed * dt;
       e.y += e.dir.y * e.speed * dt;
-
-      const oldCell = { c: Math.floor(oldX), r: Math.floor(oldY) };
-      const newCell = { c: Math.floor(e.x), r: Math.floor(e.y) };
-
-      // 若跨入牆格，立刻退回原本格子中心，避免整個遊戲座標跑掉。
-      if (isWallCell(newCell.c, newCell.r)) {
-        e.x = oldCell.c + 0.5;
-        e.y = oldCell.r + 0.5;
+      const nextCell = cellOf(e);
+      if (isWallCell(nextCell.c, nextCell.r)) {
+        e.x = Math.floor(oldX) + 0.5;
+        e.y = Math.floor(oldY) + 0.5;
         e.dir = { x: 0, y: 0 };
-        return;
-      }
-
-      // 防止速度造成一次跨太多格。
-      if (Math.abs(e.x - oldX) > 0.25 || Math.abs(e.y - oldY) > 0.25) {
-        e.x = oldX;
-        e.y = oldY;
       }
     }
 
     function setDirection(name) {
-      if (!state.player || !state.running || state.paused) return;
       const dir = DIRS[name];
       if (!dir) return;
-
+      state.inputDir = { ...dir };
+      if (!state.player || !state.running || state.paused) return;
       state.player.nextDir = { ...dir };
-
-      // 在格子中心時立即轉向；不在中心時先記住下一個方向，到了路口再轉。
-      if (atCenter(state.player)) {
+      if (nearCenter(state.player, 0.12)) {
         snap(state.player);
-        if (canMove(state.player, dir)) {
-          state.player.dir = { ...dir };
-        }
+        const cell = cellOf(state.player);
+        if (canGoFromCell(cell, dir)) state.player.dir = { ...dir };
       }
     }
 
-    function findNextDirByBFS(start, target, currentDir) {
+    function openNeighborDirs(cell) {
+      return ALL_DIRS.filter(d => canGoFromCell(cell, d));
+    }
+
+    function findNextDirByBFS(start, target, fallback) {
       const queue = [{ c: start.c, r: start.r, first: null }];
       const visited = new Set([`${start.c},${start.r}`]);
-      let steps = 0;
-
-      while (queue.length && steps < 500) {
-        steps++;
+      while (queue.length) {
         const node = queue.shift();
-        if (node.c === target.c && node.r === target.r) return node.first || currentDir;
-
+        if (node.c === target.c && node.r === target.r) return node.first || fallback || { x: 0, y: 0 };
         for (const d of ALL_DIRS) {
-          const nc = node.c + d.x;
-          const nr = node.r + d.y;
-          const key = `${nc},${nr}`;
+          const nc = node.c + d.x, nr = node.r + d.y, key = `${nc},${nr}`;
           if (visited.has(key) || isWallCell(nc, nr)) continue;
           visited.add(key);
           queue.push({ c: nc, r: nr, first: node.first || d });
         }
       }
-      return currentDir || { x: 0, y: 0 };
+      return fallback || { x: 0, y: 0 };
     }
 
     function chooseGhostDir(g) {
       const gc = cellOf(g);
-      const openDirs = openNeighborDirs(gc);
-      if (!openDirs.length) return { x: 0, y: 0 };
-
-      const reachedTarget = g.target && Math.abs(gc.c - g.target.c) + Math.abs(gc.r - g.target.r) <= 1;
-      if (!g.target || reachedTarget) g.target = nextPatrolTarget(g);
-
-      // 以大範圍巡邏為主，偶爾追小勇者；用 BFS 找路，避免只在中央橫移。
+      const choices = openNeighborDirs(gc);
+      if (!choices.length) return { x: 0, y: 0 };
+      if (!g.target || Math.abs(gc.c - g.target.c) + Math.abs(gc.r - g.target.r) <= 1) g.target = nextPatrolTarget(g);
       const target = Math.random() < 0.16 ? cellOf(state.player) : g.target;
       let dir = findNextDirByBFS(gc, target, g.dir);
-
-      // 若 BFS 給的方向不能走，就改選可走方向。
-      if (!openDirs.some(d => d.x === dir.x && d.y === dir.y)) {
-        const reverse = { x: -g.dir.x, y: -g.dir.y };
-        const choices = openDirs.length > 1
-          ? openDirs.filter(d => !(d.x === reverse.x && d.y === reverse.y))
-          : openDirs;
-        dir = choices[Math.floor(Math.random() * choices.length)] || openDirs[0];
-      }
+      if (!choices.some(d => d.x === dir.x && d.y === dir.y)) dir = choices[Math.floor(Math.random() * choices.length)];
       return dir;
     }
 
@@ -530,8 +506,11 @@
           g.target = nextPatrolTarget(g);
           g.scatterTimer = 4.5 + Math.random() * 2.5;
         }
-        if (atCenter(g)) { snap(g); g.dir = chooseGhostDir(g); }
-        moveEntity(g, dt);
+        if (nearCenter(g, 0.1)) {
+          snap(g);
+          g.dir = chooseGhostDir(g);
+        }
+        moveEntityAuto(g, dt);
         if (g.dir.x === 0 && g.dir.y === 0) {
           g.target = nextPatrolTarget(g);
           g.dir = chooseGhostDir(g);
@@ -609,24 +588,18 @@
       const used = state.powers.filter(p => p.active).map(p => `${p.c},${p.r}`);
       const playerCell = cellOf(state.player);
       const corners = [nearestOpen(17, 1), nearestOpen(1, 17), nearestOpen(17, 17), nearestOpen(3, 15), nearestOpen(15, 3)];
-      let candidates = openCells()
-        .filter(cell => Math.abs(cell.c - playerCell.c) + Math.abs(cell.r - playerCell.r) >= 12)
-        .filter(cell => !used.includes(`${cell.c},${cell.r}`));
+      let candidates = openCells().filter(cell => Math.abs(cell.c - playerCell.c) + Math.abs(cell.r - playerCell.r) >= 12).filter(cell => !used.includes(`${cell.c},${cell.r}`));
       if (!candidates.length) candidates = openCells().filter(cell => !used.includes(`${cell.c},${cell.r}`));
-      let best = candidates[0] || nearestOpen(17, 17);
-      let bestScore = -Infinity;
+      let best = candidates[0] || nearestOpen(17, 17), bestScore = -Infinity;
       for (const cell of candidates) {
         const distPlayer = Math.abs(cell.c - playerCell.c) + Math.abs(cell.r - playerCell.r);
         const distCorner = Math.min(...corners.map(c => Math.abs(c.c - cell.c) + Math.abs(c.r - cell.r)));
-        const distOtherPowers = state.powers.filter(p => p !== power && p.active).map(p => Math.abs(p.c - cell.c) + Math.abs(p.r - cell.r));
-        const minOther = distOtherPowers.length ? Math.min(...distOtherPowers) : 10;
+        const other = state.powers.filter(p => p !== power && p.active).map(p => Math.abs(p.c - cell.c) + Math.abs(p.r - cell.r));
+        const minOther = other.length ? Math.min(...other) : 10;
         const score = distPlayer * 2 + minOther * 2 - distCorner + Math.random();
         if (score > bestScore) { bestScore = score; best = cell; }
       }
-      power.c = best.c;
-      power.r = best.r;
-      power.active = true;
-      power.pulse = Math.random() * 10;
+      power.c = best.c; power.r = best.r; power.active = true; power.pulse = Math.random() * 10;
       state.dots.delete(`${best.c},${best.r}`);
     }
 
@@ -673,8 +646,6 @@
     document.addEventListener("keydown", handleKey, true);
     document.body.addEventListener("keydown", handleKey, true);
     canvas.addEventListener("keydown", handleKey, true);
-    window.onkeydown = handleKey;
-    document.onkeydown = handleKey;
     canvas.addEventListener("click", focusCanvas);
     document.body.addEventListener("click", focusCanvas);
 
@@ -821,8 +792,7 @@
       drawBackground(time);
       drawMaze();
       if (state.running && !state.paused) {
-        moveEntity(state.player, dt);
-        if (state.player && (state.player.dir.x !== 0 || state.player.dir.y !== 0)) state.player.anim += dt * 8;
+        movePlayer(dt);
         moveGhosts(dt);
         checkCollectibles();
         checkCollision();
